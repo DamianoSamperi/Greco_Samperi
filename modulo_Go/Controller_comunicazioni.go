@@ -2,12 +2,9 @@ package main
 
 import (
 	"encoding/json"
-	_ "encoding/json"
 	"fmt"
 	"io/ioutil"
-	_ "modulo_Go/magazzino"
 	"modulo_Go/spedizione"
-	_ "modulo_Go/spedizione"
 	"net/http"
 )
 
@@ -34,7 +31,7 @@ func Visualizza_spedizioni(w http.ResponseWriter, r *http.Request) {
 	}
 	var dati string
 	_ = json.Unmarshal(body, &dati)
-	fmt.Fprintf(w, spedizione.Visualizza_Spedizioni(dati))
+	fmt.Fprint(w, spedizione.Visualizza_Spedizioni(dati))
 }
 func Inserimento_prodotto(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Hai richiesto: %s!", r.URL.Path[1:])
