@@ -36,8 +36,14 @@ func NuovoGestoreMagazzino(ctx context.Context, uri string) (*GestoreMagazzino, 
 	return &GestoreMagazzino{client: client, ctx: ctx}, nil
 }
 
-func Ritorna_hub_per_vicinanza(indirizzo string) string {
+func (g *GestoreMagazzino) Ritorna_hub_per_vicinanza(indirizzo string) string {
 	//TO_DO funzione che ritorna l'hub più vicino all'indirizzo dato
+	//TO_DO trasforma indirizzi in coordinate e poi calcola distanza tra due punti e moltiplica per indice curvatura terreste poi trovi il minimo delle distanze
+	collezioni, _ := g.client.Database("Magazzino").ListCollectionNames(g.ctx, bson.M{})
+	for _, collezione := range collezioni {
+		collection := g.client.Database("Magazzino").Collection(collezione)
+
+	}
 	return "da implementare"
 }
 
