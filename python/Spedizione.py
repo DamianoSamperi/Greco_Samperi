@@ -1,7 +1,6 @@
-from datetime import datetime, timedelta
 import random
 import string
-from datetime import datetime, timedelta
+from datetime import datetime
 
 class Spedizione:
     def __init__(self, codice_spedizione, mittente, destinatario):
@@ -29,7 +28,7 @@ class Spedizione:
         #print(f"Data Consegna Stimata: {self.data_consegna_stimata.strftime('%Y-%m-%d %H:%M:%S')}")
         print("Eventi di Tracciamento:")
         for data, evento in self.eventi_tracciamento:
-            print(f" - {data.strftime('%Y-%m-%d %H:%M:%S')}: {evento}")
+            print(f"{data.strftime('%Y-%m-%d %H:%M:%S')}: {evento}")
 
 
 class GestoreSpedizioni:
@@ -43,7 +42,7 @@ class GestoreSpedizioni:
 
     def crea_spedizione(self, mittente, destinatario):
         codice_spedizione = self.genera_codice_spedizione()
-        data_spedizione = datetime.now() + timedelta(hours=2)
+        #data_spedizione = datetime.now() + timedelta(hours=2)
         spedizione = Spedizione(codice_spedizione, mittente, destinatario)
         self.spedizioni_attive[codice_spedizione] = spedizione
         return spedizione

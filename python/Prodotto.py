@@ -27,5 +27,7 @@ class Prodotto:
 
         return prezzo_finale
 
+
+
     def __str__(self):
         return f"Prodotto: {self.nome} (Codice: {self.codice}), Dimensione: {self.dimensione}, Quantità: {self.quantita}, Prezzo: {self.calcola_prezzo()} euro"
