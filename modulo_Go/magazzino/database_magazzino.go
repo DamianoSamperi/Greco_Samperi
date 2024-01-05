@@ -2,14 +2,12 @@ package magazzino
 
 import (
 	"context"
-	"database/sql"
-	"log"
 	"modulo_Go/spedizione"
 	"strconv"
 
-	_ "go.mongodb.org/mongo-driver"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 	// _ "github.com/go-sql-driver/mysql"
 )
 
@@ -25,95 +23,58 @@ type Hub struct {
 	// Prodotti []Prodotto `json:"prodotti"`
 	Pacchi []spedizione.Pacco
 }
-
-// la funzione modifica l'hub di un Pacco,quindi va chiamata quando
-func insert_prodotto(Sede string, Pacco int) {
-	db, err := sql.Open("mysql", "Greco_Samperi:apl@/Magazzino")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer db.Close()
-
-	// Inserisci un nuovo prodotto in un hub
-	stmt, err := db.Prepare("UPDATE Prodotti SET sede = ? WHERE id = ?")
-
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer stmt.Close()
-
-	// Esegui l'istruzione SQL con i valori forniti
-	_, err = stmt.Exec(Sede, Pacco)
-	if err != nil {
-		log.Fatal(err)
-	}
-
+type GestoreMagazzino struct {
+	client *mongo.Client
+	ctx    context.Context
 }
 
-// func ottieni_prodotti(Sede string) string {
-// 	db, err := sql.Open("mysql", "Greco_Samperi:apl@/Magazzino")
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-// 	defer db.Close()
+func NuovoGestoreMagazzino(ctx context.Context, uri string) (*GestoreMagazzino, error) {
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI(uri))
+	if err != nil {
+		return nil, err
+	}
+	return &GestoreMagazzino{client: client, ctx: ctx}, nil
+}
 
-// 	// Ottieni tutti i pacchi di un dato hub
-// 	rows, err := db.Query("SELECT id, nome FROM Hub WHERE id = ?", 1)
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-// 	defer rows.Close()
-
-// 	for rows.Next() {
-// 		var h Hub
-// 		err := rows.Scan(&h.ID, &h.Sede)
-// 		if err != nil {
-// 			log.Fatal(err)
-// 		}
-
-// 		pacchiRows, err := db.Query("SELECT id, nome, quantita FROM Prodotti WHERE hub_id = ?", h.ID)
-// 		if err != nil {
-// 			log.Fatal(err)
-// 		}
-// 		defer prodottiRows.Close()
-
-// 		for prodottiRows.Next() {
-// 			var p Prodotto
-// 			err := prodottiRows.Scan(&p.ID, &p.Nome, &p.Quantita)
-// 			if err != nil {
-// 				log.Fatal(err)
-// 			}
-// 			h.Prodotti = append(h.Prodotti, p)
-// 		}
-
-// 		if err = prodottiRows.Err(); err != nil {
-// 			log.Fatal(err)
-// 		}
-
-// 		fmt.Println(h)
-// 	}
-// 	return ToString(h)
-// }
-
-func ritorna_hub_per_vicinanza(indirizzo string) string {
+func Ritorna_hub_per_vicinanza(indirizzo string) string {
 	//TO_DO funzione che ritorna l'hub più vicino all'indirizzo dato
 	return "da implementare"
 }
 
-func OttieniPacchiPerSede(ctx context.Context, client *mongo.Client, sede string) (string, error) {
-	collection := client.Database("Magazzino").Collection(sede)
-	cursor, err := collection.Find(ctx, bson.M{})
+func (g *GestoreMagazzino) OttieniPacchiPerSede(sede string) string {
+	collection := g.client.Database("Magazzino").Collection(sede)
+	cursor, err := collection.Find(g.ctx, bson.M{})
 	if err != nil {
-		return "", err
+		return err.Error()
 	}
-	defer cursor.Close(ctx)
+	defer cursor.Close(g.ctx)
 
 	var pacchi []spedizione.Pacco
-	if err = cursor.All(ctx, &pacchi); err != nil {
-		return "", err
+	if err = cursor.All(g.ctx, &pacchi); err != nil {
+		return err.Error()
 	}
 
-	return ToString(pacchi, sede), nil
+	return ToString(pacchi, sede)
+}
+
+func (g *GestoreMagazzino) InserisciPaccoInSede(sede string, p spedizione.Pacco) error {
+	collection := g.client.Database("nomeDelTuoDatabase").Collection(sede)
+	_, err := collection.InsertOne(g.ctx, p)
+	return err
+}
+
+func (g *GestoreMagazzino) SpostaPacco(id string, vecchiaSede string, nuovaSede string) error {
+	vecchiaCollection := g.client.Database("nomeDelTuoDatabase").Collection(vecchiaSede)
+	nuovaCollection := g.client.Database("nomeDelTuoDatabase").Collection(nuovaSede)
+
+	var p spedizione.Pacco
+	err := vecchiaCollection.FindOneAndDelete(g.ctx, bson.M{"_id": id}).Decode(&p)
+	if err != nil {
+		return err
+	}
+
+	_, err = nuovaCollection.InsertOne(g.ctx, p)
+	return err
 }
 
 func ToString(Pacchi []spedizione.Pacco, Sede string) string {

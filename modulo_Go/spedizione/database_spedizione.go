@@ -77,19 +77,18 @@ func Visualizza_Spedizioni(Mittente string) string {
 	return "error"
 }
 
-func Insert_Spedizione(mittente string, destinatario string, indirizzo string, Pacchi []Pacco) {
+func Insert_Spedizione(mittente string, destinatario string, Pacchi []Pacco, sede string) {
 	db, err := sql.Open("mysql", "Greco_Samperi:apl@/Spedizione")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer db.Close()
 	// Inserisci una nuova spedizione
-	res, err := db.Exec("INSERT INTO Spedizioni (mittente, destinatario, indirizzo, numero_pacchi) VALUES (?, ?, ?)", mittente, destinatario, indirizzo, len(Pacchi))
+	res, err := db.Exec("INSERT INTO Spedizioni (mittente, destinatario, numero_pacchi) VALUES (?, ?, ?)", mittente, destinatario, len(Pacchi))
 	if err != nil {
 		log.Fatal(err)
 	}
-	idSpedizione, err := res.LastInsertId()
-	sede := magazzino.ritorna_hub_per_vicinanza(mittente)
+	idSpedizione, _ := res.LastInsertId()
 	for _, pacco := range Pacchi {
 		_, err := db.Exec("INSERT INTO Pacchi (peso,lunghezza,altezza,profondità,prezzo, spedizione_id, hub) VALUES (?, ?, ?, ?, ?, ?, ?)", pacco.Peso, pacco.Lunghezza, pacco.Altezza, pacco.Profondità, pacco.Prezzo, idSpedizione, sede)
 		if err != nil {
