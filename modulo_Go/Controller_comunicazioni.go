@@ -3,14 +3,14 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"modulo_Go/spedizione"
 	"net/http"
 )
 
 func Inserimento_spedizione(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
-		body, err := ioutil.ReadAll(r.Body)
+		body, err := io.ReadAll(r.Body)
 		if err != nil {
 			http.Error(w, "Errore nella lettura del corpo della richiesta", http.StatusBadRequest)
 			return
@@ -24,7 +24,7 @@ func Inserimento_spedizione(w http.ResponseWriter, r *http.Request) {
 }
 
 func Visualizza_spedizioni(w http.ResponseWriter, r *http.Request) {
-	body, err := ioutil.ReadAll(r.Body)
+	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		http.Error(w, "Errore nella lettura del corpo della richiesta", http.StatusBadRequest)
 		return
@@ -38,10 +38,22 @@ func Inserimento_prodotto(w http.ResponseWriter, r *http.Request) {
 }
 
 func Ottieni_prodotti(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Questo è un altro handler!")
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		http.Error(w, "Errore nella lettura del corpo della richiesta", http.StatusBadRequest)
+		return
+	}
+	var dati string
+	err = json.Unmarshal(body, &dati)
+	if err != nil {
+		http.Error(w, "Formato json non corretto", http.StatusBadRequest)
+		return
+	}
+	fmt.Fprint(w, magazzino.ottieni_prodotti(dati))
 }
 
 func main() {
+
 	http.HandleFunc("/Inserisci_Spedizione", Inserimento_spedizione)
 	http.HandleFunc("/Visualizza_Spedizioni", Visualizza_spedizioni)
 	http.HandleFunc("/Ottieni_Prodotti_Hub", Ottieni_prodotti)

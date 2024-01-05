@@ -11,7 +11,6 @@ type Spedizione struct {
 	ID           int    `json:"id"`
 	Mittente     string `json:"mittente"`
 	Destinatario string `json:"destinatario"`
-	Indirizzo    string `json:"indirizzo"`
 	Stato        string `json:"stato"`
 	NumeroPacchi int    `json:"numero_pacchi"`
 	Pacchi       []Pacco
@@ -44,7 +43,7 @@ func Visualizza_Spedizioni(Mittente string) string {
 
 	for rows.Next() {
 		var s Spedizione
-		err := rows.Scan(&s.ID, &s.Mittente, &s.Destinatario, &s.Indirizzo, &s.NumeroPacchi)
+		err := rows.Scan(&s.ID, &s.Mittente, &s.Destinatario, &s.NumeroPacchi)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -90,9 +89,9 @@ func Insert_Spedizione(mittente string, destinatario string, indirizzo string, P
 		log.Fatal(err)
 	}
 	idSpedizione, err := res.LastInsertId()
-
+	sede := magazzino.ritorna_hub_per_vicinanza(mittente)
 	for _, pacco := range Pacchi {
-		_, err := db.Exec("INSERT INTO Pacchi (peso,lunghezza,altezza,profondità,prezzo, spedizione_id) VALUES (?, ?, ?)", pacco.Peso, pacco.Lunghezza, pacco.Altezza, pacco.Profondità, pacco.Prezzo, idSpedizione)
+		_, err := db.Exec("INSERT INTO Pacchi (peso,lunghezza,altezza,profondità,prezzo, spedizione_id, hub) VALUES (?, ?, ?, ?, ?, ?, ?)", pacco.Peso, pacco.Lunghezza, pacco.Altezza, pacco.Profondità, pacco.Prezzo, idSpedizione, sede)
 		if err != nil {
 			log.Fatal(err)
 		}
