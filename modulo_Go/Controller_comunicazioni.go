@@ -17,6 +17,11 @@ type richiesta struct {
 }
 
 func Inserimento_spedizione(w http.ResponseWriter, r *http.Request) {
+	ctx := context.TODO()
+	g, err := magazzino.NuovoGestoreMagazzino(ctx, "mongodb://localhost:27017")
+	if err != nil {
+		log.Fatal(err)
+	}
 	if r.Method == http.MethodPost {
 		body, err := io.ReadAll(r.Body)
 		if err != nil {
@@ -25,7 +30,7 @@ func Inserimento_spedizione(w http.ResponseWriter, r *http.Request) {
 		}
 		var dati spedizione.Spedizione
 		_ = json.Unmarshal(body, &dati)
-		Sede := magazzino.Ritorna_hub_per_vicinanza(dati.Mittente)
+		Sede := g.Ritorna_hub_per_vicinanza(dati.Mittente)
 		spedizione.Insert_Spedizione(dati.Mittente, dati.Destinatario, dati.Pacchi, Sede)
 	} else {
 		http.Error(w, "Metodo non valido", http.StatusMethodNotAllowed)

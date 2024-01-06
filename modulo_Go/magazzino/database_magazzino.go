@@ -2,8 +2,14 @@ package magazzino
 
 import (
 	"context"
+	"encoding/json"
+	"io"
+	"log"
+	"math"
 	"modulo_Go/spedizione"
+	"net/http"
 	"strconv"
+	"strings"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -27,6 +33,15 @@ type GestoreMagazzino struct {
 	client *mongo.Client
 	ctx    context.Context
 }
+type RispostaAPI struct {
+	Latitudine  float64 `json:"latitude"`
+	Longitudine float64 `json:"longitude"`
+}
+type RispostaDatabase struct {
+	Sede        string  `bson:"sede"`
+	Latitudine  float64 `bson:"latitude"`
+	Longitudine float64 `bson:"longitude"`
+}
 
 func NuovoGestoreMagazzino(ctx context.Context, uri string) (*GestoreMagazzino, error) {
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(uri))
@@ -39,12 +54,44 @@ func NuovoGestoreMagazzino(ctx context.Context, uri string) (*GestoreMagazzino, 
 func (g *GestoreMagazzino) Ritorna_hub_per_vicinanza(indirizzo string) string {
 	//TO_DO funzione che ritorna l'hub più vicino all'indirizzo dato
 	//TO_DO trasforma indirizzi in coordinate e poi calcola distanza tra due punti e moltiplica per indice curvatura terreste poi trovi il minimo delle distanze
+	R := 6372795.477598
+	url := "https://geocoding.openapi.it/geocode"
 	collezioni, _ := g.client.Database("Magazzino").ListCollectionNames(g.ctx, bson.M{})
+	payload := strings.NewReader("{\"address\":" + indirizzo + "}")
+	req, _ := http.NewRequest("POST", url, payload)
+
+	req.Header.Add("content-type", "application/json")
+	req.Header.Add("Authorization", "Bearer REPLACE_BEARER_TOKEN")
+
+	res, _ := http.DefaultClient.Do(req)
+
+	defer res.Body.Close()
+	body, _ := io.ReadAll(res.Body)
+	var risposta RispostaAPI
+	err := json.Unmarshal(body, &risposta)
+	if err != nil {
+		log.Fatal(err)
+	}
+	latA := risposta.Latitudine
+	lonA := risposta.Longitudine
+	min := 0.0
+	var sede string
 	for _, collezione := range collezioni {
 		collection := g.client.Database("Magazzino").Collection(collezione)
-
+		var result RispostaDatabase
+		err := collection.FindOne(g.ctx, bson.D{}).Decode(&result)
+		if err != nil {
+			return err.Error()
+		}
+		latB := result.Latitudine
+		lonB := result.Longitudine
+		distanza := R * math.Acos(math.Sin(latA)*math.Sin(latB)+math.Cos(latA)*math.Cos(latB)*math.Cos(lonA-lonB))
+		if min > distanza {
+			min = distanza
+			sede = result.Sede
+		}
 	}
-	return "da implementare"
+	return sede
 }
 
 func (g *GestoreMagazzino) OttieniPacchiPerSede(sede string) string {
