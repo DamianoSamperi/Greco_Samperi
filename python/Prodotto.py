@@ -7,9 +7,6 @@ class Prodotto:
         self.dimensione = dimensione
         self.prezzo_base_unita = prezzo
     
-    def get_quant(self):
-        return self.quantita
-        
 
     def calcola_prezzo(self):
         # Calcolo del prezzo basato sulla dimensione
@@ -19,8 +16,6 @@ class Prodotto:
             coefficiente_dimensione = 1.2
         elif self.dimensione == 'grande':
             coefficiente_dimensione = 1.5
-        else:
-            coefficiente_dimensione = 1.0  # Se la dimensione non è specificata
 
         # Calcolo del prezzo finale
         prezzo_finale = self.prezzo_base_unita * coefficiente_dimensione 
