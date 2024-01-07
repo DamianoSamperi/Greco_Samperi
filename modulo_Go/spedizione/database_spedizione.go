@@ -40,9 +40,8 @@ func Visualizza_Spedizioni(Mittente string) string {
 
 	}
 	defer rows.Close()
-
+	var s Spedizione
 	for rows.Next() {
-		var s Spedizione
 		err := rows.Scan(&s.ID, &s.Mittente, &s.Destinatario, &s.NumeroPacchi)
 		if err != nil {
 			log.Fatal(err)
@@ -68,13 +67,9 @@ func Visualizza_Spedizioni(Mittente string) string {
 		}
 
 		// fmt.Println(s)
-		return ToString(s)
 	}
 
-	if err = rows.Err(); err != nil {
-		log.Fatal(err)
-	}
-	return "error"
+	return ToString(s)
 }
 
 func Insert_Spedizione(mittente string, destinatario string, Pacchi []Pacco, sede string) {
@@ -94,6 +89,7 @@ func Insert_Spedizione(mittente string, destinatario string, Pacchi []Pacco, sed
 		if err != nil {
 			log.Fatal(err)
 		}
+		//TO_DO in base alla progettuazione andrebbe inserito il pacco nel magazzino
 	}
 
 }
