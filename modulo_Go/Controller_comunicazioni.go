@@ -87,11 +87,32 @@ func Ottieni_prodotti(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, g.OttieniPacchiPerSede(dati))
 }
 
+// func Ritorna_sede(w http.ResponseWriter, r *http.Request) string{
+// 	ctx := context.TODO()
+// 	g, err := magazzino.NuovoGestoreMagazzino(ctx, "mongodb://localhost:27017")
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+// 	body, err := io.ReadAll(r.Body)
+// 	if err != nil {
+// 		http.Error(w, "Errore nella lettura del corpo della richiesta", http.StatusBadRequest)
+// 		return
+// 	}
+// 	var dati string
+// 	err = json.Unmarshal(body, &dati)
+// 	if err != nil {
+// 		http.Error(w, "Formato json non corretto", http.StatusBadRequest)
+// 		return
+// 	}
+// 	return g.Ritorna_hub_per_vicinanza(dati)
+// }
+
 func main() {
 	http.HandleFunc("/Inserisci_Spedizione", Inserimento_spedizione)
 	http.HandleFunc("/Visualizza_Spedizioni", Visualizza_spedizioni)
 	http.HandleFunc("/Ottieni_Prodotti_Hub", Ottieni_prodotti)
 	http.HandleFunc("/Inserisci_Prodotto_Hub", Inserimento_prodotto)
+	// http.HandleFunc("/Ritorna_Sede", Ritorna_sede)
 	// TO_DO inserire error handler nel listen
 	http.ListenAndServe(":8080", nil)
 

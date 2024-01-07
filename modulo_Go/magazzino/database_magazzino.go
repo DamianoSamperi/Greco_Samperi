@@ -61,14 +61,16 @@ func (g *GestoreMagazzino) Ritorna_hub_per_vicinanza(indirizzo string) string {
 	req, _ := http.NewRequest("POST", url, payload)
 
 	req.Header.Add("content-type", "application/json")
-	req.Header.Add("Authorization", "Bearer REPLACE_BEARER_TOKEN")
+	req.Header.Add("Authorization", "Bearer 659ad5656af8cf61ad062a3c")
 
-	res, _ := http.DefaultClient.Do(req)
-
+	res, err := http.DefaultClient.Do(req)
+	if err != nil {
+		log.Fatal(err)
+	}
 	defer res.Body.Close()
 	body, _ := io.ReadAll(res.Body)
 	var risposta RispostaAPI
-	err := json.Unmarshal(body, &risposta)
+	err = json.Unmarshal(body, &risposta)
 	if err != nil {
 		log.Fatal(err)
 	}
