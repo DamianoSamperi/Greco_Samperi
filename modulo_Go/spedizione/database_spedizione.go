@@ -1,6 +1,7 @@
 package spedizione
 
 import (
+	//TO_DO da passare come non relazionale, per aggiungere lista stati per il tracciamento
 	"database/sql"
 	"log"
 	"strconv"
@@ -85,7 +86,7 @@ func Insert_Spedizione(mittente string, destinatario string, Pacchi []Pacco, sed
 	}
 	idSpedizione, _ := res.LastInsertId()
 	for _, pacco := range Pacchi {
-		_, err := db.Exec("INSERT INTO Pacchi (peso,lunghezza,altezza,profondità,prezzo, spedizione_id, hub) VALUES (?, ?, ?, ?, ?, ?, ?)", pacco.Peso, pacco.Lunghezza, pacco.Altezza, pacco.Profondità, pacco.Prezzo, idSpedizione, sede)
+		_, err := db.Exec("INSERT INTO Pacchi (peso,lunghezza,altezza,profondità,prezzo, spedizione_id) VALUES (?, ?, ?, ?, ?, ?)", pacco.Peso, pacco.Lunghezza, pacco.Altezza, pacco.Profondità, pacco.Prezzo, idSpedizione)
 		if err != nil {
 			log.Fatal(err)
 		}

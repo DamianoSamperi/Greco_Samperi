@@ -12,9 +12,11 @@ class Spedizione:
         #self.data_consegna_stimata = self.data_spedizione + timedelta(days=5)
         self.eventi_tracciamento = []
 
+    #aggiorna stato e aggiungi tracciamento sono insieme, bisogna chiamare la funzione che farà Damiano
     def aggiorna_stato(self, nuovo_stato):
         self.stato_attuale = nuovo_stato
         self.eventi_tracciamento.append((datetime.now(), nuovo_stato))
+
 
     def aggiungi_evento_tracciamento(self, evento):
         self.eventi_tracciamento.append((datetime.now(), evento))
@@ -39,6 +41,7 @@ class GestoreSpedizioni:
        lunghezza_codice = 8
        caratteri_validi = string.ascii_uppercase + string.digits
        return ''.join(random.choice(caratteri_validi) for _ in range(lunghezza_codice))    
+       
 
     def crea_spedizione(self, mittente, destinatario):
         codice_spedizione = self.genera_codice_spedizione()

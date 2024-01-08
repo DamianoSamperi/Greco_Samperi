@@ -110,8 +110,11 @@ func Ottieni_prodotti(w http.ResponseWriter, r *http.Request) {
 func main() {
 	http.HandleFunc("/Inserisci_Spedizione", Inserimento_spedizione)
 	http.HandleFunc("/Visualizza_Spedizioni", Visualizza_spedizioni)
+	//passare la sede
 	http.HandleFunc("/Ottieni_Prodotti_Hub", Ottieni_prodotti)
 	http.HandleFunc("/Inserisci_Prodotto_Hub", Inserimento_prodotto)
+	//TO_DO funzione che passa tutti gli id delle spedizioni
+	//TO_DO funzione che modifica lo stato della spedizione
 	// http.HandleFunc("/Ritorna_Sede", Ritorna_sede)
 	// TO_DO inserire error handler nel listen
 	http.ListenAndServe(":8080", nil)

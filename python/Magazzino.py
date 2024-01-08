@@ -58,6 +58,8 @@ class Magazzino:
     
         
         while continua_inserimento:
+            #TO_DO il codice pacco l'ho calcolo autoincrementale
+            #TO_DO è possibile solo aggiungere nuovi pacchi non selezionarli dal magazzino
             codice_prodotto = input("Inserisci il codice del prodotto: ")
             quantita = int(input("Inserisci la quantità desiderata da aggiungere: "))
 
