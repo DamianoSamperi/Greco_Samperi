@@ -94,6 +94,35 @@ func Insert_Spedizione(mittente string, destinatario string, Pacchi []Pacco, sed
 	}
 
 }
+
+func RitornaID() []string {
+	db, err := sql.Open("mysql", "Greco_Samperi:apl@/Spedizione")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+	// Visualizza tutte le spedizioni
+	rows, err := db.Query("SELECT id")
+	if err != nil {
+		log.Fatal(err)
+
+	}
+	defer rows.Close()
+	var ID string
+	var IDs []string
+	for rows.Next() {
+		err := rows.Scan(&ID)
+		if err != nil {
+			log.Fatal(err)
+		}
+		IDs = append(IDs, ID)
+	}
+	return IDs
+}
+func Modifica_Stato_Spedizione(id string, stato string) {
+	//TO_DO funzione modifica, però prima va cambiato il database in non relazionale
+
+}
 func ToString(s Spedizione) string {
 	String := "Id " + strconv.Itoa(s.ID) + " Mittente" + s.Mittente + "Destinatario " + s.Destinatario + " Stato " + s.Stato + " Numero Pacchi: " + strconv.Itoa(s.NumeroPacchi)
 	for _, pacco := range s.Pacchi {
