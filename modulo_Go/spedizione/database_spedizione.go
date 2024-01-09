@@ -2,132 +2,160 @@ package spedizione
 
 import (
 	//TO_DO da passare come non relazionale, per aggiungere lista stati per il tracciamento
-	"database/sql"
+	"context"
+	"fmt"
 	"log"
 	"strconv"
+
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 	// _ "github.com/go-sql-driver/mysql"
 )
 
+type Stato int
+
+const (
+	InPreparazione Stato = iota
+	InTransito
+	Hub
+	Consegnato
+	Errore
+)
+
 type Spedizione struct {
-	ID           int    `json:"id"`
-	Mittente     string `json:"mittente"`
-	Destinatario string `json:"destinatario"`
-	Stato        string `json:"stato"`
-	NumeroPacchi int    `json:"numero_pacchi"`
-	Pacchi       []Pacco
+	ID           string  `bson:"id"`
+	Mittente     string  `bson:"mittente"`
+	Destinatario string  `bson:"destinatario"`
+	Stato        []Stato `bson:"stato"`
+	NumeroPacchi int     `bson:"numero_pacchi"`
+	Pacchi       []Pacco `bson:"pacchi"`
+}
+
+type GestoreSpedizioni struct {
+	client *mongo.Client
+	ctx    context.Context
 }
 
 type Pacco struct {
-	ID            int `json:"id"`
-	Spedizione_id int `json:"spedizione_id"`
+	ID            int
+	Spedizione_id int
 	// Nome string  `json:"nome"`
-	Peso       float64 `json:"peso"`
-	Lunghezza  float64 `json:"lunghezza"`
-	Altezza    float64 `json:"altezza"`
-	Profondità float64 `json:"profondità"`
-	Prezzo     float64 `json:"prezzo"`
+	Peso       float64
+	Lunghezza  float64
+	Altezza    float64
+	Profondità float64
+	Prezzo     float64
 }
 
-func Visualizza_Spedizioni(Mittente string) string {
-	db, err := sql.Open("mysql", "Greco_Samperi:apl@/Spedizione")
-	if err != nil {
-		log.Fatal(err)
+func (s Stato) String() string {
+	switch s {
+	case InPreparazione:
+		return "InPreparazione"
+	case InTransito:
+		return "InTransito"
+	case Hub:
+		return "Consegnato all'Hub"
+	case Consegnato:
+		return "Consegnato"
 	}
-	defer db.Close()
-	// Visualizza tutte le spedizioni
-	rows, err := db.Query("SELECT id, indirizzo, numero_pacchi FROM Spedizioni WHERE mittente = ?", Mittente)
+	return "unknown"
+}
+func ToStato(s string) Stato {
+	switch s {
+	case "InPreparazione":
+		return InPreparazione
+	case "InTransito":
+		return InTransito
+	case "Consegnato all'Hub":
+		return Hub
+	case "Consegnato":
+		return Consegnato
+	}
+	return Errore
+}
+func NuovoGestoreSpedizioni(ctx context.Context, uri string) (*GestoreSpedizioni, error) {
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI(uri))
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
+	}
+	return &GestoreSpedizioni{client: client, ctx: ctx}, nil
+}
 
+func (g *GestoreSpedizioni) Visualizza_Spedizioni(Mittente string) string {
+	collection := g.client.Database("Magazzino").Collection("spedizioni")
+	var spedizioni []Spedizione
+	filter := bson.D{{Key: "mittente", Value: Mittente}}
+	cur, err := collection.Find(context.TODO(), filter)
+	if err != nil {
+		log.Fatal(err)
 	}
-	defer rows.Close()
-	var s Spedizione
-	for rows.Next() {
-		err := rows.Scan(&s.ID, &s.Mittente, &s.Destinatario, &s.NumeroPacchi)
+	defer cur.Close(context.TODO())
+	for cur.Next(context.TODO()) {
+		var result Spedizione
+		err := cur.Decode(&result)
 		if err != nil {
 			log.Fatal(err)
 		}
-
-		pacchiRows, err := db.Query("SELECT id, nome, peso FROM Pacchi WHERE spedizione_id = ?", s.ID)
-		if err != nil {
-			log.Fatal(err)
-		}
-		defer pacchiRows.Close()
-
-		for pacchiRows.Next() {
-			var p Pacco
-			err := pacchiRows.Scan(&p.ID, &p.Peso, &p.Altezza, &p.Lunghezza, &p.Profondità)
-			if err != nil {
-				log.Fatal(err)
-			}
-			s.Pacchi = append(s.Pacchi, p)
-		}
-
-		if err = pacchiRows.Err(); err != nil {
-			log.Fatal(err)
-		}
-
-		// fmt.Println(s)
+		spedizioni = append(spedizioni, result)
 	}
 
-	return ToString(s)
+	return ToString(spedizioni)
 }
 
-func Insert_Spedizione(mittente string, destinatario string, Pacchi []Pacco, sede string) {
-	db, err := sql.Open("mysql", "Greco_Samperi:apl@/Spedizione")
+func (g *GestoreSpedizioni) Insert_Spedizione(ID string, mittente string, destinatario string, Pacchi []Pacco, sede string) {
+	collection := g.client.Database("Magazzino").Collection("spedizioni")
+	var Stati []Stato
+	Stati = append(Stati, InPreparazione)
+	spedizione := Spedizione{ID, mittente, destinatario, Stati, len(Pacchi), Pacchi}
+	insertResult, err := collection.InsertOne(context.TODO(), spedizione)
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer db.Close()
-	// Inserisci una nuova spedizione
-	res, err := db.Exec("INSERT INTO Spedizioni (mittente, destinatario, numero_pacchi) VALUES (?, ?, ?)", mittente, destinatario, len(Pacchi))
-	if err != nil {
-		log.Fatal(err)
-	}
-	idSpedizione, _ := res.LastInsertId()
-	for _, pacco := range Pacchi {
-		_, err := db.Exec("INSERT INTO Pacchi (peso,lunghezza,altezza,profondità,prezzo, spedizione_id) VALUES (?, ?, ?, ?, ?, ?)", pacco.Peso, pacco.Lunghezza, pacco.Altezza, pacco.Profondità, pacco.Prezzo, idSpedizione)
-		if err != nil {
-			log.Fatal(err)
-		}
-		//TO_DO in base alla progettuazione andrebbe inserito il pacco nel magazzino
-	}
-
+	fmt.Println("Inserita una nuova spedizione con ID:", insertResult.InsertedID)
+	//TO_DO potrebbbe essere necessario inserire il pacco nel magazzino
 }
 
-func RitornaID() []string {
-	db, err := sql.Open("mysql", "Greco_Samperi:apl@/Spedizione")
+func (g *GestoreSpedizioni) RitornaID() []string {
+	collection := g.client.Database("Magazzino").Collection("spedizioni")
+	opts := options.Find().SetProjection(bson.D{{Key: "ID", Value: 1}}) //TO_DO il key-value viene aggiunto da Golang perchè richiede i key name della struct, andrebbe controllato se funziona anche cosi l'option
+	cur, err := collection.Find(context.TODO(), bson.D{}, opts)
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer db.Close()
-	// Visualizza tutte le spedizioni
-	rows, err := db.Query("SELECT id")
-	if err != nil {
-		log.Fatal(err)
-
-	}
-	defer rows.Close()
-	var ID string
 	var IDs []string
-	for rows.Next() {
-		err := rows.Scan(&ID)
+	defer cur.Close(context.TODO())
+	for cur.Next(context.TODO()) {
+		var result string
+		err := cur.Decode(&result)
 		if err != nil {
 			log.Fatal(err)
 		}
-		IDs = append(IDs, ID)
+		IDs = append(IDs, result)
 	}
 	return IDs
 }
-func Modifica_Stato_Spedizione(id string, stato string) {
+func (g *GestoreSpedizioni) Modifica_Stato_Spedizione(id string, stato string) {
 	//TO_DO funzione modifica, però prima va cambiato il database in non relazionale
-
+	collection := g.client.Database("Magazzino").Collection("spedizioni")
+	filter := bson.D{{Key: "idspedizione", Value: id}}
+	update := bson.D{{Key: "$push", Value: bson.D{{Key: "stato", Value: ToStato(stato)}}}}
+	updateResult, err := collection.UpdateOne(context.TODO(), filter, update)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("Modificati %v documenti\n", updateResult.ModifiedCount)
 }
-func ToString(s Spedizione) string {
-	String := "Id " + strconv.Itoa(s.ID) + " Mittente" + s.Mittente + "Destinatario " + s.Destinatario + " Stato " + s.Stato + " Numero Pacchi: " + strconv.Itoa(s.NumeroPacchi)
-	for _, pacco := range s.Pacchi {
-		Pacco := "Peso" + strconv.FormatFloat(pacco.Peso, 'f', -1, 64) + "Lunghezza" + strconv.FormatFloat(pacco.Lunghezza, 'f', -1, 64) + "Altezza" + strconv.FormatFloat(pacco.Altezza, 'f', -1, 64) + "Profondità" + strconv.FormatFloat(pacco.Profondità, 'f', -1, 64) + "Prezzo" + strconv.FormatFloat(pacco.Prezzo, 'f', -1, 64)
-		String = String + Pacco
+
+func ToString(spedizioni []Spedizione) string {
+	var String string
+	for _, s := range spedizioni {
+		SpedizioneString := "Id " + s.ID + " Mittente" + s.Mittente + "Destinatario " + s.Destinatario + " Stato " + s.Stato[len(s.Stato)-1].String() + " Numero Pacchi: " + strconv.Itoa(s.NumeroPacchi)
+		for _, pacco := range s.Pacchi {
+			Pacco := "Peso" + strconv.FormatFloat(pacco.Peso, 'f', -1, 64) + "Lunghezza" + strconv.FormatFloat(pacco.Lunghezza, 'f', -1, 64) + "Altezza" + strconv.FormatFloat(pacco.Altezza, 'f', -1, 64) + "Profondità" + strconv.FormatFloat(pacco.Profondità, 'f', -1, 64) + "Prezzo" + strconv.FormatFloat(pacco.Prezzo, 'f', -1, 64)
+			SpedizioneString = SpedizioneString + Pacco
+		}
+		String = String + SpedizioneString
 	}
 	return String
 }

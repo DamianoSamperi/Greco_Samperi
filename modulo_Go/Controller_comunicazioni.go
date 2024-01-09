@@ -19,10 +19,14 @@ type modifica_stato struct {
 	Stato         string `json:"stato"`
 	Id_spedizione string `json:"id"`
 }
+type richiesta_spedizione struct {
+	Spedizione spedizione.Spedizione `json:"spedizione"`
+	Sede       string                `json:"sede"`
+}
 
 func Inserimento_spedizione(w http.ResponseWriter, r *http.Request) {
 	ctx := context.TODO()
-	g, err := magazzino.NuovoGestoreMagazzino(ctx, "mongodb://localhost:27017")
+	g, err := spedizione.NuovoGestoreSpedizioni(ctx, "mongodb://localhost:27017")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -32,16 +36,21 @@ func Inserimento_spedizione(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Errore nella lettura del corpo della richiesta", http.StatusBadRequest)
 			return
 		}
-		var dati spedizione.Spedizione
+		var dati richiesta_spedizione
 		_ = json.Unmarshal(body, &dati)
-		Sede := g.Ritorna_hub_per_vicinanza(dati.Mittente)
-		spedizione.Insert_Spedizione(dati.Mittente, dati.Destinatario, dati.Pacchi, Sede)
+		// Sede := g.Ritorna_hub_per_vicinanza(dati.Mittente)
+		g.Insert_Spedizione(dati.Spedizione.ID, dati.Spedizione.Mittente, dati.Spedizione.Destinatario, dati.Spedizione.Pacchi, dati.Sede)
 	} else {
 		http.Error(w, "Metodo non valido", http.StatusMethodNotAllowed)
 	}
 }
 
 func Visualizza_spedizioni(w http.ResponseWriter, r *http.Request) {
+	ctx := context.TODO()
+	g, err := spedizione.NuovoGestoreSpedizioni(ctx, "mongodb://localhost:27017")
+	if err != nil {
+		log.Fatal(err)
+	}
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		http.Error(w, "Errore nella lettura del corpo della richiesta", http.StatusBadRequest)
@@ -49,7 +58,7 @@ func Visualizza_spedizioni(w http.ResponseWriter, r *http.Request) {
 	}
 	var dati string
 	_ = json.Unmarshal(body, &dati)
-	fmt.Fprint(w, spedizione.Visualizza_Spedizioni(dati))
+	fmt.Fprint(w, g.Visualizza_Spedizioni(dati))
 }
 func Inserimento_prodotto(w http.ResponseWriter, r *http.Request) {
 	ctx := context.TODO()
@@ -111,9 +120,19 @@ func Ritorna_sede(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, g.Ritorna_hub_per_vicinanza(dati))
 }
 func Ritorna_id(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, spedizione.RitornaID())
+	ctx := context.TODO()
+	g, err := spedizione.NuovoGestoreSpedizioni(ctx, "mongodb://localhost:27017")
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Fprint(w, g.RitornaID())
 }
 func Modifica_stato(w http.ResponseWriter, r *http.Request) {
+	ctx := context.TODO()
+	g, err := spedizione.NuovoGestoreSpedizioni(ctx, "mongodb://localhost:27017")
+	if err != nil {
+		log.Fatal(err)
+	}
 	if r.Method == http.MethodPost {
 		body, err := io.ReadAll(r.Body)
 		if err != nil {
@@ -122,14 +141,14 @@ func Modifica_stato(w http.ResponseWriter, r *http.Request) {
 		}
 		var dati modifica_stato
 		_ = json.Unmarshal(body, &dati)
-		spedizione.Modifica_Stato_Spedizione(dati.Id_spedizione, dati.Stato)
+		g.Modifica_Stato_Spedizione(dati.Id_spedizione, dati.Stato)
 
 	} else {
 		http.Error(w, "Metodo non valido", http.StatusMethodNotAllowed)
 	}
 }
 func main() {
-	//passi una spedizione e la inserisce nel database
+	//passi una spedizione e la sede che puoi farti tornare da ritorna sede(o faccio io vedi tu) e la inserisce nel database
 	http.HandleFunc("/Inserisci_Spedizione", Inserimento_spedizione)
 	//passi un mittente e ti torna tutte le sue spedizioni
 	http.HandleFunc("/Visualizza_Spedizioni", Visualizza_spedizioni)
