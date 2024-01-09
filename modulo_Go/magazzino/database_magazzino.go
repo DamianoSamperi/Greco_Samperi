@@ -56,7 +56,7 @@ func (g *GestoreMagazzino) Ritorna_hub_per_vicinanza(indirizzo string) string {
 	//TO_DO trasforma indirizzi in coordinate e poi calcola distanza tra due punti e moltiplica per indice curvatura terreste poi trovi il minimo delle distanze
 	R := 6372795.477598
 	url := "https://geocoding.openapi.it/geocode"
-	collezioni, _ := g.client.Database("Magazzino").ListCollectionNames(g.ctx, bson.M{})
+	collezioni, _ := g.client.Database("APL").ListCollectionNames(g.ctx, bson.M{})
 	payload := strings.NewReader("{\"address\":" + indirizzo + "}")
 	req, _ := http.NewRequest("POST", url, payload)
 
@@ -79,7 +79,7 @@ func (g *GestoreMagazzino) Ritorna_hub_per_vicinanza(indirizzo string) string {
 	min := 0.0
 	var sede string
 	for _, collezione := range collezioni {
-		collection := g.client.Database("Magazzino").Collection(collezione)
+		collection := g.client.Database("APL").Collection(collezione)
 		var result RispostaDatabase
 		err := collection.FindOne(g.ctx, bson.D{}).Decode(&result)
 		if err != nil {
@@ -97,7 +97,7 @@ func (g *GestoreMagazzino) Ritorna_hub_per_vicinanza(indirizzo string) string {
 }
 
 func (g *GestoreMagazzino) OttieniPacchiPerSede(sede string) string {
-	collection := g.client.Database("Magazzino").Collection(sede)
+	collection := g.client.Database("APL").Collection(sede)
 	cursor, err := collection.Find(g.ctx, bson.M{})
 	if err != nil {
 		return err.Error()

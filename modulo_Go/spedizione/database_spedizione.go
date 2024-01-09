@@ -83,7 +83,7 @@ func NuovoGestoreSpedizioni(ctx context.Context, uri string) (*GestoreSpedizioni
 }
 
 func (g *GestoreSpedizioni) Visualizza_Spedizioni(Mittente string) string {
-	collection := g.client.Database("Magazzino").Collection("spedizioni")
+	collection := g.client.Database("APL").Collection("spedizioni")
 	var spedizioni []Spedizione
 	filter := bson.D{{Key: "mittente", Value: Mittente}}
 	cur, err := collection.Find(context.TODO(), filter)
@@ -104,7 +104,7 @@ func (g *GestoreSpedizioni) Visualizza_Spedizioni(Mittente string) string {
 }
 
 func (g *GestoreSpedizioni) Insert_Spedizione(ID string, mittente string, destinatario string, Pacchi []Pacco, sede string) {
-	collection := g.client.Database("Magazzino").Collection("spedizioni")
+	collection := g.client.Database("APL").Collection("spedizioni")
 	var Stati []Stato
 	Stati = append(Stati, InPreparazione)
 	spedizione := Spedizione{ID, mittente, destinatario, Stati, len(Pacchi), Pacchi}
@@ -117,7 +117,7 @@ func (g *GestoreSpedizioni) Insert_Spedizione(ID string, mittente string, destin
 }
 
 func (g *GestoreSpedizioni) RitornaID() []string {
-	collection := g.client.Database("Magazzino").Collection("spedizioni")
+	collection := g.client.Database("APL").Collection("spedizioni")
 	opts := options.Find().SetProjection(bson.D{{Key: "ID", Value: 1}}) //TO_DO il key-value viene aggiunto da Golang perchè richiede i key name della struct, andrebbe controllato se funziona anche cosi l'option
 	cur, err := collection.Find(context.TODO(), bson.D{}, opts)
 	if err != nil {
@@ -137,7 +137,7 @@ func (g *GestoreSpedizioni) RitornaID() []string {
 }
 func (g *GestoreSpedizioni) Modifica_Stato_Spedizione(id string, stato string) {
 	//TO_DO funzione modifica, però prima va cambiato il database in non relazionale
-	collection := g.client.Database("Magazzino").Collection("spedizioni")
+	collection := g.client.Database("APL").Collection("spedizioni")
 	filter := bson.D{{Key: "idspedizione", Value: id}}
 	update := bson.D{{Key: "$push", Value: bson.D{{Key: "stato", Value: ToStato(stato)}}}}
 	updateResult, err := collection.UpdateOne(context.TODO(), filter, update)

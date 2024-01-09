@@ -3,12 +3,14 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"log"
 	"modulo_Go/magazzino"
 	"modulo_Go/spedizione"
 	"net/http"
+	"os"
 )
 
 type richiesta struct {
@@ -163,6 +165,12 @@ func main() {
 	//passi l'indirizzo e ti torna la sede più vicina
 	http.HandleFunc("/Ritorna_Sede", Ritorna_sede)
 	// TO_DO inserire error handler nel listen
-	http.ListenAndServe(":8080", nil)
+	err := http.ListenAndServe(":8080", nil)
+	if errors.Is(err, http.ErrServerClosed) {
+		fmt.Print("server closed\n")
+	} else if err != nil {
+		fmt.Printf("error starting server: %s\n", err)
+		os.Exit(1)
+	}
 
 }
