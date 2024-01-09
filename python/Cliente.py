@@ -6,9 +6,11 @@ class Cliente:
         self.citta = citta
         self.CF = CF
         self.indirizzo = indirizzo
+        self.ordini = []
 
-    def aggiunge_ordine(self, prodotto, quantita):
-        print("Caro/a {} {}, hai aggiunto un ordine di {} {}.".format(self.nome, self.cognome, quantita, prodotto.nome))
+    def aggiunge_ordine(self, pacco):
+        self.ordini.append(pacco)
+        print("Caro/a {} {}, il tuo ordine è stato preso in carico da ...".format(self.nome, self.cognome))
 
 
 
