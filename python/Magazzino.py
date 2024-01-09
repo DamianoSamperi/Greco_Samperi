@@ -1,3 +1,4 @@
+import requests
 import time
 from Pacco import Pacco
 
@@ -51,6 +52,45 @@ class Magazzino:
                 
             # Crea un'istanza di Spedizione utilizzando il GestoreSpedizioni
             sped = self.gestore_spedizioni.crea_spedizione(mittente=mittente, destinatario=destinatario)
+            '''
+            url = "http://localhost:8080/Inserisci_Spedizione"
+
+            # Dati da inviare nella richiesta POST, se necessario
+            payload = {
+                    "parametro1": sped,
+                    "parametro2": "sede"                    
+                    
+                      }   
+
+            # Effettua la richiesta POST
+            response = requests.post(url, data=payload)
+            if response.status_code == 200:
+                print("Richiesta POST eseguita con successo!")
+                print(response.text)
+            else:
+                print(f"Errore nella richiesta POST. Codice di stato: {response.status_code}")
+                print(response.text)
+            '''
+            url2 = "http://localhost:8080/Ritorna_sede"
+
+            # Dati da inviare nella richiesta POST, se necessario
+            payload = {
+                    "parametro1": mittente,
+                                       
+                    
+                      }   
+
+            # Effettua la richiesta POST
+            response = requests.post(url2, data=payload)
+            if response.status_code == 200:
+                print("Richiesta POST eseguita con successo!")
+                print(response.text)
+            else:
+                print(f"Errore nella richiesta POST. Codice di stato: {response.status_code}")
+                print(response.text)
+
+
+
             sped.aggiungi_evento_tracciamento(f"Pacco spedito a {destinatario}")
             sped.tracciamento()
                 
