@@ -58,9 +58,11 @@ func Visualizza_spedizioni(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Errore nella lettura del corpo della richiesta", http.StatusBadRequest)
 		return
 	}
-	var dati string
+	var dati = struct {
+		Mittente string
+	}{}
 	_ = json.Unmarshal(body, &dati)
-	fmt.Fprint(w, g.Visualizza_Spedizioni(dati))
+	fmt.Fprint(w, g.Visualizza_Spedizioni(dati.Mittente))
 }
 func Inserimento_prodotto(w http.ResponseWriter, r *http.Request) {
 	ctx := context.TODO()
@@ -93,13 +95,15 @@ func Ottieni_prodotti(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Errore nella lettura del corpo della richiesta", http.StatusBadRequest)
 		return
 	}
-	var dati string
+	var dati = struct {
+		Sede string
+	}{}
 	err = json.Unmarshal(body, &dati)
 	if err != nil {
 		http.Error(w, "Formato json non corretto", http.StatusBadRequest)
 		return
 	}
-	fmt.Fprint(w, g.OttieniPacchiPerSede(dati))
+	fmt.Fprint(w, g.OttieniPacchiPerSede(dati.Sede))
 }
 
 func Ritorna_sede(w http.ResponseWriter, r *http.Request) {
@@ -113,13 +117,15 @@ func Ritorna_sede(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Errore nella lettura del corpo della richiesta", http.StatusBadRequest)
 		return
 	}
-	var dati string
+	var dati = struct {
+		Indirizzo string
+	}{}
 	err = json.Unmarshal(body, &dati)
 	if err != nil {
 		http.Error(w, "Formato json non corretto", http.StatusBadRequest)
 		return
 	}
-	fmt.Fprint(w, g.Ritorna_hub_per_vicinanza(dati))
+	fmt.Fprint(w, g.Ritorna_hub_per_vicinanza(dati.Indirizzo))
 }
 func Ritorna_id(w http.ResponseWriter, r *http.Request) {
 	ctx := context.TODO()
