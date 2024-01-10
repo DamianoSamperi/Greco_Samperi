@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"modulo_Go/consegne"
 	"modulo_Go/magazzino"
 	"modulo_Go/spedizione"
 	"net/http"
@@ -155,6 +156,29 @@ func Modifica_stato(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Metodo non valido", http.StatusMethodNotAllowed)
 	}
 }
+func Ottieni_percorso(w http.ResponseWriter, r *http.Request) {
+	ctx := context.TODO()
+	g, err := spedizione.NuovoGestoreSpedizioni(ctx, "mongodb+srv://root:yWP2DlLumOz07vNv@apl.yignw97.mongodb.net/?retryWrites=true&w=majority")
+	if err != nil {
+		log.Fatal(err)
+	}
+	if r.Method == http.MethodPost {
+		body, err := io.ReadAll(r.Body)
+		if err != nil {
+			http.Error(w, "Errore nella lettura del corpo della richiesta", http.StatusBadRequest)
+			return
+		}
+		var dati = struct {
+			Sede string
+		}{}
+		_ = json.Unmarshal(body, &dati)
+		//TO_DO funzione in spedizione e trovare un modo per passargli la sede come punto geografico o lo calcolo all'interno mi sa meglio
+		spedizione := g.trova_spedizioni_per_sede(dati.Sede)
+		consegne.Trova_percorso(spedizioni)
+	} else {
+		http.Error(w, "Metodo non valido", http.StatusMethodNotAllowed)
+	}
+}
 func main() {
 	//passi una spedizione e la sede che puoi farti tornare da ritorna sede(o faccio io vedi tu) e la inserisce nel database
 	http.HandleFunc("/Inserisci_Spedizione", Inserimento_spedizione)
@@ -170,6 +194,8 @@ func main() {
 	http.HandleFunc("/Modifica_Stato_Spedizione", Modifica_stato)
 	//passi l'indirizzo e ti torna la sede più vicina
 	http.HandleFunc("/Ritorna_Sede", Ritorna_sede)
+	//funziona che torna il percorso o i pacchi vedo per il corriere, bisogna passargli la sede
+	http.HandleFunc("/Ottieni_Percorso", Ottieni_percorso)
 	// TO_DO inserire error handler nel listen
 	err := http.ListenAndServe(":8080", nil)
 	if errors.Is(err, http.ErrServerClosed) {
