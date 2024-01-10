@@ -3,7 +3,6 @@ package magazzino
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"io"
 	"log"
 	"math"
@@ -99,7 +98,6 @@ func (g *GestoreMagazzino) Ritorna_hub_per_vicinanza(indirizzo string) string {
 func (g *GestoreMagazzino) OttieniPacchiPerSede(sede string) string {
 	collection := g.client.Database("APL").Collection(sede)
 	cursor, err := collection.Find(g.ctx, bson.M{})
-	fmt.Print("Sono arrivato 1")
 	if err != nil {
 		return err.Error()
 	}
