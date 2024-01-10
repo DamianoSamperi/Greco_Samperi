@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"io"
 	"log"
-	"modulo_Go/consegne"
 	"modulo_Go/magazzino"
 	"modulo_Go/spedizione"
 	"net/http"
@@ -173,8 +172,8 @@ func Ottieni_percorso(w http.ResponseWriter, r *http.Request) {
 		}{}
 		_ = json.Unmarshal(body, &dati)
 		//TO_DO funzione in spedizione e trovare un modo per passargli la sede come punto geografico o lo calcolo all'interno mi sa meglio
-		spedizione := g.trova_spedizioni_per_sede(dati.Sede)
-		consegne.Trova_percorso(spedizioni)
+		// spedizione := g.trova_spedizioni_per_sede(dati.Sede)
+		// consegne.Trova_percorso(spedizioni)
 	} else {
 		http.Error(w, "Metodo non valido", http.StatusMethodNotAllowed)
 	}
