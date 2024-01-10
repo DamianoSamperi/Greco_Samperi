@@ -28,7 +28,7 @@ type richiesta_spedizione struct {
 
 func Inserimento_spedizione(w http.ResponseWriter, r *http.Request) {
 	ctx := context.TODO()
-	g, err := spedizione.NuovoGestoreSpedizioni(ctx, "mongodb://localhost:27017")
+	g, err := spedizione.NuovoGestoreSpedizioni(ctx, "mongodb+srv://root:yWP2DlLumOz07vNv@apl.yignw97.mongodb.net/?retryWrites=true&w=majority")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -49,7 +49,7 @@ func Inserimento_spedizione(w http.ResponseWriter, r *http.Request) {
 
 func Visualizza_spedizioni(w http.ResponseWriter, r *http.Request) {
 	ctx := context.TODO()
-	g, err := spedizione.NuovoGestoreSpedizioni(ctx, "mongodb://localhost:27017")
+	g, err := spedizione.NuovoGestoreSpedizioni(ctx, "mongodb+srv://root:yWP2DlLumOz07vNv@apl.yignw97.mongodb.net/?retryWrites=true&w=majority")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -66,7 +66,7 @@ func Visualizza_spedizioni(w http.ResponseWriter, r *http.Request) {
 }
 func Inserimento_prodotto(w http.ResponseWriter, r *http.Request) {
 	ctx := context.TODO()
-	g, err := magazzino.NuovoGestoreMagazzino(ctx, "mongodb://localhost:27017")
+	g, err := magazzino.NuovoGestoreMagazzino(ctx, "mongodb+srv://root:yWP2DlLumOz07vNv@apl.yignw97.mongodb.net/?retryWrites=true&w=majority")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -86,7 +86,7 @@ func Inserimento_prodotto(w http.ResponseWriter, r *http.Request) {
 
 func Ottieni_prodotti(w http.ResponseWriter, r *http.Request) {
 	ctx := context.TODO()
-	g, err := magazzino.NuovoGestoreMagazzino(ctx, "mongodb://localhost:27017")
+	g, err := magazzino.NuovoGestoreMagazzino(ctx, "mongodb+srv://root:yWP2DlLumOz07vNv@apl.yignw97.mongodb.net/?retryWrites=true&w=majority")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -108,7 +108,7 @@ func Ottieni_prodotti(w http.ResponseWriter, r *http.Request) {
 
 func Ritorna_sede(w http.ResponseWriter, r *http.Request) {
 	ctx := context.TODO()
-	g, err := magazzino.NuovoGestoreMagazzino(ctx, "mongodb://localhost:27017")
+	g, err := magazzino.NuovoGestoreMagazzino(ctx, "mongodb+srv://root:yWP2DlLumOz07vNv@apl.yignw97.mongodb.net/?retryWrites=true&w=majority")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -129,7 +129,7 @@ func Ritorna_sede(w http.ResponseWriter, r *http.Request) {
 }
 func Ritorna_id(w http.ResponseWriter, r *http.Request) {
 	ctx := context.TODO()
-	g, err := spedizione.NuovoGestoreSpedizioni(ctx, "mongodb://localhost:27017")
+	g, err := spedizione.NuovoGestoreSpedizioni(ctx, "mongodb+srv://root:yWP2DlLumOz07vNv@apl.yignw97.mongodb.net/?retryWrites=true&w=majority")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -137,7 +137,7 @@ func Ritorna_id(w http.ResponseWriter, r *http.Request) {
 }
 func Modifica_stato(w http.ResponseWriter, r *http.Request) {
 	ctx := context.TODO()
-	g, err := spedizione.NuovoGestoreSpedizioni(ctx, "mongodb://localhost:27017")
+	g, err := spedizione.NuovoGestoreSpedizioni(ctx, "mongodb+srv://root:yWP2DlLumOz07vNv@apl.yignw97.mongodb.net/?retryWrites=true&w=majority")
 	if err != nil {
 		log.Fatal(err)
 	}
