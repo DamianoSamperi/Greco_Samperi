@@ -6,6 +6,7 @@ class Pacco:
         self.dimensione = dimensione
         self.prezzo_base_unita = prezzo
     
+    
 
     def calcola_prezzo(self):
         # Calcolo del prezzo basato sulla dimensione
@@ -32,3 +33,12 @@ class Pacco:
 
     def __str__(self):
         return f"(Codice: {self.codice}), Peso: {self.peso}, Dimensione: {self.dimensione}, Prezzo: {self.calcola_prezzo()} euro"
+    
+
+    def to_dict(self):
+        return {
+            'codice': self.codice,
+            'peso': self.peso,
+            'prezzo': self.calcola_prezzo(),
+            'dimensione': self.dimensione
+        }
