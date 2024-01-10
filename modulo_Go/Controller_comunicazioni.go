@@ -156,11 +156,11 @@ func Modifica_stato(w http.ResponseWriter, r *http.Request) {
 	}
 }
 func Ottieni_percorso(w http.ResponseWriter, r *http.Request) {
-	ctx := context.TODO()
-	g, err := spedizione.NuovoGestoreSpedizioni(ctx, "mongodb+srv://root:yWP2DlLumOz07vNv@apl.yignw97.mongodb.net/?retryWrites=true&w=majority")
-	if err != nil {
-		log.Fatal(err)
-	}
+	// ctx := context.TODO()
+	// g, err := spedizione.NuovoGestoreSpedizioni(ctx, "mongodb+srv://root:yWP2DlLumOz07vNv@apl.yignw97.mongodb.net/?retryWrites=true&w=majority")
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
 	if r.Method == http.MethodPost {
 		body, err := io.ReadAll(r.Body)
 		if err != nil {
