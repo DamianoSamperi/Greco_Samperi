@@ -3,6 +3,7 @@ package magazzino
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"math"
@@ -38,7 +39,6 @@ type RispostaAPI struct {
 	Longitudine float64 `json:"longitude"`
 }
 type RispostaDatabase struct {
-	Sede        string  `bson:"sede"`
 	Latitudine  float64 `bson:"latitude"`
 	Longitudine float64 `bson:"longitude"`
 }
@@ -90,7 +90,7 @@ func (g *GestoreMagazzino) Ritorna_hub_per_vicinanza(indirizzo string) string {
 		distanza := R * math.Acos(math.Sin(latA)*math.Sin(latB)+math.Cos(latA)*math.Cos(latB)*math.Cos(lonA-lonB))
 		if min > distanza {
 			min = distanza
-			sede = result.Sede
+			sede = collezione
 		}
 	}
 	return sede
@@ -99,16 +99,16 @@ func (g *GestoreMagazzino) Ritorna_hub_per_vicinanza(indirizzo string) string {
 func (g *GestoreMagazzino) OttieniPacchiPerSede(sede string) string {
 	collection := g.client.Database("APL").Collection(sede)
 	cursor, err := collection.Find(g.ctx, bson.M{})
+	fmt.Print("Sono arrivato 1")
 	if err != nil {
 		return err.Error()
 	}
-	defer cursor.Close(g.ctx)
-
 	var pacchi []spedizione.Pacco
 	if err = cursor.All(g.ctx, &pacchi); err != nil {
 		return err.Error()
 	}
 
+	defer cursor.Close(g.ctx)
 	return ToString(pacchi, sede)
 }
 
