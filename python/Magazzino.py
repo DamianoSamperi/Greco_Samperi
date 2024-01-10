@@ -1,9 +1,11 @@
 import requests
 import time
 from Pacco import Pacco
+import json
 
 
 class Magazzino:
+    sede = "ciao"
     def __init__(self, gestore_spedizioni):
         self.codice_prodotto = None
         #Crea un dizionario vuoto e lo assegna all'attributo di istanza 'inventario'
@@ -52,14 +54,28 @@ class Magazzino:
                 
             # Crea un'istanza di Spedizione utilizzando il GestoreSpedizioni
             sped = self.gestore_spedizioni.crea_spedizione(mittente=mittente, destinatario=destinatario)
-            '''
-            url = "http://localhost:8080/Inserisci_Spedizione"
 
-            # Dati da inviare nella richiesta POST, se necessario
+            url2 = "http://localhost:8080/Ritorna_Sede"
+
+            payload = {"Indirizzo": mittente }
+            payload_json = json.dumps(payload)
+            headers = {"Content-Type": "application/json"}
+            response = requests.post(url2, data=payload_json, headers=headers)
+
+            if response.status_code == 200:
+                print("Richiesta POST eseguita con successo!")
+                print(response.text)
+            else:
+                print(f"Errore nella richiesta POST. Codice di stato: {response.status_code}")
+                print(response.text)
+
+            global sede
+            sede = response.text
+            
+            url = "http://localhost:8080/Inserisci_Spedizione"
             payload = {
-                    "parametro1": sped,
-                    "parametro2": "sede"                    
-                    
+                    "Spedizione": sped,
+                    "Sede": sede                    
                       }   
 
             # Effettua la richiesta POST
@@ -70,24 +86,40 @@ class Magazzino:
             else:
                 print(f"Errore nella richiesta POST. Codice di stato: {response.status_code}")
                 print(response.text)
-            '''
-            url2 = "http://localhost:8080/Ritorna_sede"
 
-            # Dati da inviare nella richiesta POST, se necessario
+            
+            url3 = "http://localhost:8080/Ottieni_Prodotti_Hub"
             payload = {
-                    "parametro1": mittente,
-                                       
-                    
+                    "Sede": sede                    
                       }   
 
+            #payload_json = json.dumps(payload)
+            headers = {"Content-Type": "application/json"}
             # Effettua la richiesta POST
-            response = requests.post(url2, data=payload)
+            response = requests.post(url3, json=payload, headers=headers)
             if response.status_code == 200:
                 print("Richiesta POST eseguita con successo!")
                 print(response.text)
             else:
                 print(f"Errore nella richiesta POST. Codice di stato: {response.status_code}")
                 print(response.text)
+             
+            
+            url5 = "http://localhost:8080/Visualizza_Spedizioni"
+
+            payload = {"Mittente": mittente }
+            payload_json = json.dumps(payload)
+            headers = {"Content-Type": "application/json"}
+            response = requests.post(url5, json=payload_json, headers=headers)
+
+            if response.status_code == 200:
+                print("Richiesta POST eseguita con successo!")
+                print(response.text)
+            else:
+                print(f"Errore nella richiesta POST. Codice di stato: {response.status_code}")
+                print(response.text)
+
+            
 
 
 
@@ -131,6 +163,24 @@ class Magazzino:
                     continue
                 else:
                     print(f"Pacco {nuovo_pacco.codice} aggiunto al magazzino e all'inventario con codice {nuovo_pacco.codice}.")
+            
+            #pacco_json = json.dumps(nuovo_pacco.to_dict())
+            url4 = "http://localhost:8080/Inserisci_Prodotto_Hub"
+            payload = {
+                       "Sede": self.sede,
+                       "Pacco": nuovo_pacco.to_dict()              
+                      }   
+            
+            #payload_json = json.dumps(payload)
+            headers = {"Content-Type": "application/json"}
+            # Effettua la richiesta POST
+            response = requests.post(url4, json=payload, headers=headers)
+            if response.status_code == 200:
+                print("Richiesta POST eseguita con successo!")
+                print(response.text)
+            else:
+                print(f"Errore nella richiesta POST. Codice di stato: {response.status_code}")
+                print(response.text)
            
             cliente.aggiunge_ordine(nuovo_pacco)
             continua = input("Vuoi aggiungere un altro pacco? (si/no): ")
