@@ -133,47 +133,47 @@ func calcola_punti(spedizioni []spedizione.Spedizione, sede Punto_geografico) []
 }
 
 // deve ricevere tutte le spedizioni con i pacchi in una sede, la sede dove si trova
-func Calcola_Punti_Mappa(spedizioni []spedizione.Spedizione, sede Punto_geografico) []Direzione {
-	//mi calcolo la distanza tra tutti i destinatari delle spedizioni dalla sede corrispondente e la direzione
-	R := 6372795.477598
-	url := "https://geocoding.openapi.it/geocode"
-	var direzioni []Direzione
-	for _, spedizione := range spedizioni {
-		payload := strings.NewReader("{\"address\":" + spedizione.Destinatario + "}")
-		req, _ := http.NewRequest("POST", url, payload)
+// func Calcola_Punti_Mappa(spedizioni []spedizione.Spedizione, sede Punto_geografico) []Direzione {
+// 	//mi calcolo la distanza tra tutti i destinatari delle spedizioni dalla sede corrispondente e la direzione
+// 	R := 6372795.477598
+// 	url := "https://geocoding.openapi.it/geocode"
+// 	var direzioni []Direzione
+// 	for _, spedizione := range spedizioni {
+// 		payload := strings.NewReader("{\"address\":" + spedizione.Destinatario + "}")
+// 		req, _ := http.NewRequest("POST", url, payload)
 
-		req.Header.Add("content-type", "application/json")
-		req.Header.Add("Authorization", "Bearer 659ad5656af8cf61ad062a3c")
+// 		req.Header.Add("content-type", "application/json")
+// 		req.Header.Add("Authorization", "Bearer 659ad5656af8cf61ad062a3c")
 
-		res, err := http.DefaultClient.Do(req)
-		if err != nil {
-			log.Fatal(err)
-		}
-		defer res.Body.Close()
-		body, _ := io.ReadAll(res.Body)
-		var risposta Punto_geografico
-		err = json.Unmarshal(body, &risposta)
-		if err != nil {
-			log.Fatal(err)
-		}
-		latA := risposta.Latitudine
-		lonA := risposta.Longitudine
-		latB := sede.Latitudine
-		lonB := sede.Longitudine
-		distanza := R * math.Acos(math.Sin(latA)*math.Sin(latB)+math.Cos(latA)*math.Cos(latB)*math.Cos(lonA-lonB))
-		delta := math.Log2(math.Tan(latB/2+math.Pi/4) / math.Tan(latA/2+math.Pi/4))
-		delta_lon := math.Abs(lonA - lonB)
-		if delta_lon > 180 {
-			delta_lon = math.Mod(delta_lon, 180.00)
-		}
-		angolo := math.Atan2(delta_lon, delta)
-		direzione := direzione(angolo)
-		// slice di struct
-		tupla := Direzione{id: spedizione.ID, Distanza: distanza, Direzione: direzione}
-		direzioni = append(direzioni, tupla)
-	}
-	return direzioni
-}
+// 		res, err := http.DefaultClient.Do(req)
+// 		if err != nil {
+// 			log.Fatal(err)
+// 		}
+// 		defer res.Body.Close()
+// 		body, _ := io.ReadAll(res.Body)
+// 		var risposta Punto_geografico
+// 		err = json.Unmarshal(body, &risposta)
+// 		if err != nil {
+// 			log.Fatal(err)
+// 		}
+// 		latA := risposta.Latitudine
+// 		lonA := risposta.Longitudine
+// 		latB := sede.Latitudine
+// 		lonB := sede.Longitudine
+// 		distanza := R * math.Acos(math.Sin(latA)*math.Sin(latB)+math.Cos(latA)*math.Cos(latB)*math.Cos(lonA-lonB))
+// 		delta := math.Log2(math.Tan(latB/2+math.Pi/4) / math.Tan(latA/2+math.Pi/4))
+// 		delta_lon := math.Abs(lonA - lonB)
+// 		if delta_lon > 180 {
+// 			delta_lon = math.Mod(delta_lon, 180.00)
+// 		}
+// 		angolo := math.Atan2(delta_lon, delta)
+// 		direzione := direzione(angolo)
+// 		// slice di struct
+// 		tupla := Direzione{id: spedizione.ID, Distanza: distanza, Direzione: direzione}
+// 		direzioni = append(direzioni, tupla)
+// 	}
+// 	return direzioni
+// }
 
 func Calcola_distanza_minima(origine Punto_geografico, Diramazioni []Punto_geografico, direzione_non_ammessa Direzione) (Punto_geografico, int, Direzione) {
 	minDistanza := math.MaxFloat64
