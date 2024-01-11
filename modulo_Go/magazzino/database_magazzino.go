@@ -157,7 +157,8 @@ func (g *GestoreMagazzino) SpostaPacco(id string, vecchiaSede string, nuovaSede 
 func ToString(Pacchi []spedizione.Pacco, Sede string) string {
 	String := "Hub sede: " + Sede + " prodotti:\n"
 	for _, pacco := range Pacchi {
-		Pacco := "Spedizione id" + pacco.Spedizione_id + "Peso" + strconv.FormatFloat(pacco.Peso, 'f', -1, 64) + "Lunghezza" + strconv.FormatFloat(pacco.Lunghezza, 'f', -1, 64) + "Altezza" + strconv.FormatFloat(pacco.Altezza, 'f', -1, 64) + "Profondità" + strconv.FormatFloat(pacco.Profondità, 'f', -1, 64) + "Prezzo" + strconv.FormatFloat(pacco.Prezzo, 'f', -1, 64)
+		// Pacco := "Spedizione id" + pacco.Spedizione_id + "Peso" + strconv.FormatFloat(pacco.Peso, 'f', -1, 64) + "Lunghezza" + strconv.FormatFloat(pacco.Lunghezza, 'f', -1, 64) + "Altezza" + strconv.FormatFloat(pacco.Altezza, 'f', -1, 64) + "Profondità" + strconv.FormatFloat(pacco.Profondità, 'f', -1, 64) + "Prezzo" + strconv.FormatFloat(pacco.Prezzo, 'f', -1, 64)
+		Pacco := "Spedizione id" + pacco.Spedizione_id + "Peso" + strconv.FormatFloat(pacco.Peso, 'f', -1, 64) + "Dimensione" + pacco.Dimensione + "Prezzo" + strconv.FormatFloat(pacco.Prezzo, 'f', -1, 64)
 		String = String + Pacco
 	}
 	return String

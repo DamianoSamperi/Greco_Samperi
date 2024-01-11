@@ -2,6 +2,7 @@
 class Pacco:
     def __init__(self, codice, peso, prezzo, dimensione):
         self.codice = codice
+        # TO_DO codice_spedizione
         self.peso = peso
         self.dimensione = dimensione
         self.prezzo_base_unita = prezzo
