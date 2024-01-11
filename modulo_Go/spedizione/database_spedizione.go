@@ -41,10 +41,11 @@ type Pacco struct {
 	ID            int
 	Spedizione_id string
 	// Nome string  `json:"nome"`
-	Peso       float64
-	Lunghezza  float64
-	Altezza    float64
-	Profondità float64
+	Peso float64
+	// Lunghezza  float64
+	// Altezza    float64
+	// Profondità float64
+	Dimensione string
 	Prezzo     float64
 }
 
@@ -167,7 +168,8 @@ func ToString(spedizioni []Spedizione) string {
 	for _, s := range spedizioni {
 		SpedizioneString := "Id " + s.ID + " Mittente" + s.Mittente + "Destinatario " + s.Destinatario + " Stato " + s.Stato[len(s.Stato)-1].String() + " Numero Pacchi: " + strconv.Itoa(s.NumeroPacchi)
 		for _, pacco := range s.Pacchi {
-			Pacco := "Peso" + strconv.FormatFloat(pacco.Peso, 'f', -1, 64) + "Lunghezza" + strconv.FormatFloat(pacco.Lunghezza, 'f', -1, 64) + "Altezza" + strconv.FormatFloat(pacco.Altezza, 'f', -1, 64) + "Profondità" + strconv.FormatFloat(pacco.Profondità, 'f', -1, 64) + "Prezzo" + strconv.FormatFloat(pacco.Prezzo, 'f', -1, 64)
+			// Pacco := "Peso" + strconv.FormatFloat(pacco.Peso, 'f', -1, 64) + "Lunghezza" + strconv.FormatFloat(pacco.Lunghezza, 'f', -1, 64) + "Altezza" + strconv.FormatFloat(pacco.Altezza, 'f', -1, 64) + "Profondità" + strconv.FormatFloat(pacco.Profondità, 'f', -1, 64) + "Prezzo" + strconv.FormatFloat(pacco.Prezzo, 'f', -1, 64)
+			Pacco := "Peso" + strconv.FormatFloat(pacco.Peso, 'f', -1, 64) + "Dimensione" + pacco.Dimensione + "Prezzo" + strconv.FormatFloat(pacco.Prezzo, 'f', -1, 64)
 			SpedizioneString = SpedizioneString + Pacco
 		}
 		String = String + SpedizioneString
