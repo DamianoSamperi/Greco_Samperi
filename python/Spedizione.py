@@ -44,7 +44,8 @@ class GestoreSpedizioni:
         codice_spedizione = self.genera_codice_spedizione()
         spedizione = Spedizione(codice_spedizione, mittente, destinatario)
         self.spedizioni_attive[codice_spedizione] = spedizione
-        return spedizione
+        return spedizione, codice_spedizione
+            
        
 
     

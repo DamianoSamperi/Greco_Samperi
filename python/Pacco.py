@@ -1,8 +1,8 @@
 
 class Pacco:
-    def __init__(self, codice, peso, prezzo, dimensione):
+    def __init__(self, codice, codice_sped, peso, prezzo, dimensione):
         self.codice = codice
-        # TO_DO codice_spedizione
+        self.codice_sped = codice_sped
         self.peso = peso
         self.dimensione = dimensione
         self.prezzo_base_unita = prezzo
@@ -33,7 +33,7 @@ class Pacco:
 
 
     def __str__(self):
-        return f"(Codice: {self.codice}), Peso: {self.peso}, Dimensione: {self.dimensione}, Prezzo: {self.calcola_prezzo()} euro"
+        return f"(Codice: {self.codice}), Cod_sped: {self.codice_sped} Peso: {self.peso}, Dimensione: {self.dimensione}, Prezzo: {self.calcola_prezzo()} euro"
     
 
     def to_dict(self):

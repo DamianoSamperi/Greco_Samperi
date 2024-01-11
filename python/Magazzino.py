@@ -7,6 +7,7 @@ import json
 class Magazzino:
     sede = "ciao"
     def __init__(self, gestore_spedizioni):
+        self.cod_sped = None
         self.codice_prodotto = None
         #Crea un dizionario vuoto e lo assegna all'attributo di istanza 'inventario'
         self.inventario = []
@@ -47,13 +48,14 @@ class Magazzino:
 
     def gestisci_magazzino(self):            
             mittente = input("Inserisci il mittente per la spedizione: ")
-            destinatario = input("Inserisci il destinatario per la spedizione: ")
+            destinatario = input("Inserisci indirizzo destinatario per la spedizione: ")
 
             print(f"Aggiunto al magazzino.")
             time.sleep(4)
                 
             # Crea un'istanza di Spedizione utilizzando il GestoreSpedizioni
-            sped = self.gestore_spedizioni.crea_spedizione(mittente=mittente, destinatario=destinatario)
+            sped, self.cod_sped = self.gestore_spedizioni.crea_spedizione(mittente=mittente, destinatario=destinatario)
+            
 
             print("Ritorna Sede")
             url2 = "http://localhost:8080/Ritorna_Sede"
@@ -125,10 +127,12 @@ class Magazzino:
 
 
 
-            sped.aggiungi_evento_tracciamento(f"Pacco spedito a {destinatario}")
+            sped.aggiungi_evento_tracciamento(f"Pacco in preparazione consegna")
             sped.tracciamento()
                 
-            print("Ordine completato.")
+            
+
+   
 
 
 
@@ -146,7 +150,7 @@ class Magazzino:
             dimensione = input("Inserisci la dimensione del nuovo pacco: ")
 
             # Crea un nuovo oggetto Pacco con il nuovo codice
-            nuovo_pacco = Pacco(codice=nuovo_codice, peso=peso, prezzo=100, dimensione=dimensione)
+            nuovo_pacco = Pacco(codice=nuovo_codice, codice_sped=self.cod_sped, peso=peso, prezzo=100, dimensione=dimensione)
 
             # Aggiungi il nuovo pacco al magazzino
             self.aggiungi_pacco(nuovo_pacco)
@@ -190,6 +194,7 @@ class Magazzino:
             if continua.lower() != 'si':
                 break
 
+           
 
 
     
