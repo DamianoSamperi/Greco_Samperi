@@ -39,7 +39,7 @@ type GestoreSpedizioni struct {
 
 type Pacco struct {
 	ID            int
-	Spedizione_id int
+	Spedizione_id string
 	// Nome string  `json:"nome"`
 	Peso       float64
 	Lunghezza  float64
@@ -101,6 +101,21 @@ func (g *GestoreSpedizioni) Visualizza_Spedizioni(Mittente string) string {
 	}
 
 	return ToString(spedizioni)
+}
+func (g *GestoreSpedizioni) Trova_spedizioni_per_ID(ID string) Spedizione {
+	collection := g.client.Database("APL").Collection("spedizioni")
+	filter := bson.D{{Key: "id", Value: ID}}
+	cur, err := collection.Find(context.TODO(), filter)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer cur.Close(context.TODO())
+	var result Spedizione
+	err = cur.Decode(&result)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return result
 }
 
 func (g *GestoreSpedizioni) Insert_Spedizione(ID string, mittente string, destinatario string, Pacchi []Pacco, sede string) {

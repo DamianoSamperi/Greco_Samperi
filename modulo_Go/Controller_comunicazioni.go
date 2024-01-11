@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"modulo_Go/consegne"
 	"modulo_Go/magazzino"
 	"modulo_Go/spedizione"
 	"net/http"
@@ -156,11 +157,15 @@ func Modifica_stato(w http.ResponseWriter, r *http.Request) {
 	}
 }
 func Ottieni_percorso(w http.ResponseWriter, r *http.Request) {
-	// ctx := context.TODO()
-	// g, err := spedizione.NuovoGestoreSpedizioni(ctx, "mongodb+srv://root:yWP2DlLumOz07vNv@apl.yignw97.mongodb.net/?retryWrites=true&w=majority")
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
+	ctx := context.TODO()
+	g, err := magazzino.NuovoGestoreMagazzino(ctx, "mongodb+srv://root:yWP2DlLumOz07vNv@apl.yignw97.mongodb.net/?retryWrites=true&w=majority")
+	if err != nil {
+		log.Fatal(err)
+	}
+	s, err := spedizione.NuovoGestoreSpedizioni(ctx, "mongodb+srv://root:yWP2DlLumOz07vNv@apl.yignw97.mongodb.net/?retryWrites=true&w=majority")
+	if err != nil {
+		log.Fatal(err)
+	}
 	if r.Method == http.MethodPost {
 		body, err := io.ReadAll(r.Body)
 		if err != nil {
@@ -171,9 +176,29 @@ func Ottieni_percorso(w http.ResponseWriter, r *http.Request) {
 			Sede string
 		}{}
 		_ = json.Unmarshal(body, &dati)
+		//TO_DO funzione che torna gli id delle spedizioni di un magazzino passata la sede
+		ids := g.Ottieni_Spedizioni_PerSede(dati.Sede)
 		//TO_DO funzione in spedizione e trovare un modo per passargli la sede come punto geografico o lo calcolo all'interno mi sa meglio
-		// spedizione := g.trova_spedizioni_per_sede(dati.Sede)
-		// consegne.Trova_percorso(spedizioni)
+		var spedizioni []spedizione.Spedizione
+		for _, id := range ids {
+			//TO_DO andrebbero tornate solo quelle che sono in preparazione
+			spedizione := s.Trova_spedizioni_per_ID(id)
+			spedizioni = append(spedizioni, spedizione)
+		}
+		Coordinata_Sede := g.Ritorna_Coordinate_hub(dati.Sede)
+		if Coordinata_Sede == (magazzino.Coordinate{}) {
+			http.Error(w, "Sede non valida", http.StatusMethodNotAllowed)
+		}
+		var Sede = consegne.Punto_geografico{Indirizzo: dati.Sede, Latitudine: Coordinata_Sede.Latitudine, Longitudine: Coordinata_Sede.Longitudine}
+		percorso := consegne.Trova_percorso(spedizioni, Sede)
+		var indirizzi []string
+		for _, p := range percorso {
+			indirizzi = append(indirizzi, p.Indirizzo)
+			if p.Indirizzo != dati.Sede {
+				s.Modifica_Stato_Spedizione(p.Indirizzo, "InTransito")
+			}
+		}
+		fmt.Fprint(w, indirizzi)
 	} else {
 		http.Error(w, "Metodo non valido", http.StatusMethodNotAllowed)
 	}

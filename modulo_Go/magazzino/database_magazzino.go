@@ -33,11 +33,12 @@ type GestoreMagazzino struct {
 	client *mongo.Client
 	ctx    context.Context
 }
-type RispostaAPI struct {
-	Latitudine  float64 `json:"latitude"`
-	Longitudine float64 `json:"longitude"`
-}
-type RispostaDatabase struct {
+
+//	type RispostaAPI struct {
+//		Latitudine  float64 `json:"latitude"`
+//		Longitudine float64 `json:"longitude"`
+//	}
+type Coordinate struct {
 	Latitudine  float64 `bson:"latitude"`
 	Longitudine float64 `bson:"longitude"`
 }
@@ -68,7 +69,7 @@ func (g *GestoreMagazzino) Ritorna_hub_per_vicinanza(indirizzo string) string {
 	}
 	defer res.Body.Close()
 	body, _ := io.ReadAll(res.Body)
-	var risposta RispostaAPI
+	var risposta Coordinate
 	err = json.Unmarshal(body, &risposta)
 	if err != nil {
 		log.Fatal(err)
@@ -79,7 +80,7 @@ func (g *GestoreMagazzino) Ritorna_hub_per_vicinanza(indirizzo string) string {
 	var sede string
 	for _, collezione := range collezioni {
 		collection := g.client.Database("APL").Collection(collezione)
-		var result RispostaDatabase
+		var result Coordinate
 		err := collection.FindOne(g.ctx, bson.D{}).Decode(&result)
 		if err != nil {
 			return err.Error()
@@ -94,20 +95,43 @@ func (g *GestoreMagazzino) Ritorna_hub_per_vicinanza(indirizzo string) string {
 	}
 	return sede
 }
+func (g *GestoreMagazzino) Ritorna_Coordinate_hub(sede string) Coordinate {
+	collection := g.client.Database("APL").Collection(sede)
+	var result Coordinate
+	err := collection.FindOne(g.ctx, bson.D{}).Decode(&result)
+	if err != nil {
+		return Coordinate{}
+	}
+	return result
+}
 
-func (g *GestoreMagazzino) OttieniPacchiPerSede(sede string) string {
+func (g *GestoreMagazzino) OttieniPacchiPerSede(sede string) []spedizione.Pacco {
 	collection := g.client.Database("APL").Collection(sede)
 	cursor, err := collection.Find(g.ctx, bson.M{})
 	if err != nil {
-		return err.Error()
+		return nil
 	}
 	var pacchi []spedizione.Pacco
 	if err = cursor.All(g.ctx, &pacchi); err != nil {
-		return err.Error()
+		return nil
 	}
 
 	defer cursor.Close(g.ctx)
-	return ToString(pacchi, sede)
+	return pacchi
+	// return ToString(pacchi, sede)
+}
+func (g *GestoreMagazzino) Ottieni_Spedizioni_PerSede(sede string) []string {
+	Pacchi := g.OttieniPacchiPerSede(sede)
+	ids := make(map[string]bool)
+	for _, pacco := range Pacchi {
+		ids[pacco.Spedizione_id] = true
+	}
+	uniqueIDs := make([]string, 0, len(ids))
+	for id := range ids {
+		uniqueIDs = append(uniqueIDs, id)
+	}
+
+	return uniqueIDs
 }
 
 func (g *GestoreMagazzino) InserisciPaccoInSede(sede string, p spedizione.Pacco) error {
@@ -133,7 +157,7 @@ func (g *GestoreMagazzino) SpostaPacco(id string, vecchiaSede string, nuovaSede 
 func ToString(Pacchi []spedizione.Pacco, Sede string) string {
 	String := "Hub sede: " + Sede + " prodotti:\n"
 	for _, pacco := range Pacchi {
-		Pacco := "Spedizione id" + strconv.Itoa(pacco.Spedizione_id) + "Peso" + strconv.FormatFloat(pacco.Peso, 'f', -1, 64) + "Lunghezza" + strconv.FormatFloat(pacco.Lunghezza, 'f', -1, 64) + "Altezza" + strconv.FormatFloat(pacco.Altezza, 'f', -1, 64) + "Profondità" + strconv.FormatFloat(pacco.Profondità, 'f', -1, 64) + "Prezzo" + strconv.FormatFloat(pacco.Prezzo, 'f', -1, 64)
+		Pacco := "Spedizione id" + pacco.Spedizione_id + "Peso" + strconv.FormatFloat(pacco.Peso, 'f', -1, 64) + "Lunghezza" + strconv.FormatFloat(pacco.Lunghezza, 'f', -1, 64) + "Altezza" + strconv.FormatFloat(pacco.Altezza, 'f', -1, 64) + "Profondità" + strconv.FormatFloat(pacco.Profondità, 'f', -1, 64) + "Prezzo" + strconv.FormatFloat(pacco.Prezzo, 'f', -1, 64)
 		String = String + Pacco
 	}
 	return String
