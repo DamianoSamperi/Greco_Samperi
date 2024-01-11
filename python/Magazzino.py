@@ -55,6 +55,7 @@ class Magazzino:
             # Crea un'istanza di Spedizione utilizzando il GestoreSpedizioni
             sped = self.gestore_spedizioni.crea_spedizione(mittente=mittente, destinatario=destinatario)
 
+            print("Ritorna Sede")
             url2 = "http://localhost:8080/Ritorna_Sede"
 
             payload = {"Indirizzo": mittente }
@@ -72,6 +73,7 @@ class Magazzino:
             global sede
             sede = response.text
             
+            print("Inserisci Spedizione")
             url = "http://localhost:8080/Inserisci_Spedizione"
             payload = {
                     "Spedizione": sped,
@@ -87,10 +89,10 @@ class Magazzino:
                 print(f"Errore nella richiesta POST. Codice di stato: {response.status_code}")
                 print(response.text)
 
-            
+            print("Ottieni Prodotti")
             url3 = "http://localhost:8080/Ottieni_Prodotti_Hub"
             payload = {
-                    "Sede": sede                    
+                    "Sede": "Catania"                    
                       }   
 
             #payload_json = json.dumps(payload)
@@ -104,7 +106,7 @@ class Magazzino:
                 print(f"Errore nella richiesta POST. Codice di stato: {response.status_code}")
                 print(response.text)
              
-            
+            print("Visualizza Spedizioni")
             url5 = "http://localhost:8080/Visualizza_Spedizioni"
 
             payload = {"Mittente": mittente }
@@ -165,6 +167,7 @@ class Magazzino:
                     print(f"Pacco {nuovo_pacco.codice} aggiunto al magazzino e all'inventario con codice {nuovo_pacco.codice}.")
             
             #pacco_json = json.dumps(nuovo_pacco.to_dict())
+            print("Inserisci Prodotto Hub")
             url4 = "http://localhost:8080/Inserisci_Prodotto_Hub"
             payload = {
                        "Sede": self.sede,
