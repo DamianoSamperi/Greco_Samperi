@@ -12,6 +12,7 @@ import (
 	"modulo_Go/spedizione"
 	"net/http"
 	"os"
+	"time"
 )
 
 type richiesta struct {
@@ -21,6 +22,10 @@ type richiesta struct {
 type modifica_stato struct {
 	Stato         string `json:"stato"`
 	Id_spedizione string `json:"id"`
+}
+type modifica_data struct {
+	Id_spedizione string    `json:"id"`
+	Data          time.Time `json:"data"`
 }
 type richiesta_spedizione struct {
 	Spedizione spedizione.Spedizione `json:"spedizione"`
@@ -136,6 +141,21 @@ func Ritorna_id(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Fprint(w, g.RitornaID())
 }
+func Ottieni_data(w http.ResponseWriter, r *http.Request) {
+	ctx := context.TODO()
+	g, err := spedizione.NuovoGestoreSpedizioni(ctx, "mongodb+srv://root:yWP2DlLumOz07vNv@apl.yignw97.mongodb.net/?retryWrites=true&w=majority")
+	if err != nil {
+		log.Fatal(err)
+	}
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		http.Error(w, "Errore nella lettura del corpo della richiesta", http.StatusBadRequest)
+		return
+	}
+	var id_spedizione string
+	_ = json.Unmarshal(body, &id_spedizione)
+	fmt.Fprint(w, g.Ritorna_Data_Spedizione(id_spedizione))
+}
 func Modifica_stato(w http.ResponseWriter, r *http.Request) {
 	ctx := context.TODO()
 	g, err := spedizione.NuovoGestoreSpedizioni(ctx, "mongodb+srv://root:yWP2DlLumOz07vNv@apl.yignw97.mongodb.net/?retryWrites=true&w=majority")
@@ -151,6 +171,26 @@ func Modifica_stato(w http.ResponseWriter, r *http.Request) {
 		var dati modifica_stato
 		_ = json.Unmarshal(body, &dati)
 		g.Modifica_Stato_Spedizione(dati.Id_spedizione, dati.Stato)
+
+	} else {
+		http.Error(w, "Metodo non valido", http.StatusMethodNotAllowed)
+	}
+}
+func Inserimento_data_consegna(w http.ResponseWriter, r *http.Request) {
+	ctx := context.TODO()
+	g, err := spedizione.NuovoGestoreSpedizioni(ctx, "mongodb+srv://root:yWP2DlLumOz07vNv@apl.yignw97.mongodb.net/?retryWrites=true&w=majority")
+	if err != nil {
+		log.Fatal(err)
+	}
+	if r.Method == http.MethodPost {
+		body, err := io.ReadAll(r.Body)
+		if err != nil {
+			http.Error(w, "Errore nella lettura del corpo della richiesta", http.StatusBadRequest)
+			return
+		}
+		var dati modifica_data
+		_ = json.Unmarshal(body, &dati)
+		g.Modifica_Data_Consegna_Spedizione(dati.Id_spedizione, dati.Data)
 
 	} else {
 		http.Error(w, "Metodo non valido", http.StatusMethodNotAllowed)
@@ -224,7 +264,10 @@ func main() {
 	http.HandleFunc("/Ritorna_Sede", Ritorna_sede)
 	//funziona che torna il percorso o i pacchi vedo per il corriere, bisogna passargli la sede
 	http.HandleFunc("/Ottieni_Percorso", Ottieni_percorso)
-	// TO_DO inserire error handler nel listen
+	//funzione che mi ritorna data spedizione, in modo da fare il controllo per l'aggiunta nuova data su c#
+	http.HandleFunc("/Ottieni_data_spedizione", Ottieni_data)
+	//funzione che permette all'utente di scegliere una data di consegna, di default è impostata come il prima possibile
+	http.HandleFunc("/Scegli_data_consegna", Inserimento_data_consegna)
 	err := http.ListenAndServe(":8080", nil)
 	if errors.Is(err, http.ErrServerClosed) {
 		fmt.Print("server closed\n")

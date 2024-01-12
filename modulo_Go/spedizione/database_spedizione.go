@@ -154,6 +154,33 @@ func (g *GestoreSpedizioni) RitornaID() []string {
 	}
 	return IDs
 }
+func (g *GestoreSpedizioni) Modifica_Data_Consegna_Spedizione(id string, date time.Time) {
+	//TO_DO funzione modifica, però prima va cambiato il database in non relazionale
+	collection := g.client.Database("APL").Collection("spedizioni")
+	filter := bson.D{{Key: "idspedizione", Value: id}}
+	update := bson.D{{Key: "$push", Value: bson.D{{Key: "data_consegna", Value: date}}}}
+	updateResult, err := collection.UpdateOne(context.TODO(), filter, update)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("Modificati %v documenti\n", updateResult.ModifiedCount)
+}
+func (g *GestoreSpedizioni) Ritorna_Data_Spedizione(id string) time.Time {
+	//TO_DO funzione modifica, però prima va cambiato il database in non relazionale
+	collection := g.client.Database("APL").Collection("spedizioni")
+	filter := bson.D{{Key: "idspedizione", Value: id}}
+	cur, err := collection.Find(context.TODO(), filter)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer cur.Close(context.TODO())
+	var date time.Time
+	err = cur.Decode(&date)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return date
+}
 func (g *GestoreSpedizioni) Modifica_Stato_Spedizione(id string, stato string) {
 	//TO_DO funzione modifica, però prima va cambiato il database in non relazionale
 	collection := g.client.Database("APL").Collection("spedizioni")
