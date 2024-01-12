@@ -7,6 +7,7 @@ import json
 class Magazzino:
     sede = "ciao"
     def __init__(self, gestore_spedizioni):
+        self.cod_sped = None
         self.codice_prodotto = None
         #Crea un dizionario vuoto e lo assegna all'attributo di istanza 'inventario'
         self.inventario = []
@@ -47,14 +48,16 @@ class Magazzino:
 
     def gestisci_magazzino(self):            
             mittente = input("Inserisci il mittente per la spedizione: ")
-            destinatario = input("Inserisci il destinatario per la spedizione: ")
+            destinatario = input("Inserisci indirizzo destinatario per la spedizione: ")
 
             print(f"Aggiunto al magazzino.")
             time.sleep(4)
                 
             # Crea un'istanza di Spedizione utilizzando il GestoreSpedizioni
-            sped = self.gestore_spedizioni.crea_spedizione(mittente=mittente, destinatario=destinatario)
+            sped, self.cod_sped = self.gestore_spedizioni.crea_spedizione(mittente=mittente, destinatario=destinatario)
+            
 
+            print("Ritorna Sede")
             url2 = "http://localhost:8080/Ritorna_Sede"
 
             payload = {"Indirizzo": mittente }
@@ -72,6 +75,7 @@ class Magazzino:
             global sede
             sede = response.text
             
+            print("Inserisci Spedizione")
             url = "http://localhost:8080/Inserisci_Spedizione"
             payload = {
                     "Spedizione": sped,
@@ -87,10 +91,10 @@ class Magazzino:
                 print(f"Errore nella richiesta POST. Codice di stato: {response.status_code}")
                 print(response.text)
 
-            
+            print("Ottieni Prodotti")
             url3 = "http://localhost:8080/Ottieni_Prodotti_Hub"
             payload = {
-                    "Sede": sede                    
+                    "Sede": "Catania"                    
                       }   
 
             #payload_json = json.dumps(payload)
@@ -104,7 +108,7 @@ class Magazzino:
                 print(f"Errore nella richiesta POST. Codice di stato: {response.status_code}")
                 print(response.text)
              
-            
+            print("Visualizza Spedizioni")
             url5 = "http://localhost:8080/Visualizza_Spedizioni"
 
             payload = {"Mittente": mittente }
@@ -123,10 +127,12 @@ class Magazzino:
 
 
 
-            sped.aggiungi_evento_tracciamento(f"Pacco spedito a {destinatario}")
+            sped.aggiungi_evento_tracciamento(f"Pacco in preparazione consegna")
             sped.tracciamento()
                 
-            print("Ordine completato.")
+            
+
+   
 
 
 
@@ -144,7 +150,7 @@ class Magazzino:
             dimensione = input("Inserisci la dimensione del nuovo pacco: ")
 
             # Crea un nuovo oggetto Pacco con il nuovo codice
-            nuovo_pacco = Pacco(codice=nuovo_codice, peso=peso, prezzo=100, dimensione=dimensione)
+            nuovo_pacco = Pacco(codice=nuovo_codice, codice_sped=self.cod_sped, peso=peso, prezzo=100, dimensione=dimensione)
 
             # Aggiungi il nuovo pacco al magazzino
             self.aggiungi_pacco(nuovo_pacco)
@@ -165,6 +171,7 @@ class Magazzino:
                     print(f"Pacco {nuovo_pacco.codice} aggiunto al magazzino e all'inventario con codice {nuovo_pacco.codice}.")
             
             #pacco_json = json.dumps(nuovo_pacco.to_dict())
+            print("Inserisci Prodotto Hub")
             url4 = "http://localhost:8080/Inserisci_Prodotto_Hub"
             payload = {
                        "Sede": self.sede,
@@ -187,6 +194,7 @@ class Magazzino:
             if continua.lower() != 'si':
                 break
 
+           
 
 
     
