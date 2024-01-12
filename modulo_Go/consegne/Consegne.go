@@ -9,10 +9,16 @@ import (
 	"modulo_Go/spedizione"
 	"net/http"
 	"strings"
+	"time"
 )
 
 type Punto_geografico struct {
-	Indirizzo   string  `json:"indirizzo"`
+	Indirizzo        string    `json:"indirizzo"`
+	Latitudine       float64   `json:"latitude"`
+	Longitudine      float64   `json:"longitude"`
+	Consegna_Stimata time.Time `json:"consegna_Stimata"`
+}
+type Coordinate struct {
 	Latitudine  float64 `json:"latitude"`
 	Longitudine float64 `json:"longitude"`
 }
@@ -122,14 +128,19 @@ func calcola_punti(spedizioni []spedizione.Spedizione, sede Punto_geografico) []
 		}
 		defer res.Body.Close()
 		body, _ := io.ReadAll(res.Body)
-		var risposta Punto_geografico
+		var risposta Coordinate
 		err = json.Unmarshal(body, &risposta)
 		if err != nil {
 			log.Fatal(err)
 		}
 		latA := risposta.Latitudine
 		lonA := risposta.Longitudine
-		tupla := Punto_geografico{Indirizzo: spedizione.ID, Latitudine: latA, Longitudine: lonA}
+		var tupla Punto_geografico
+		if spedizione.Data_consegna.IsZero() {
+			tupla = Punto_geografico{Indirizzo: spedizione.ID, Latitudine: latA, Longitudine: lonA}
+		} else {
+			tupla = Punto_geografico{Indirizzo: spedizione.ID, Latitudine: latA, Longitudine: lonA, Consegna_Stimata: spedizione.Data_consegna}
+		}
 		punti = append(punti, tupla)
 	}
 	return punti
@@ -159,26 +170,28 @@ func Calcola_distanza_minima(origine Punto_geografico, Diramazioni []Punto_geogr
 			d := Calcola_distanza_punti(origine, p)
 			if d <= distanza_massima_percorribile {
 				if (distanza_residua_percorribile - d) >= 0 {
-					if d < minDistanza {
-						minDistanza = d
-						minDiramazione = p
-						minIndice = i
-						nuovaDirezione = direzione
+					if !p.Consegna_Stimata.IsZero() && p.Consegna_Stimata == time.Now().AddDate(0, 0, 1) {
+						if d < minDistanza {
+							minDistanza = d
+							minDiramazione = p
+							minIndice = i
+							nuovaDirezione = direzione
+							distanza_residua_percorribile = distanza_residua_percorribile - d
+						}
+					}
+				} else {
+					d, p := trovaMagazzino_più_vicino(origine, p, lista_magazzini)
+					if (distanza_residua_percorribile - d) >= 0 {
+						if d < minDistanza {
+							minDistanza = d
+							minDiramazione = p
+							minIndice = i
+							nuovaDirezione = direzione
+							distanza_residua_percorribile = distanza_residua_percorribile - d
+						}
 					}
 				}
-			} else {
-				d, p := trovaMagazzino_più_vicino(origine, p, lista_magazzini)
-				if (distanza_residua_percorribile - d) >= 0 {
-					if d < minDistanza {
-						minDistanza = d
-						minDiramazione = p
-						minIndice = i
-						nuovaDirezione = direzione
-					}
-				}
-
 			}
-
 		}
 	}
 	direzione_non_ammessa = nuovaDirezione_non_ammessa(direzione_non_ammessa, nuovaDirezione)
