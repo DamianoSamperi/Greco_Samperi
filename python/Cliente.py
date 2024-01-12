@@ -1,8 +1,7 @@
 class Cliente:
-    def __init__(self, nome, cognome, indirizzo):
+    def __init__(self, nome, cognome):
         self.nome = nome
         self.cognome = cognome        
-        self.indirizzo = indirizzo
         self.ordini = []
 
     def aggiunge_ordine(self, pacco):

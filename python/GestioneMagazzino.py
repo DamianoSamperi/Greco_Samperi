@@ -14,8 +14,7 @@ magazzino = Magazzino(gestore_spedizioni)
 
 nome = input("Inserisci il tuo nome: ")
 cognome = input("Inserisci il tuo cognome: ")
-indirizzo = input("Inserisci il tuo indirizzo: ")
-cliente1 = Cliente(nome=nome, cognome=cognome, indirizzo=indirizzo)
+cliente1 = Cliente(nome=nome, cognome=cognome)
 
 magazzino.gestisci_magazzino()
 

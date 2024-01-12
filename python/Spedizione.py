@@ -9,7 +9,7 @@ class Spedizione:
         self.destinatario = destinatario
         self.stato_attuale = "In transito"
         self.data_spedizione = datetime.now()
-        self.data_consegna_stimata = self.data_spedizione + timedelta(days=5)
+        self.data_consegna_stimata = datetime.min
         self.eventi_tracciamento = []
 
     #aggiorna stato e aggiungi tracciamento sono insieme, bisogna chiamare la funzione che farà Damiano

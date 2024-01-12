@@ -50,7 +50,7 @@ class Magazzino:
             mittente = input("Inserisci il mittente per la spedizione: ")
             destinatario = input("Inserisci indirizzo destinatario per la spedizione: ")
 
-            print(f"Aggiunto al magazzino.")
+            
             time.sleep(4)
                 
             # Crea un'istanza di Spedizione utilizzando il GestoreSpedizioni
