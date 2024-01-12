@@ -206,13 +206,13 @@ func Trova_percorso(spedizioni []spedizione.Spedizione, sede Punto_geografico, l
 	var direzione_non_ammessa = Direzione{angolo_inf: -1, angolo_sup: 361}
 	var distanza_residua_percorribile = distanza_massima_percorribile
 	for len(punti) > 0 {
-		percorso = append(percorso, puntoCorrente)
 
 		puntoCorrente, indice, direzione_non_ammessa, distanza_residua_percorribile = Calcola_distanza_minima(puntoCorrente, punti, direzione_non_ammessa, distanza_residua_percorribile, lista_magazzini)
 		punti = append(punti[:indice], punti[indice+1:]...)
+		if (puntoCorrente != Punto_geografico{}) {
+			percorso = append(percorso, puntoCorrente)
+		}
 	}
-
-	percorso = append(percorso, puntoCorrente) // Aggiungi l'ultimo punto al percorso
 	for _, punto := range percorso {
 		fmt.Println(punto)
 	}

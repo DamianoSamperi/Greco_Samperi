@@ -200,10 +200,7 @@ func Ottieni_percorso(w http.ResponseWriter, r *http.Request) {
 		var indirizzi []string
 		for _, p := range percorso {
 			indirizzi = append(indirizzi, p.Indirizzo)
-			if p.Indirizzo != dati.Sede {
-				s.Modifica_Stato_Spedizione(p.Indirizzo, "InTransito")
-			}
-
+			s.Modifica_Stato_Spedizione(p.Indirizzo, "InTransito")
 		}
 		fmt.Fprint(w, indirizzi)
 	} else {
