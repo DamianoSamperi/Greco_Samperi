@@ -69,7 +69,7 @@ const distanza_massima_percorribile = 320000.0
 //			return "Nord-Ovest"
 //		}
 //	}
-func direzione(angolo float64) string {
+func Todirezione(angolo float64) string {
 	switch {
 	case angolo >= 45 && angolo < 135:
 		return "Nord"
@@ -135,50 +135,20 @@ func calcola_punti(spedizioni []spedizione.Spedizione, sede Punto_geografico) []
 	return punti
 }
 
-// deve ricevere tutte le spedizioni con i pacchi in una sede, la sede dove si trova
-// func Calcola_Punti_Mappa(spedizioni []spedizione.Spedizione, sede Punto_geografico) []Direzione {
-// 	//mi calcolo la distanza tra tutti i destinatari delle spedizioni dalla sede corrispondente e la direzione
-// 	R := 6372795.477598
-// 	url := "https://geocoding.openapi.it/geocode"
-// 	var direzioni []Direzione
-// 	for _, spedizione := range spedizioni {
-// 		payload := strings.NewReader("{\"address\":" + spedizione.Destinatario + "}")
-// 		req, _ := http.NewRequest("POST", url, payload)
-
-// 		req.Header.Add("content-type", "application/json")
-// 		req.Header.Add("Authorization", "Bearer 659ad5656af8cf61ad062a3c")
-
-// 		res, err := http.DefaultClient.Do(req)
-// 		if err != nil {
-// 			log.Fatal(err)
-// 		}
-// 		defer res.Body.Close()
-// 		body, _ := io.ReadAll(res.Body)
-// 		var risposta Punto_geografico
-// 		err = json.Unmarshal(body, &risposta)
-// 		if err != nil {
-// 			log.Fatal(err)
-// 		}
-// 		latA := risposta.Latitudine
-// 		lonA := risposta.Longitudine
-// 		latB := sede.Latitudine
-// 		lonB := sede.Longitudine
-// 		distanza := R * math.Acos(math.Sin(latA)*math.Sin(latB)+math.Cos(latA)*math.Cos(latB)*math.Cos(lonA-lonB))
-// 		delta := math.Log2(math.Tan(latB/2+math.Pi/4) / math.Tan(latA/2+math.Pi/4))
-// 		delta_lon := math.Abs(lonA - lonB)
-// 		if delta_lon > 180 {
-// 			delta_lon = math.Mod(delta_lon, 180.00)
-// 		}
-// 		angolo := math.Atan2(delta_lon, delta)
-// 		direzione := direzione(angolo)
-// 		// slice di struct
-// 		tupla := Direzione{id: spedizione.ID, Distanza: distanza, Direzione: direzione}
-// 		direzioni = append(direzioni, tupla)
-// 	}
-// 	return direzioni
-// }
-
-func Calcola_distanza_minima(origine Punto_geografico, Diramazioni []Punto_geografico, direzione_non_ammessa Direzione, distanza_residua_percorribile float64) (Punto_geografico, int, Direzione, float64) {
+func trovaMagazzino_più_vicino(destinatario Punto_geografico, origine Punto_geografico, lista_magazzini []Punto_geografico) (float64, Punto_geografico) {
+	for _, magazzino := range lista_magazzini {
+		direzione := Todirezione(calcola_direzione_punti(destinatario, origine))
+		direzione_magazzino := Todirezione(calcola_direzione_punti(magazzino, origine))
+		if direzione == direzione_magazzino {
+			distanza_magazzino := Calcola_distanza_punti(magazzino, origine)
+			if distanza_magazzino <= distanza_massima_percorribile {
+				return distanza_magazzino, magazzino
+			}
+		}
+	}
+	return distanza_massima_percorribile + 1, Punto_geografico{}
+}
+func Calcola_distanza_minima(origine Punto_geografico, Diramazioni []Punto_geografico, direzione_non_ammessa Direzione, distanza_residua_percorribile float64, lista_magazzini []Punto_geografico) (Punto_geografico, int, Direzione, float64) {
 	minDistanza := math.MaxFloat64
 	minDiramazione := Punto_geografico{}
 	minIndice := -1
@@ -187,13 +157,26 @@ func Calcola_distanza_minima(origine Punto_geografico, Diramazioni []Punto_geogr
 		direzione := calcola_direzione_punti(origine, p)
 		if direzione >= direzione_non_ammessa.angolo_sup || direzione < direzione_non_ammessa.angolo_inf {
 			d := Calcola_distanza_punti(origine, p)
-			if (distanza_residua_percorribile - d) >= 0 {
-				if d < minDistanza {
-					minDistanza = d
-					minDiramazione = p
-					minIndice = i
-					nuovaDirezione = direzione
+			if d <= distanza_massima_percorribile {
+				if (distanza_residua_percorribile - d) >= 0 {
+					if d < minDistanza {
+						minDistanza = d
+						minDiramazione = p
+						minIndice = i
+						nuovaDirezione = direzione
+					}
 				}
+			} else {
+				d, p := trovaMagazzino_più_vicino(origine, p, lista_magazzini)
+				if (distanza_residua_percorribile - d) >= 0 {
+					if d < minDistanza {
+						minDistanza = d
+						minDiramazione = p
+						minIndice = i
+						nuovaDirezione = direzione
+					}
+				}
+
 			}
 
 		}
@@ -214,7 +197,7 @@ func nuovaDirezione_non_ammessa(direzione_non_ammessa Direzione, nuovaDirezione 
 
 }
 
-func Trova_percorso(spedizioni []spedizione.Spedizione, sede Punto_geografico) []Punto_geografico {
+func Trova_percorso(spedizioni []spedizione.Spedizione, sede Punto_geografico, lista_magazzini []Punto_geografico) []Punto_geografico {
 	punti := calcola_punti(spedizioni, sede)
 	var indice int
 	percorso := []Punto_geografico{}
@@ -225,7 +208,7 @@ func Trova_percorso(spedizioni []spedizione.Spedizione, sede Punto_geografico) [
 	for len(punti) > 0 {
 		percorso = append(percorso, puntoCorrente)
 
-		puntoCorrente, indice, direzione_non_ammessa, distanza_residua_percorribile = Calcola_distanza_minima(puntoCorrente, punti, direzione_non_ammessa, distanza_residua_percorribile)
+		puntoCorrente, indice, direzione_non_ammessa, distanza_residua_percorribile = Calcola_distanza_minima(puntoCorrente, punti, direzione_non_ammessa, distanza_residua_percorribile, lista_magazzini)
 		punti = append(punti[:indice], punti[indice+1:]...)
 	}
 

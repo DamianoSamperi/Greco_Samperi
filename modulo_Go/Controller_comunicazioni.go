@@ -42,7 +42,7 @@ func Inserimento_spedizione(w http.ResponseWriter, r *http.Request) {
 		var dati richiesta_spedizione
 		_ = json.Unmarshal(body, &dati)
 		// Sede := g.Ritorna_hub_per_vicinanza(dati.Mittente)
-		g.Insert_Spedizione(dati.Spedizione.ID, dati.Spedizione.Mittente, dati.Spedizione.Destinatario, dati.Spedizione.Pacchi, dati.Sede)
+		g.Insert_Spedizione(dati.Spedizione.ID, dati.Spedizione.Mittente, dati.Spedizione.Destinatario, dati.Spedizione.Pacchi, dati.Sede, dati.Spedizione.Data_spedizione, dati.Spedizione.Data_consegna)
 	} else {
 		http.Error(w, "Metodo non valido", http.StatusMethodNotAllowed)
 	}
@@ -190,13 +190,20 @@ func Ottieni_percorso(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Sede non valida", http.StatusMethodNotAllowed)
 		}
 		var Sede = consegne.Punto_geografico{Indirizzo: dati.Sede, Latitudine: Coordinata_Sede.Latitudine, Longitudine: Coordinata_Sede.Longitudine}
-		percorso := consegne.Trova_percorso(spedizioni, Sede)
+		Lista_coordinate_magazzini, sedi_magazzini := g.Ottieni_Sedi(Sede.Indirizzo)
+		var lista_magazzini []consegne.Punto_geografico
+		for i, coordinate := range Lista_coordinate_magazzini {
+			magazzino := consegne.Punto_geografico{Indirizzo: sedi_magazzini[i], Latitudine: coordinate.Latitudine, Longitudine: coordinate.Longitudine}
+			lista_magazzini = append(lista_magazzini, magazzino)
+		}
+		percorso := consegne.Trova_percorso(spedizioni, Sede, lista_magazzini)
 		var indirizzi []string
 		for _, p := range percorso {
 			indirizzi = append(indirizzi, p.Indirizzo)
 			if p.Indirizzo != dati.Sede {
 				s.Modifica_Stato_Spedizione(p.Indirizzo, "InTransito")
 			}
+
 		}
 		fmt.Fprint(w, indirizzi)
 	} else {

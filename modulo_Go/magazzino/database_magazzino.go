@@ -104,6 +104,25 @@ func (g *GestoreMagazzino) Ritorna_Coordinate_hub(sede string) Coordinate {
 	}
 	return result
 }
+func (g *GestoreMagazzino) Ottieni_Sedi(sede string) ([]Coordinate, []string) {
+	collezioni, _ := g.client.Database("APL").ListCollectionNames(g.ctx, bson.M{})
+	var lista_magazzini []Coordinate
+	var sedi_magazzini []string
+	for _, collezione := range collezioni {
+		if collezione != sede {
+			collection := g.client.Database("APL").Collection(collezione)
+			var result Coordinate
+			err := collection.FindOne(g.ctx, bson.D{}).Decode(&result)
+			if err != nil {
+				return nil, nil
+			}
+			lista_magazzini = append(lista_magazzini, result)
+			sedi_magazzini = append(sedi_magazzini, collezione)
+		}
+	}
+
+	return lista_magazzini, sedi_magazzini
+}
 
 func (g *GestoreMagazzino) OttieniPacchiPerSede(sede string) []spedizione.Pacco {
 	collection := g.client.Database("APL").Collection(sede)
@@ -120,6 +139,7 @@ func (g *GestoreMagazzino) OttieniPacchiPerSede(sede string) []spedizione.Pacco 
 	return pacchi
 	// return ToString(pacchi, sede)
 }
+
 func (g *GestoreMagazzino) Ottieni_Spedizioni_PerSede(sede string) []string {
 	Pacchi := g.OttieniPacchiPerSede(sede)
 	ids := make(map[string]bool)

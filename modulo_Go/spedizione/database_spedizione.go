@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"strconv"
+	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -24,12 +25,14 @@ const (
 )
 
 type Spedizione struct {
-	ID           string  `bson:"id"`
-	Mittente     string  `bson:"mittente"`
-	Destinatario string  `bson:"destinatario"`
-	Stato        []Stato `bson:"stato"`
-	NumeroPacchi int     `bson:"numero_pacchi"`
-	Pacchi       []Pacco `bson:"pacchi"`
+	ID              string    `bson:"id"`
+	Mittente        string    `bson:"mittente"`
+	Destinatario    string    `bson:"destinatario"`
+	Stato           []Stato   `bson:"stato"`
+	Data_spedizione time.Time `bson:"data_spedizione"`
+	Data_consegna   time.Time `bson:"data_consegna"`
+	NumeroPacchi    int       `bson:"numero_pacchi"`
+	Pacchi          []Pacco   `bson:"pacchi"`
 }
 
 type GestoreSpedizioni struct {
@@ -119,11 +122,11 @@ func (g *GestoreSpedizioni) Trova_spedizioni_per_ID(ID string) Spedizione {
 	return result
 }
 
-func (g *GestoreSpedizioni) Insert_Spedizione(ID string, mittente string, destinatario string, Pacchi []Pacco, sede string) {
+func (g *GestoreSpedizioni) Insert_Spedizione(ID string, mittente string, destinatario string, Pacchi []Pacco, sede string, data_spedizione time.Time, data_consegna time.Time) {
 	collection := g.client.Database("APL").Collection("spedizioni")
 	var Stati []Stato
 	Stati = append(Stati, InPreparazione)
-	spedizione := Spedizione{ID, mittente, destinatario, Stati, len(Pacchi), Pacchi}
+	spedizione := Spedizione{ID, mittente, destinatario, Stati, data_spedizione, data_consegna, len(Pacchi), Pacchi}
 	insertResult, err := collection.InsertOne(context.TODO(), spedizione)
 	if err != nil {
 		log.Fatal(err)
