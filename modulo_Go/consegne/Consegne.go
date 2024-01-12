@@ -46,6 +46,9 @@ var (
 	}
 )
 
+// distanza massima che può percorrere un corriere in una giornata in metri
+const distanza_massima_percorribile = 320000.0
+
 //	func direzione(angolo float64) string {
 //		switch {
 //		case angolo >= 0 && angolo < 45:
@@ -175,7 +178,7 @@ func calcola_punti(spedizioni []spedizione.Spedizione, sede Punto_geografico) []
 // 	return direzioni
 // }
 
-func Calcola_distanza_minima(origine Punto_geografico, Diramazioni []Punto_geografico, direzione_non_ammessa Direzione) (Punto_geografico, int, Direzione) {
+func Calcola_distanza_minima(origine Punto_geografico, Diramazioni []Punto_geografico, direzione_non_ammessa Direzione, distanza_residua_percorribile float64) (Punto_geografico, int, Direzione, float64) {
 	minDistanza := math.MaxFloat64
 	minDiramazione := Punto_geografico{}
 	minIndice := -1
@@ -184,17 +187,20 @@ func Calcola_distanza_minima(origine Punto_geografico, Diramazioni []Punto_geogr
 		direzione := calcola_direzione_punti(origine, p)
 		if direzione >= direzione_non_ammessa.angolo_sup || direzione < direzione_non_ammessa.angolo_inf {
 			d := Calcola_distanza_punti(origine, p)
-			if d < minDistanza {
-				minDistanza = d
-				minDiramazione = p
-				minIndice = i
-				nuovaDirezione = direzione
+			if (distanza_residua_percorribile - d) >= 0 {
+				if d < minDistanza {
+					minDistanza = d
+					minDiramazione = p
+					minIndice = i
+					nuovaDirezione = direzione
+				}
 			}
+
 		}
 	}
 	direzione_non_ammessa = nuovaDirezione_non_ammessa(direzione_non_ammessa, nuovaDirezione)
 
-	return minDiramazione, minIndice, direzione_non_ammessa
+	return minDiramazione, minIndice, direzione_non_ammessa, distanza_residua_percorribile
 }
 func nuovaDirezione_non_ammessa(direzione_non_ammessa Direzione, nuovaDirezione float64) Direzione {
 	if direzione_non_ammessa.angolo_inf == -1 {
@@ -215,10 +221,11 @@ func Trova_percorso(spedizioni []spedizione.Spedizione, sede Punto_geografico) [
 	puntoCorrente := punti[0]               // Scelgo la sede come origine
 	punti = append(punti[:0], punti[1:]...) // Rimuovo la sede dalla lista dei punti
 	var direzione_non_ammessa = Direzione{angolo_inf: -1, angolo_sup: 361}
+	var distanza_residua_percorribile = distanza_massima_percorribile
 	for len(punti) > 0 {
 		percorso = append(percorso, puntoCorrente)
 
-		puntoCorrente, indice, direzione_non_ammessa = Calcola_distanza_minima(puntoCorrente, punti, direzione_non_ammessa)
+		puntoCorrente, indice, direzione_non_ammessa, distanza_residua_percorribile = Calcola_distanza_minima(puntoCorrente, punti, direzione_non_ammessa, distanza_residua_percorribile)
 		punti = append(punti[:indice], punti[indice+1:]...)
 	}
 
