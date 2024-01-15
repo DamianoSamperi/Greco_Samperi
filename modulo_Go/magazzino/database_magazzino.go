@@ -3,6 +3,7 @@ package magazzino
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"math"
@@ -39,8 +40,8 @@ type GestoreMagazzino struct {
 //		Longitudine float64 `json:"longitude"`
 //	}
 type Coordinate struct {
-	Latitudine  float64 `bson:"latitude"`
-	Longitudine float64 `bson:"longitude"`
+	Latitudine  float64 `json:"latitude"`
+	Longitudine float64 `json:"longitude"`
 }
 
 func contiene(slice []string, str string) bool {
@@ -65,9 +66,13 @@ func (g *GestoreMagazzino) Ritorna_hub_per_vicinanza(indirizzo string) string {
 	R := 6372795.477598
 	url := "https://geocoding.openapi.it/geocode"
 	collezioni, _ := g.client.Database("APL").ListCollectionNames(g.ctx, bson.M{})
-	payload := strings.NewReader("{\"address\":" + indirizzo + "}")
-	req, _ := http.NewRequest("POST", url, payload)
+	payload := strings.NewReader(`{"address":"` + indirizzo + `"}`)
+	req, err := http.NewRequest("POST", url, payload)
+	if err != nil {
+		log.Fatal(err)
+	}
 
+	req.Header.Add("accept", "application/json")
 	req.Header.Add("content-type", "application/json")
 	req.Header.Add("Authorization", "Bearer 659ad5656af8cf61ad062a3c")
 
@@ -75,15 +80,16 @@ func (g *GestoreMagazzino) Ritorna_hub_per_vicinanza(indirizzo string) string {
 	if err != nil {
 		return "errore nell'indirizzo " + err.Error()
 	}
-	defer res.Body.Close()
 	body, _ := io.ReadAll(res.Body)
 	var risposta Coordinate
 	err = json.Unmarshal(body, &risposta)
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer res.Body.Close()
 	latA := risposta.Latitudine
 	lonA := risposta.Longitudine
+	fmt.Printf("latitudine ind. %f, longitudine ind. %f\n", latA, lonA)
 	min := math.MaxFloat64
 	var sede string
 	for _, collezione := range collezioni {

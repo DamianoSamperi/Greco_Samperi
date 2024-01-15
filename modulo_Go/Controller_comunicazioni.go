@@ -28,8 +28,12 @@ type modifica_data struct {
 	Data          time.Time `json:"data"`
 }
 type richiesta_spedizione struct {
-	Spedizione spedizione.Spedizione `json:"spedizione"`
-	Sede       string                `json:"sede"`
+	ID              string             `json:"id"`
+	Mittente        string             `json:"mittente"`
+	Destinatario    string             `json:"destinatario"`
+	Pacchi          []spedizione.Pacco `json:"Pacchi"`
+	Sede            string             `json:"sede"`
+	Data_spedizione time.Time          `json:"data"`
 }
 
 func Inserimento_spedizione(w http.ResponseWriter, r *http.Request) {
@@ -47,7 +51,7 @@ func Inserimento_spedizione(w http.ResponseWriter, r *http.Request) {
 		var dati richiesta_spedizione
 		_ = json.Unmarshal(body, &dati)
 		// Sede := g.Ritorna_hub_per_vicinanza(dati.Mittente)
-		g.Insert_Spedizione(dati.Spedizione.ID, dati.Spedizione.Mittente, dati.Spedizione.Destinatario, dati.Spedizione.Pacchi, dati.Sede, dati.Spedizione.Data_spedizione)
+		g.Insert_Spedizione(dati.ID, dati.Mittente, dati.Destinatario, dati.Pacchi, dati.Sede, dati.Data_spedizione)
 	} else {
 		http.Error(w, "Metodo non valido", http.StatusMethodNotAllowed)
 	}
