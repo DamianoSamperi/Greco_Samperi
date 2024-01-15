@@ -151,7 +151,9 @@ func (g *GestoreSpedizioni) Insert_Pacco_spedizione(ID string, Peso float64, Dim
 	Pacchi := spedizione.Pacchi
 	Pacchi = append(Pacchi, Pacco)
 	// defer cur.Close(context.TODO())
-	update := bson.D{{Key: "$push", Value: bson.D{{Key: "numero_pacchi", Value: len(Pacchi)}, {Key: "pacchi", Value: Pacchi}}}}
+	numero_pacchi := len(Pacchi)
+	update := bson.D{{Key: "$set", Value: bson.D{{Key: "numero_pacchi", Value: numero_pacchi}, {Key: "pacchi", Value: Pacchi}}}}
+	// update := bson.D{{Key: "$set", Value: bson.D{{Key: "numero_pacchi", Value: numero_pacchi}}}, {Key: "$push", Value: bson.D{{Key: "pacchi", Value: Pacchi}}}}
 	updateResult, err := collection.UpdateOne(context.TODO(), bson.M{"id": ID}, update)
 	if err != nil {
 		print("Errore update")
