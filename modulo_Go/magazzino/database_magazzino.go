@@ -43,6 +43,14 @@ type Coordinate struct {
 	Longitudine float64 `bson:"longitude"`
 }
 
+func contiene(slice []string, str string) bool {
+	for _, item := range slice {
+		if item == str {
+			return true
+		}
+	}
+	return false
+}
 func NuovoGestoreMagazzino(ctx context.Context, uri string) (*GestoreMagazzino, error) {
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(uri))
 	if err != nil {
@@ -160,10 +168,20 @@ func (g *GestoreMagazzino) Ottieni_Spedizioni_PerSede(sede string) []string {
 	return uniqueIDs
 }
 
-func (g *GestoreMagazzino) InserisciPaccoInSede(sede string, p spedizione.Pacco) error {
-	collection := g.client.Database("APL").Collection(sede)
-	_, err := collection.InsertOne(g.ctx, p)
-	return err
+func (g *GestoreMagazzino) InserisciPaccoInSede(sede string, p spedizione.Pacco) string {
+	collezioni, _ := g.client.Database("APL").ListCollectionNames(g.ctx, bson.M{})
+	if contiene(collezioni, sede) {
+		collection := g.client.Database("APL").Collection(sede)
+		_, err := collection.InsertOne(g.ctx, p)
+		if err != nil {
+			return err.Error()
+		} else {
+			return "Inserimento completato"
+		}
+	} else {
+		return "Sede non esistente"
+	}
+
 }
 
 func (g *GestoreMagazzino) SpostaPacco(id string, vecchiaSede string, nuovaSede string) error {
