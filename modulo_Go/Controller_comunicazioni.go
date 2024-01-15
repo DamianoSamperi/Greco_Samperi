@@ -67,10 +67,10 @@ func Inserimento_pacco(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		var dati = struct {
-			Spedizione_id string
-			Peso          float64
-			Dimensione    string
-			Prezzo        float64
+			Spedizione_id string  `json:"id_spedizione"`
+			Peso          float64 `json:"peso"`
+			Dimensione    string  `json:"dimensione"`
+			Prezzo        float64 `json:"prezzo"`
 		}{}
 		err = json.Unmarshal(body, &dati)
 		if err != nil {
@@ -78,7 +78,7 @@ func Inserimento_pacco(w http.ResponseWriter, r *http.Request) {
 		}
 		err = g.Insert_Pacco_spedizione(dati.Spedizione_id, dati.Peso, dati.Dimensione, dati.Prezzo)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
+			http.Error(w, "Errore inserimento "+err.Error(), http.StatusBadRequest)
 			//TO_DO andrebbe fatto il rollback
 		} else {
 			fmt.Fprint(w, "Pacco inserito con successo")

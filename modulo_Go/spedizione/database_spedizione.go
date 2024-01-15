@@ -137,22 +137,24 @@ func (g *GestoreSpedizioni) Insert_Spedizione(ID string, mittente string, destin
 func (g *GestoreSpedizioni) Insert_Pacco_spedizione(ID string, Peso float64, Dimensione string, Prezzo float64) error {
 	collection := g.client.Database("APL").Collection("spedizioni")
 	Pacco := Pacco{Spedizione_id: ID, Peso: Peso, Dimensione: Dimensione, Prezzo: Prezzo}
-	filter := bson.D{{Key: "idspedizione", Value: ID}}
-	cur, err := collection.Find(context.TODO(), filter)
+	// filter := bson.M{{"id": ID}}
+	var spedizione Spedizione
+	err := collection.FindOne(g.ctx, bson.M{"id": ID}).Decode(&spedizione)
 	if err != nil {
 		return errors.New("Spedizione inesistente")
 	}
-	var spedizione Spedizione
-	err = cur.Decode(&spedizione)
-	if err != nil {
-		return err
-	}
+	// err = cur.Decode(&spedizione)
+	// if err != nil {
+	// 	print("Errore decode")
+	// 	return err
+	// }
 	Pacchi := spedizione.Pacchi
 	Pacchi = append(Pacchi, Pacco)
-	defer cur.Close(context.TODO())
+	// defer cur.Close(context.TODO())
 	update := bson.D{{Key: "$push", Value: bson.D{{Key: "numero_pacchi", Value: len(Pacchi)}, {Key: "pacchi", Value: Pacchi}}}}
-	updateResult, err := collection.UpdateOne(context.TODO(), filter, update)
+	updateResult, err := collection.UpdateOne(context.TODO(), bson.M{"id": ID}, update)
 	if err != nil {
+		print("Errore update")
 		return err
 	}
 	fmt.Printf("Modificati %v documenti\n", updateResult.ModifiedCount)
