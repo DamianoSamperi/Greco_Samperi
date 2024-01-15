@@ -128,13 +128,19 @@ func calcola_punti(spedizioni []spedizione.Spedizione, sede Punto_geografico) []
 		}
 		defer res.Body.Close()
 		body, _ := io.ReadAll(res.Body)
-		var risposta Coordinate
+		var risposta = struct {
+			Success bool `json:"success"`
+			Element struct {
+				Latitude  float64 `json:"latitude"`
+				Longitude float64 `json:"longitude"`
+			} `json:"element"`
+		}{}
 		err = json.Unmarshal(body, &risposta)
 		if err != nil {
 			log.Fatal(err)
 		}
-		latA := risposta.Latitudine
-		lonA := risposta.Longitudine
+		latA := risposta.Element.Latitude
+		lonA := risposta.Element.Longitude
 		var tupla Punto_geografico
 		if spedizione.Data_consegna.IsZero() {
 			tupla = Punto_geografico{Indirizzo: spedizione.ID, Latitudine: latA, Longitudine: lonA}

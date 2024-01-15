@@ -72,7 +72,6 @@ func (g *GestoreMagazzino) Ritorna_hub_per_vicinanza(indirizzo string) string {
 		log.Fatal(err)
 	}
 
-	req.Header.Add("accept", "application/json")
 	req.Header.Add("content-type", "application/json")
 	req.Header.Add("Authorization", "Bearer 659ad5656af8cf61ad062a3c")
 
@@ -81,14 +80,20 @@ func (g *GestoreMagazzino) Ritorna_hub_per_vicinanza(indirizzo string) string {
 		return "errore nell'indirizzo " + err.Error()
 	}
 	body, _ := io.ReadAll(res.Body)
-	var risposta Coordinate
+	var risposta = struct {
+		Success bool `json:"success"`
+		Element struct {
+			Latitude  float64 `json:"latitude"`
+			Longitude float64 `json:"longitude"`
+		} `json:"element"`
+	}{}
 	err = json.Unmarshal(body, &risposta)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer res.Body.Close()
-	latA := risposta.Latitudine
-	lonA := risposta.Longitudine
+	latA := risposta.Element.Latitude
+	lonA := risposta.Element.Longitude
 	fmt.Printf("latitudine ind. %f, longitudine ind. %f\n", latA, lonA)
 	min := math.MaxFloat64
 	var sede string
@@ -103,6 +108,7 @@ func (g *GestoreMagazzino) Ritorna_hub_per_vicinanza(indirizzo string) string {
 			}
 			latB := result.Latitudine
 			lonB := result.Longitudine
+			fmt.Printf("latitudine ind. %f, longitudine ind. %f\n", latB, lonB)
 			distanza := R * math.Acos(math.Sin(latA)*math.Sin(latB)+math.Cos(latA)*math.Cos(latB)*math.Cos(lonA-lonB))
 			if min > distanza {
 				min = distanza
@@ -112,6 +118,40 @@ func (g *GestoreMagazzino) Ritorna_hub_per_vicinanza(indirizzo string) string {
 	}
 	return sede
 }
+
+// func (g *GestoreMagazzino) Ritorna_hub_per_vicinanza(indirizzo string) string {
+
+// 	url := "https://geocoding.openapi.it/geocode"
+
+// 	payload := strings.NewReader("{\"address\":\"Via Cristoforo Colombo, Roma RM\"}")
+
+// 	req, _ := http.NewRequest("POST", url, payload)
+
+// 	req.Header.Add("content-type", "application/json")
+// 	req.Header.Add("Authorization", "Bearer 659ad5656af8cf61ad062a3c")
+
+// 	res, _ := http.DefaultClient.Do(req)
+
+// 	defer res.Body.Close()
+// 	body, _ := io.ReadAll(res.Body)
+
+//		fmt.Println(string(body))
+//		var risposta = struct {
+//			Success bool `json:"success"`
+//			Element struct {
+//				ProvidedBy string  `json:"providedBy"`
+//				Latitude   float64 `json:"latitude"`
+//				Longitude  float64 `json:"longitude"`
+//				// Aggiungi qui altri campi se necessario
+//			} `json:"element"`
+//		}{}
+//		err := json.Unmarshal(body, &risposta)
+//		if err != nil {
+//			log.Fatal(err)
+//		}
+//		fmt.Println("coso ", risposta.Element)
+//		return ""
+//	}
 func (g *GestoreMagazzino) Ritorna_Coordinate_hub(sede string) Coordinate {
 	collection := g.client.Database("APL").Collection(sede)
 	var result Coordinate
