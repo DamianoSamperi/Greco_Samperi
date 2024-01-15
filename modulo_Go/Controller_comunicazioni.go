@@ -131,7 +131,12 @@ func Ritorna_sede(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Formato json non corretto", http.StatusBadRequest)
 		return
 	}
-	fmt.Fprint(w, g.Ritorna_hub_per_vicinanza(dati.Indirizzo))
+	hub := g.Ritorna_hub_per_vicinanza(dati.Indirizzo)
+	if hub != "" {
+		fmt.Fprint(w, hub)
+	} else {
+		http.Error(w, "Errore nella ricerca della sede", http.StatusBadRequest)
+	}
 }
 func Ritorna_id(w http.ResponseWriter, r *http.Request) {
 	ctx := context.TODO()
@@ -261,7 +266,7 @@ func main() {
 	http.HandleFunc("/RitornaId_Spedizionie", Ritorna_id)
 	//TO_DO funzione che modifica lo stato della spedizione
 	http.HandleFunc("/Modifica_Stato_Spedizione", Modifica_stato)
-	//passi l'indirizzo e ti torna la sede più vicina
+	//passi l'indirizzo e ti torna la sede più vicina, il formato indirizzo deve essere Via, Città Provincia ex. "Via Cristoforo Colombo, Roma RM"
 	http.HandleFunc("/Ritorna_Sede", Ritorna_sede)
 	//funziona che torna il percorso o i pacchi vedo per il corriere, bisogna passargli la sede
 	http.HandleFunc("/Ottieni_Percorso", Ottieni_percorso)

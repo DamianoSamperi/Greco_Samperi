@@ -65,7 +65,7 @@ func (g *GestoreMagazzino) Ritorna_hub_per_vicinanza(indirizzo string) string {
 
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
-		log.Fatal(err)
+		return "errore nell'indirizzo " + err.Error()
 	}
 	defer res.Body.Close()
 	body, _ := io.ReadAll(res.Body)
@@ -76,21 +76,24 @@ func (g *GestoreMagazzino) Ritorna_hub_per_vicinanza(indirizzo string) string {
 	}
 	latA := risposta.Latitudine
 	lonA := risposta.Longitudine
-	min := 0.0
+	min := math.MaxFloat64
 	var sede string
 	for _, collezione := range collezioni {
-		collection := g.client.Database("APL").Collection(collezione)
-		var result Coordinate
-		err := collection.FindOne(g.ctx, bson.D{}).Decode(&result)
-		if err != nil {
-			return err.Error()
-		}
-		latB := result.Latitudine
-		lonB := result.Longitudine
-		distanza := R * math.Acos(math.Sin(latA)*math.Sin(latB)+math.Cos(latA)*math.Cos(latB)*math.Cos(lonA-lonB))
-		if min > distanza {
-			min = distanza
-			sede = collezione
+		if collezione != "spedizioni" {
+			collection := g.client.Database("APL").Collection(collezione)
+			var result Coordinate
+			// filtro := bson.M{"latitude": bson.M{"$exists": true}}
+			err := collection.FindOne(g.ctx, bson.M{}).Decode(&result)
+			if err != nil {
+				return "errore nella richesta al database " + err.Error()
+			}
+			latB := result.Latitudine
+			lonB := result.Longitudine
+			distanza := R * math.Acos(math.Sin(latA)*math.Sin(latB)+math.Cos(latA)*math.Cos(latB)*math.Cos(lonA-lonB))
+			if min > distanza {
+				min = distanza
+				sede = collezione
+			}
 		}
 	}
 	return sede
