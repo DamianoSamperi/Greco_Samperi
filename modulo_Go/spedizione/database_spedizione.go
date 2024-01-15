@@ -41,7 +41,6 @@ type GestoreSpedizioni struct {
 }
 
 type Pacco struct {
-	ID            int
 	Spedizione_id string
 	// Nome string  `json:"nome"`
 	Peso float64
@@ -122,11 +121,11 @@ func (g *GestoreSpedizioni) Trova_spedizioni_per_ID(ID string) Spedizione {
 	return result
 }
 
-func (g *GestoreSpedizioni) Insert_Spedizione(ID string, mittente string, destinatario string, Pacchi []Pacco, sede string, data_spedizione time.Time, data_consegna time.Time) {
+func (g *GestoreSpedizioni) Insert_Spedizione(ID string, mittente string, destinatario string, Pacchi []Pacco, sede string, data_spedizione time.Time) {
 	collection := g.client.Database("APL").Collection("spedizioni")
 	var Stati []Stato
 	Stati = append(Stati, InPreparazione)
-	spedizione := Spedizione{ID, mittente, destinatario, Stati, data_spedizione, data_consegna, len(Pacchi), Pacchi}
+	spedizione := Spedizione{ID, mittente, destinatario, Stati, data_spedizione, time.Time{}, len(Pacchi), Pacchi}
 	insertResult, err := collection.InsertOne(context.TODO(), spedizione)
 	if err != nil {
 		log.Fatal(err)

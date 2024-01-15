@@ -109,10 +109,10 @@ func (g *GestoreMagazzino) Ottieni_Sedi(sede string) ([]Coordinate, []string) {
 	var lista_magazzini []Coordinate
 	var sedi_magazzini []string
 	for _, collezione := range collezioni {
-		if collezione != sede {
+		if collezione != sede && collezione != "spedizioni" {
 			collection := g.client.Database("APL").Collection(collezione)
 			var result Coordinate
-			err := collection.FindOne(g.ctx, bson.D{}).Decode(&result)
+			err := collection.FindOne(g.ctx, bson.M{}).Decode(&result)
 			if err != nil {
 				return nil, nil
 			}
@@ -126,15 +126,18 @@ func (g *GestoreMagazzino) Ottieni_Sedi(sede string) ([]Coordinate, []string) {
 
 func (g *GestoreMagazzino) OttieniPacchiPerSede(sede string) []spedizione.Pacco {
 	collection := g.client.Database("APL").Collection(sede)
-	cursor, err := collection.Find(g.ctx, bson.M{})
+	filtro := bson.M{"spedizione_id": bson.M{"$exists": true}}
+	cursor, err := collection.Find(g.ctx, filtro)
 	if err != nil {
-		return nil
+		print("error ", err)
+		return []spedizione.Pacco{}
 	}
 	var pacchi []spedizione.Pacco
-	if err = cursor.All(g.ctx, &pacchi); err != nil {
-		return nil
+	err = cursor.All(g.ctx, &pacchi)
+	if err != nil {
+		print("error ", err)
+		return []spedizione.Pacco{}
 	}
-
 	defer cursor.Close(g.ctx)
 	return pacchi
 	// return ToString(pacchi, sede)

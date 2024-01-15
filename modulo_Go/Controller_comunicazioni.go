@@ -47,7 +47,7 @@ func Inserimento_spedizione(w http.ResponseWriter, r *http.Request) {
 		var dati richiesta_spedizione
 		_ = json.Unmarshal(body, &dati)
 		// Sede := g.Ritorna_hub_per_vicinanza(dati.Mittente)
-		g.Insert_Spedizione(dati.Spedizione.ID, dati.Spedizione.Mittente, dati.Spedizione.Destinatario, dati.Spedizione.Pacchi, dati.Sede, dati.Spedizione.Data_spedizione, dati.Spedizione.Data_consegna)
+		g.Insert_Spedizione(dati.Spedizione.ID, dati.Spedizione.Mittente, dati.Spedizione.Destinatario, dati.Spedizione.Pacchi, dati.Sede, dati.Spedizione.Data_spedizione)
 	} else {
 		http.Error(w, "Metodo non valido", http.StatusMethodNotAllowed)
 	}
@@ -247,6 +247,7 @@ func Ottieni_percorso(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Metodo non valido", http.StatusMethodNotAllowed)
 	}
 }
+
 func main() {
 	//passi una spedizione e la sede che puoi farti tornare da ritorna sede(o faccio io vedi tu) e la inserisce nel database
 	http.HandleFunc("/Inserisci_Spedizione", Inserimento_spedizione)
