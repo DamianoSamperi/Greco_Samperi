@@ -155,14 +155,14 @@ func (g *GestoreMagazzino) Ottieni_Spedizioni_PerSede(sede string) []string {
 }
 
 func (g *GestoreMagazzino) InserisciPaccoInSede(sede string, p spedizione.Pacco) error {
-	collection := g.client.Database("nomeDelTuoDatabase").Collection(sede)
+	collection := g.client.Database("APL").Collection(sede)
 	_, err := collection.InsertOne(g.ctx, p)
 	return err
 }
 
 func (g *GestoreMagazzino) SpostaPacco(id string, vecchiaSede string, nuovaSede string) error {
-	vecchiaCollection := g.client.Database("nomeDelTuoDatabase").Collection(vecchiaSede)
-	nuovaCollection := g.client.Database("nomeDelTuoDatabase").Collection(nuovaSede)
+	vecchiaCollection := g.client.Database("APL").Collection(vecchiaSede)
+	nuovaCollection := g.client.Database("APL").Collection(nuovaSede)
 
 	var p spedizione.Pacco
 	err := vecchiaCollection.FindOneAndDelete(g.ctx, bson.M{"_id": id}).Decode(&p)
