@@ -5,10 +5,11 @@ import json
 
 
 class Magazzino:
-    sede = "ciao"
+    #sede = "ciao"
     def __init__(self, gestore_spedizioni):
         self.cod_sped = None
         self.codice_prodotto = None
+        self.sede = None
         #Crea un dizionario vuoto e lo assegna all'attributo di istanza 'inventario'
         self.inventario = []
 
@@ -72,14 +73,14 @@ class Magazzino:
                 print(f"Errore nella richiesta POST. Codice di stato: {response.status_code}")
                 print(response.text)
 
-            global sede
-            sede = response.text
+            
+            self.sede = response.text
             
             print("Inserisci Spedizione")
             url = "http://localhost:8080/Inserisci_Spedizione"
             payload = {
                     "Spedizione": sped,
-                    "Sede": sede                    
+                    "Sede": self.sede                    
                       }   
 
             # Effettua la richiesta POST
@@ -94,7 +95,7 @@ class Magazzino:
             print("Ottieni Prodotti")
             url3 = "http://localhost:8080/Ottieni_Prodotti_Hub"
             payload = {
-                    "Sede": "Catania"                    
+                    "Sede": self.sede                   
                       }   
 
             #payload_json = json.dumps(payload)
