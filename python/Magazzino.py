@@ -140,17 +140,13 @@ class Magazzino:
         self.ordini = []
         while True:
             # Ottieni l'ultimo codice presente nel magazzino
-            if self.inventario:
-                ultimo_codice = max(pacco.codice for pacco in self.inventario)
-                nuovo_codice = ultimo_codice + str(1)
-            else:
-                nuovo_codice = "1"
+            
 
             peso = float(input("Inserisci il peso in grammi: "))
             dimensione = input("Inserisci la dimensione del nuovo pacco: ")
 
             # Crea un nuovo oggetto Pacco con il nuovo codice
-            nuovo_pacco = Pacco(codice=nuovo_codice, codice_sped=self.cod_sped, peso=peso, prezzo=100, dimensione=dimensione)
+            nuovo_pacco = Pacco(codice=None, codice_sped=self.cod_sped, peso=peso, prezzo=100, dimensione=dimensione)
 
             # Aggiungi il nuovo pacco al magazzino
             self.aggiungi_pacco(nuovo_pacco)
