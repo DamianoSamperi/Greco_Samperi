@@ -28,12 +28,10 @@ type modifica_data struct {
 	Data          time.Time `json:"data"`
 }
 type richiesta_spedizione struct {
-	ID              string             `json:"id"`
-	Mittente        string             `json:"mittente"`
-	Destinatario    string             `json:"destinatario"`
-	Pacchi          []spedizione.Pacco `json:"Pacchi"`
-	Sede            string             `json:"sede"`
-	Data_spedizione time.Time          `json:"data"`
+	ID           string `json:"id"`
+	Mittente     string `json:"mittente"`
+	Destinatario string `json:"destinatario"`
+	Sede         string `json:"sede"`
 }
 
 func Inserimento_spedizione(w http.ResponseWriter, r *http.Request) {
@@ -51,7 +49,40 @@ func Inserimento_spedizione(w http.ResponseWriter, r *http.Request) {
 		var dati richiesta_spedizione
 		_ = json.Unmarshal(body, &dati)
 		// Sede := g.Ritorna_hub_per_vicinanza(dati.Mittente)
-		g.Insert_Spedizione(dati.ID, dati.Mittente, dati.Destinatario, dati.Pacchi, dati.Sede, dati.Data_spedizione)
+		g.Insert_Spedizione(dati.ID, dati.Mittente, dati.Destinatario, dati.Sede)
+	} else {
+		http.Error(w, "Metodo non valido", http.StatusMethodNotAllowed)
+	}
+}
+func Inserimento_pacco(w http.ResponseWriter, r *http.Request) {
+	ctx := context.TODO()
+	g, err := spedizione.NuovoGestoreSpedizioni(ctx, "mongodb+srv://root:yWP2DlLumOz07vNv@apl.yignw97.mongodb.net/?retryWrites=true&w=majority")
+	if err != nil {
+		log.Fatal(err)
+	}
+	if r.Method == http.MethodPost {
+		body, err := io.ReadAll(r.Body)
+		if err != nil {
+			http.Error(w, "Errore nella lettura del corpo della richiesta", http.StatusBadRequest)
+			return
+		}
+		var dati = struct {
+			Spedizione_id string
+			Peso          float64
+			Dimensione    string
+			Prezzo        float64
+		}{}
+		err = json.Unmarshal(body, &dati)
+		if err != nil {
+			http.Error(w, "Errore formato inviato", http.StatusBadRequest)
+		}
+		err = g.Insert_Pacco_spedizione(dati.Spedizione_id, dati.Peso, dati.Dimensione, dati.Prezzo)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			//TO_DO andrebbe fatto il rollback
+		} else {
+			fmt.Fprint(w, "Pacco inserito con successo")
+		}
 	} else {
 		http.Error(w, "Metodo non valido", http.StatusMethodNotAllowed)
 	}
@@ -261,6 +292,8 @@ func Ottieni_percorso(w http.ResponseWriter, r *http.Request) {
 func main() {
 	//passi una spedizione e la sede che puoi farti tornare da ritorna sede(o faccio io vedi tu) e la inserisce nel database
 	http.HandleFunc("/Inserisci_Spedizione", Inserimento_spedizione)
+	//funzione dove passi i pacchi e li inserisce in una spedizione creata in caso di errore non inserire più pacchi ma riprova ad inserire la spedizione
+	http.HandleFunc("/Inserisci_Pacco_spedizione", Inserimento_pacco)
 	//passi un mittente e ti torna tutte le sue spedizioni
 	http.HandleFunc("/Visualizza_Spedizioni", Visualizza_spedizioni)
 	//passi la sede e ti ritorna tutti i pacchi in quella sede

@@ -3,6 +3,7 @@ package spedizione
 import (
 	//TO_DO da passare come non relazionale, per aggiungere lista stati per il tracciamento
 	"context"
+	"errors"
 	"fmt"
 	"log"
 	"strconv"
@@ -121,17 +122,42 @@ func (g *GestoreSpedizioni) Trova_spedizioni_per_ID(ID string) Spedizione {
 	return result
 }
 
-func (g *GestoreSpedizioni) Insert_Spedizione(ID string, mittente string, destinatario string, Pacchi []Pacco, sede string, data_spedizione time.Time) {
+func (g *GestoreSpedizioni) Insert_Spedizione(ID string, mittente string, destinatario string, sede string) {
 	collection := g.client.Database("APL").Collection("spedizioni")
 	var Stati []Stato
 	Stati = append(Stati, InPreparazione)
-	spedizione := Spedizione{ID, mittente, destinatario, Stati, data_spedizione, time.Time{}, len(Pacchi), Pacchi}
+	spedizione := Spedizione{ID, mittente, destinatario, Stati, time.Now(), time.Time{}, 0, []Pacco{}}
 	insertResult, err := collection.InsertOne(context.TODO(), spedizione)
 	if err != nil {
 		log.Fatal(err)
 	}
 	fmt.Println("Inserita una nuova spedizione con ID:", insertResult.InsertedID)
 	//TO_DO potrebbbe essere necessario inserire il pacco nel magazzino
+}
+func (g *GestoreSpedizioni) Insert_Pacco_spedizione(ID string, Peso float64, Dimensione string, Prezzo float64) error {
+	collection := g.client.Database("APL").Collection("spedizioni")
+	Pacco := Pacco{Spedizione_id: ID, Peso: Peso, Dimensione: Dimensione, Prezzo: Prezzo}
+	filter := bson.D{{Key: "idspedizione", Value: ID}}
+	cur, err := collection.Find(context.TODO(), filter)
+	if err != nil {
+		return errors.New("Spedizione inesistente")
+	}
+	var spedizione Spedizione
+	err = cur.Decode(&spedizione)
+	if err != nil {
+		return err
+	}
+	Pacchi := spedizione.Pacchi
+	Pacchi = append(Pacchi, Pacco)
+	defer cur.Close(context.TODO())
+	update := bson.D{{Key: "$push", Value: bson.D{{Key: "numero_pacchi", Value: len(Pacchi)}, {Key: "pacchi", Value: Pacchi}}}}
+	updateResult, err := collection.UpdateOne(context.TODO(), filter, update)
+	if err != nil {
+		return err
+	}
+	fmt.Printf("Modificati %v documenti\n", updateResult.ModifiedCount)
+	//TO_DO potrebbbe essere necessario inserire il pacco nel magazzino
+	return nil
 }
 
 func (g *GestoreSpedizioni) RitornaID() []string {
