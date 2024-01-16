@@ -29,47 +29,31 @@
         private void InitializeComponent()
         {
             LabelInserisciNome = new Label();
-            textBoxNome = new TextBox();
             labelInserisciCognome = new Label();
-            textBoxCognome = new TextBox();
             button_invia = new Button();
+            textBoxCognome = new TextBox();
+            textBoxNome = new TextBox();
             SuspendLayout();
             // 
             // LabelInserisciNome
             // 
             LabelInserisciNome.AutoSize = true;
-            LabelInserisciNome.Location = new Point(93, 64);
+            LabelInserisciNome.Location = new Point(99, 57);
             LabelInserisciNome.Name = "LabelInserisciNome";
             LabelInserisciNome.Size = new Size(141, 20);
             LabelInserisciNome.TabIndex = 0;
             LabelInserisciNome.Text = "Inserisci il tuo nome";
             LabelInserisciNome.Click += label_Nome_Click;
             // 
-            // textBoxNome
-            // 
-            textBoxNome.Location = new Point(93, 97);
-            textBoxNome.Name = "textBoxNome";
-            textBoxNome.Size = new Size(190, 27);
-            textBoxNome.TabIndex = 1;
-            textBoxNome.TextChanged += textBoxNome_TextChanged;
-            // 
             // labelInserisciCognome
             // 
             labelInserisciCognome.AutoSize = true;
-            labelInserisciCognome.Location = new Point(93, 147);
+            labelInserisciCognome.Location = new Point(99, 157);
             labelInserisciCognome.Name = "labelInserisciCognome";
             labelInserisciCognome.Size = new Size(166, 20);
             labelInserisciCognome.TabIndex = 2;
             labelInserisciCognome.Text = "Inserisci il tuo cognome";
             labelInserisciCognome.Click += label_cognome;
-            // 
-            // textBoxCognome
-            // 
-            textBoxCognome.Location = new Point(93, 185);
-            textBoxCognome.Name = "textBoxCognome";
-            textBoxCognome.Size = new Size(190, 27);
-            textBoxCognome.TabIndex = 3;
-            textBoxCognome.TextChanged += textBoxCognome_TextChanged;
             // 
             // button_invia
             // 
@@ -81,15 +65,29 @@
             button_invia.UseVisualStyleBackColor = true;
             button_invia.Click += button_invia_Click;
             // 
+            // textBoxCognome
+            // 
+            textBoxCognome.Location = new Point(99, 192);
+            textBoxCognome.Name = "textBoxCognome";
+            textBoxCognome.Size = new Size(184, 27);
+            textBoxCognome.TabIndex = 5;
+            // 
+            // textBoxNome
+            // 
+            textBoxNome.Location = new Point(99, 104);
+            textBoxNome.Name = "textBoxNome";
+            textBoxNome.Size = new Size(184, 27);
+            textBoxNome.TabIndex = 6;
+            // 
             // Form2
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
-            Controls.Add(button_invia);
-            Controls.Add(textBoxCognome);
-            Controls.Add(labelInserisciCognome);
             Controls.Add(textBoxNome);
+            Controls.Add(textBoxCognome);
+            Controls.Add(button_invia);
+            Controls.Add(labelInserisciCognome);
             Controls.Add(LabelInserisciNome);
             Name = "Form2";
             Text = "Form2";
@@ -101,9 +99,9 @@
         #endregion
 
         private Label LabelInserisciNome;
-        private TextBox textBoxNome;
         private Label labelInserisciCognome;
-        private TextBox textBoxCognome;
         private Button button_invia;
+        private TextBox textBoxCognome;
+        private TextBox textBoxNome;
     }
 }
