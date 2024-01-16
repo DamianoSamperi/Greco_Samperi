@@ -88,7 +88,8 @@ class Magazzino:
                       }   
             print("Id ",self.cod_sped)
             # Effettua la richiesta POST
-            response = requests.post(url, json=payload)
+            headers = {"Content-Type": "application/json"}
+            response = requests.post(url, json=payload, headers=headers)
             if response.status_code == 200:
                 print("Richiesta POST eseguita con successo!")
                 print(response.text)
