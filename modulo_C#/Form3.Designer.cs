@@ -28,12 +28,47 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Text = "Form3";
+            label1 = new Label();
+            btn_percorso = new Button();
+            SuspendLayout();
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new Point(326, 20);
+            label1.Name = "label1";
+            label1.Size = new Size(150, 25);
+            label1.TabIndex = 0;
+            label1.Text = "Seleziona operazione";
+            label1.UseCompatibleTextRendering = true;
+            label1.Click += label1_Click;
+            // 
+            // btn_percorso
+            // 
+            btn_percorso.Location = new Point(314, 101);
+            btn_percorso.Name = "btn_percorso";
+            btn_percorso.Size = new Size(162, 29);
+            btn_percorso.TabIndex = 1;
+            btn_percorso.Text = "Ottieni spedizioni";
+            btn_percorso.UseVisualStyleBackColor = true;
+            btn_percorso.Click += btn_percorso_Click;
+            // 
+            // Form3
+            // 
+            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(800, 450);
+            Controls.Add(btn_percorso);
+            Controls.Add(label1);
+            Name = "Form3";
+            Text = "Corriere";
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
+
+        private Label label1;
+        private Button btn_percorso;
     }
 }
