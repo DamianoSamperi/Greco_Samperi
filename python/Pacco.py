@@ -37,7 +37,7 @@ class Pacco:
 
     def to_dict(self):
         return {
-            'codice_sped': self.codice_sped,
+            'spedizione_id': self.codice_sped,
             'peso': self.peso,
             'prezzo': self.calcola_prezzo(),
             'dimensione': self.dimensione

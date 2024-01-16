@@ -7,23 +7,26 @@ from fastapi import FastAPI
 
 #@app.get("/")
 #def requestMagazzino():
-gestore_spedizioni = GestoreSpedizioni()
-# Creazione di un oggetto Magazzino
-magazzino = Magazzino(gestore_spedizioni)
-# Creazione di un cliente1
+def main():
+    gestore_spedizioni = GestoreSpedizioni()
+    # Creazione di un oggetto Magazzino
+    magazzino = Magazzino(gestore_spedizioni)
+    # Creazione di un cliente1
 
-nome = input("Inserisci il tuo nome: ")
-cognome = input("Inserisci il tuo cognome: ")
-cliente1 = Cliente(nome=nome, cognome=cognome)
+    nome = input("Inserisci il tuo nome: ")
+    cognome = input("Inserisci il tuo cognome: ")
+    cliente1 = Cliente(nome=nome, cognome=cognome)
 
-magazzino.gestisci_magazzino()
+    magazzino.gestisci_magazzino()
 
-magazzino.aggiungi_pacco_cliente(cliente1)
+    magazzino.aggiungi_pacco_cliente(cliente1)
 
-print("Ordine completato.")
-#mostra inventario aggiurnato
-magazzino.mostra_inventario()
+    print("Ordine completato.")
+    #mostra inventario aggiurnato
+    magazzino.mostra_inventario()
 
+if __name__ == "__main__":
+    main()
 
 
    

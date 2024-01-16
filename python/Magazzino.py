@@ -146,10 +146,21 @@ class Magazzino:
         self.ordini = []
         while True:
             # Ottieni l'ultimo codice presente nel magazzino
-            
+            while True:
+                try:
+                    peso = float(input("Inserisci il peso in grammi: "))
+                    break
+                except ValueError:
+                    print("Errore: Inserisci un valore numerico.")
 
-            peso = float(input("Inserisci il peso in grammi: "))
-            dimensione = input("Inserisci la dimensione del nuovo pacco: ")
+            
+            while True:
+                dimensione = input("Inserisci la dimensione del nuovo pacco (piccolo/medio/grande): ").lower()
+    
+                if dimensione in ["piccolo", "medio", "grande"]:
+                    break  # Esci dal ciclo se l'input è valido
+                else:
+                    print("Errore: Inserisci una dimensione valida (piccolo, medio o grande).")
 
             # Crea un nuovo oggetto Pacco con il nuovo codice
             nuovo_pacco = Pacco(codice_sped=self.cod_sped, peso=peso, prezzo=100, dimensione=dimensione)
