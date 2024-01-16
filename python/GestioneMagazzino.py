@@ -16,6 +16,8 @@ nome = input("Inserisci il tuo nome: ")
 cognome = input("Inserisci il tuo cognome: ")
 cliente1 = Cliente(nome=nome, cognome=cognome)
 
+
+
 magazzino.gestisci_magazzino()
 
 magazzino.aggiungi_pacco_cliente(cliente1)

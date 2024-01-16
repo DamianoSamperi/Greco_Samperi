@@ -5,10 +5,9 @@ import json
 
 
 class Magazzino:
-    #sede = "ciao"
     def __init__(self, gestore_spedizioni):
         self.cod_sped = None
-        self.codice_prodotto = None
+        #self.codice_prodotto = None
         self.sede = None
         #Crea un dizionario vuoto e lo assegna all'attributo di istanza 'inventario'
         self.inventario = []
@@ -76,10 +75,15 @@ class Magazzino:
             
             self.sede = response.text
             
+
+    
+
             print("Inserisci Spedizione")
             url = "http://localhost:8080/Inserisci_Spedizione"
             payload = {
-                    "Spedizione": sped,
+                    "ID": self.cod_sped,
+                    "Mittente": mittente,
+                    "Destinatario": destinatario, 
                     "Sede": self.sede                    
                       }   
 
@@ -147,7 +151,7 @@ class Magazzino:
             dimensione = input("Inserisci la dimensione del nuovo pacco: ")
 
             # Crea un nuovo oggetto Pacco con il nuovo codice
-            nuovo_pacco = Pacco(codice=None, codice_sped=self.cod_sped, peso=peso, prezzo=100, dimensione=dimensione)
+            nuovo_pacco = Pacco(codice_sped=self.cod_sped, peso=peso, prezzo=100, dimensione=dimensione)
 
             # Aggiungi il nuovo pacco al magazzino
             self.aggiungi_pacco(nuovo_pacco)
@@ -165,7 +169,7 @@ class Magazzino:
                     print(f"Attenzione: Limite di pacchi {nuovo_pacco.dimensione} raggiunto. Non è stato aggiunto nessun pacco del nuovo ordine, riprovare con meno pacchi")
                     continue
                 else:
-                    print(f"Pacco {nuovo_pacco.codice} aggiunto al magazzino e all'inventario con codice {nuovo_pacco.codice}.")
+                    print(f"Pacco  aggiunto al magazzino e all'inventario con codice {nuovo_pacco.codice_sped}.")
             
             #pacco_json = json.dumps(nuovo_pacco.to_dict())
             print("Inserisci Prodotto Hub")
@@ -186,6 +190,30 @@ class Magazzino:
                 print(f"Errore nella richiesta POST. Codice di stato: {response.status_code}")
                 print(response.text)
            
+
+            print("Inserisci Pacco spedizione")
+            url7 = "http://localhost:8080/Inserisci_Pacco_spedizione"
+            payload = {
+                       "Spedizione_id": nuovo_pacco.codice_sped,
+                       "Peso": nuovo_pacco.peso,
+                       "Dimensione": nuovo_pacco.dimensione,
+                       "Prezzo": nuovo_pacco.calcola_prezzo()          
+                      }   
+            
+            #payload_json = json.dumps(payload)
+            headers = {"Content-Type": "application/json"}
+            # Effettua la richiesta POST
+            response = requests.post(url7, json=payload, headers=headers)
+            if response.status_code == 200:
+                print("Richiesta POST eseguita con successo!")
+                print(response.text)
+            else:
+                print(f"Errore nella richiesta POST. Codice di stato: {response.status_code}")
+                print(response.text)
+           
+
+
+
             cliente.aggiunge_ordine(nuovo_pacco)
             continua = input("Vuoi aggiungere un altro pacco? (si/no): ")
             if continua.lower() != 'si':
