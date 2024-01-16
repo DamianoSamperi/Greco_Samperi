@@ -67,6 +67,14 @@ namespace Modulo_C_
                     MessageBox.Show($"Errore: {response.StatusCode}", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
+            this.Hide();
+            //CustomControl customControl = new CustomControl();
+            Form newForm = new Form4();
+            //newForm.Controls.Add(customControl);
+            newForm.ShowDialog();
+            newForm = null;
+
+            this.Show();
         }
 
 
