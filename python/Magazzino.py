@@ -60,7 +60,7 @@ class Magazzino:
             print("Ritorna Sede")
             url2 = "http://localhost:8080/Ritorna_Sede"
 
-            payload = {"Indirizzo": mittente }
+            payload = {"indirizzo": mittente }
             payload_json = json.dumps(payload)
             headers = {"Content-Type": "application/json"}
             response = requests.post(url2, data=payload_json, headers=headers)
@@ -81,14 +81,14 @@ class Magazzino:
             print("Inserisci Spedizione")
             url = "http://localhost:8080/Inserisci_Spedizione"
             payload = {
-                    "ID": self.cod_sped,
-                    "Mittente": mittente,
-                    "Destinatario": destinatario, 
-                    "Sede": self.sede                    
+                    "id": self.cod_sped,
+                    "mittente": mittente,
+                    "destinatario": destinatario, 
+                    "sede": self.sede                    
                       }   
-
+            print("Id ",self.cod_sped)
             # Effettua la richiesta POST
-            response = requests.post(url, data=payload)
+            response = requests.post(url, json=payload)
             if response.status_code == 200:
                 print("Richiesta POST eseguita con successo!")
                 print(response.text)
@@ -99,7 +99,7 @@ class Magazzino:
             print("Ottieni Prodotti")
             url3 = "http://localhost:8080/Ottieni_Prodotti_Hub"
             payload = {
-                    "Sede": self.sede                   
+                    "sede": self.sede                   
                       }   
 
             #payload_json = json.dumps(payload)
@@ -117,7 +117,7 @@ class Magazzino:
             url5 = "http://localhost:8080/Visualizza_Spedizioni"
 
             payload = {"Mittente": mittente }
-            payload_json = json.dumps(payload)
+            payload_json = json.dumps(payload)  
             headers = {"Content-Type": "application/json"}
             response = requests.post(url5, json=payload_json, headers=headers)
 
@@ -175,8 +175,8 @@ class Magazzino:
             print("Inserisci Prodotto Hub")
             url4 = "http://localhost:8080/Inserisci_Prodotto_Hub"
             payload = {
-                       "Sede": self.sede,
-                       "Pacco": nuovo_pacco.to_dict()              
+                       "sede": self.sede,
+                       "pacco": nuovo_pacco.to_dict()              
                       }   
             
             #payload_json = json.dumps(payload)
@@ -194,10 +194,10 @@ class Magazzino:
             print("Inserisci Pacco spedizione")
             url7 = "http://localhost:8080/Inserisci_Pacco_spedizione"
             payload = {
-                       "Spedizione_id": nuovo_pacco.codice_sped,
-                       "Peso": nuovo_pacco.peso,
-                       "Dimensione": nuovo_pacco.dimensione,
-                       "Prezzo": nuovo_pacco.calcola_prezzo()          
+                       "id_spedizione": nuovo_pacco.codice_sped,
+                       "peso": nuovo_pacco.peso,
+                       "dimensione": nuovo_pacco.dimensione,
+                       "prezzo": nuovo_pacco.calcola_prezzo()          
                       }   
             
             #payload_json = json.dumps(payload)

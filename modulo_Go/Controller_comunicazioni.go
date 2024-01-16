@@ -100,7 +100,7 @@ func Visualizza_spedizioni(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var dati = struct {
-		Mittente string
+		Mittente string `json:"mittente"`
 	}{}
 	_ = json.Unmarshal(body, &dati)
 	fmt.Fprint(w, g.Visualizza_Spedizioni(dati.Mittente))
@@ -138,7 +138,7 @@ func Ottieni_prodotti(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var dati = struct {
-		Sede string
+		Sede string `json:"sede"`
 	}{}
 	err = json.Unmarshal(body, &dati)
 	if err != nil {
@@ -160,7 +160,7 @@ func Ritorna_sede(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var dati = struct {
-		Indirizzo string
+		Indirizzo string `json:"indirizzo"`
 	}{}
 	err = json.Unmarshal(body, &dati)
 	if err != nil {
