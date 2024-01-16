@@ -88,7 +88,8 @@ class Magazzino:
                       }   
 
             # Effettua la richiesta POST
-            response = requests.post(url, data=payload)
+            headers = {"Content-Type": "application/json"}
+            response = requests.post(url, json=payload, headers=headers)
             if response.status_code == 200:
                 print("Richiesta POST eseguita con successo!")
                 print(response.text)
@@ -175,8 +176,9 @@ class Magazzino:
             print("Inserisci Prodotto Hub")
             url4 = "http://localhost:8080/Inserisci_Prodotto_Hub"
             payload = {
-                       "Sede": self.sede,
-                       "Pacco": nuovo_pacco.to_dict()              
+                       "Pacco": nuovo_pacco.to_dict(), 
+                       "Sede": self.sede
+                                   
                       }   
             
             #payload_json = json.dumps(payload)
