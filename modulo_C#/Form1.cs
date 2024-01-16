@@ -1,4 +1,6 @@
 using System.Windows.Forms;
+using System;
+using System.Diagnostics;
 
 namespace Modulo_C_
 {
@@ -22,6 +24,7 @@ namespace Modulo_C_
             //newForm.Controls.Add(customControl);
             newForm.ShowDialog();
             newForm = null;
+           
             this.Show();
         }
 
