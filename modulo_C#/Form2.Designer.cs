@@ -43,7 +43,6 @@
             LabelInserisciNome.Size = new Size(141, 20);
             LabelInserisciNome.TabIndex = 0;
             LabelInserisciNome.Text = "Inserisci il tuo nome";
-            LabelInserisciNome.Click += label_Nome_Click;
             // 
             // labelInserisciCognome
             // 
@@ -53,7 +52,6 @@
             labelInserisciCognome.Size = new Size(166, 20);
             labelInserisciCognome.TabIndex = 2;
             labelInserisciCognome.Text = "Inserisci il tuo cognome";
-            labelInserisciCognome.Click += label_cognome;
             // 
             // button_invia
             // 
@@ -91,7 +89,6 @@
             Controls.Add(LabelInserisciNome);
             Name = "Form2";
             Text = "Form2";
-            Load += Form2_Load;
             ResumeLayout(false);
             PerformLayout();
         }

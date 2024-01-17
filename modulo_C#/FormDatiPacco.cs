@@ -18,17 +18,33 @@ namespace Modulo_C_
             InitializeComponent();
         }
 
-    
+
         private async void button_invia_dati_pacco_Click_1(object sender, EventArgs e)
         {
             string peso = textBoxPeso.Text;
             string dimensione = textBoxDimensione.Text;
+            string risposta = "";
+
+            for (int i = 0; i < checkedListBoxSiNo.Items.Count; i++)
+            {
+                if (checkedListBoxSiNo.GetItemChecked(i))
+                {
+                    risposta = checkedListBoxSiNo.GetItemText(checkedListBoxSiNo.Items[i]);
+                    break;  // Esci dal ciclo una volta trovata la checkbox selezionata
+                }
+            }
 
 
-            await InviaRichiestaPost(peso, dimensione);
+
+            await InviaRichiestaPost(peso, dimensione, risposta);
+
+            if (risposta == "si")
+            {
+                await InviaRichiestaPost(peso, dimensione, risposta);
+            }
         }
 
-        private async Task InviaRichiestaPost(string peso, string dimensione)
+        private async Task InviaRichiestaPost(string peso, string dimensione, string risposta)
         {
             string url = "http://localhost:8082/aggiungi_pacco_cliente"; // Cambia la porta e il percorso a seconda delle tue esigenze
 
@@ -39,6 +55,7 @@ namespace Modulo_C_
                 {
                     peso = peso,
                     dimensione = dimensione,
+                    risposta = risposta
                 };
 
                 // Converti i dati in formato JSON
@@ -62,9 +79,7 @@ namespace Modulo_C_
                     MessageBox.Show($"Errore: {response.StatusCode}", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
-
+            
         }
-
-        
     }
 }

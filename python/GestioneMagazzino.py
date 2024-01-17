@@ -7,6 +7,8 @@ app = Flask(__name__)
 gestore_spedizioni = GestoreSpedizioni()  
 magazzino = Magazzino(gestore_spedizioni)  
 
+cliente_data = {}
+
 @app.route('/invia_dati', methods=['POST'])
 def invia_dati():
     if request.method == 'POST':
@@ -19,6 +21,8 @@ def invia_dati():
 
         # Crea un oggetto Cliente con i dati ricevuti
         cliente = Cliente(nome=nome, cognome=cognome)
+
+        cliente_data['cliente'] = cliente
         
         return jsonify({'messaggio': 'Ordine completato. Inventario aggiornato.'})
         # Gestisci il magazzino e aggiungi il pacco del cliente
@@ -42,12 +46,13 @@ def aggiungi_pacco_cliente():
     if request.method == 'POST':
         data = request.json
         # Esegui l'elaborazione dei dati per aggiungere il pacco del cliente
-        #nome = data.get('nome', '')
-        #cognome = data.get('cognome', '')
-        cliente = Cliente(nome="gabri", cognome="greco")
-        magazzino.aggiungi_pacco_cliente(cliente, data)
+        
+        cliente = cliente_data.get('cliente')
+        magazzino.aggiungi_pacco_cliente(cliente, data)        
         return jsonify({'messaggio': 'Pacco cliente aggiunto correttamente.'})
-      
+    
+    #magazzino.mostra_inventario()  
+
 
 if __name__ == '__main__':
     app.run(debug=True,  host='0.0.0.0', port=8082)  # Cambia la porta se necessario

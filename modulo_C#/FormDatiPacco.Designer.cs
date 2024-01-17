@@ -33,6 +33,8 @@
             button_invia_dati_pacco = new Button();
             labelInserisciPeso = new Label();
             LabelInserisciDimensione = new Label();
+            labelContinua = new Label();
+            checkedListBoxSiNo = new CheckedListBox();
             SuspendLayout();
             // 
             // textBoxPeso
@@ -51,7 +53,7 @@
             // 
             // button_invia_dati_pacco
             // 
-            button_invia_dati_pacco.Location = new Point(62, 239);
+            button_invia_dati_pacco.Location = new Point(62, 346);
             button_invia_dati_pacco.Name = "button_invia_dati_pacco";
             button_invia_dati_pacco.Size = new Size(94, 29);
             button_invia_dati_pacco.TabIndex = 9;
@@ -77,11 +79,31 @@
             LabelInserisciDimensione.TabIndex = 8;
             LabelInserisciDimensione.Text = "Inserisci la dimensione del pacco (piccolo/medio/grande)";
             // 
+            // labelContinua
+            // 
+            labelContinua.AutoSize = true;
+            labelContinua.Location = new Point(62, 245);
+            labelContinua.Name = "labelContinua";
+            labelContinua.Size = new Size(250, 20);
+            labelContinua.TabIndex = 12;
+            labelContinua.Text = "vuoi inserie un nuovo pacco?(si/no): ";
+            // 
+            // checkedListBoxSiNo
+            // 
+            checkedListBoxSiNo.FormattingEnabled = true;
+            checkedListBoxSiNo.Items.AddRange(new object[] { "si", "no" });
+            checkedListBoxSiNo.Location = new Point(62, 283);
+            checkedListBoxSiNo.Name = "checkedListBoxSiNo";
+            checkedListBoxSiNo.Size = new Size(150, 48);
+            checkedListBoxSiNo.TabIndex = 15;
+            // 
             // FormDatiPacco
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(checkedListBoxSiNo);
+            Controls.Add(labelContinua);
             Controls.Add(textBoxPeso);
             Controls.Add(textBoxDimensione);
             Controls.Add(button_invia_dati_pacco);
@@ -100,5 +122,7 @@
         private Button button_invia_dati_pacco;
         private Label labelInserisciPeso;
         private Label LabelInserisciDimensione;
+        private Label labelContinua;
+        private CheckedListBox checkedListBoxSiNo;
     }
 }

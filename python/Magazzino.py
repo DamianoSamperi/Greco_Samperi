@@ -229,7 +229,7 @@ class Magazzino:
 
 
             cliente.aggiunge_ordine(nuovo_pacco)
-            continua = input("Vuoi aggiungere un altro pacco? (si/no): ")
+            continua = data.get('risposta', '')
             if continua.lower() != 'si':
                 break
 

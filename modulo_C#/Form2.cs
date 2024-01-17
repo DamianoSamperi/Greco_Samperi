@@ -30,16 +30,16 @@ namespace Modulo_C_
             string cognome = textBoxCognome.Text;
 
             // Esegui la richiesta POST
-           await InviaRichiestaPost(nome, cognome);
+            await InviaRichiestaPost(nome, cognome);
 
-           this.Hide();
-           //CustomControl customControl = new CustomControl();
-           Form newForm = new Form4();
-           //newForm.Controls.Add(customControl);
-           newForm.ShowDialog();
-           newForm = null;
+            this.Hide();
+            //CustomControl customControl = new CustomControl();
+            Form newForm = new Form4();
+            //newForm.Controls.Add(customControl);
+            newForm.ShowDialog();
+            newForm = null;
 
-           this.Show();
+            this.Show();
         }
 
         private async Task InviaRichiestaPost(string nome, string cognome)
@@ -76,23 +76,6 @@ namespace Modulo_C_
                     MessageBox.Show($"Errore: {response.StatusCode}", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
-            
-        }
-
-
-        private void label_cognome(object sender, EventArgs e)
-        {
-
-        }
-
-
-        private void label_Nome_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void Form2_Load(object sender, EventArgs e)
-        {
 
         }
 
