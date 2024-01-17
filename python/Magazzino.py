@@ -2,6 +2,7 @@ import requests
 import time
 from Pacco import Pacco
 import json
+from flask import Flask, request, jsonify
 
 
 class Magazzino:
@@ -44,11 +45,13 @@ class Magazzino:
             print(pacco)
 
 
+    
+    def gestisci_magazzino(self, data):
 
 
-    def gestisci_magazzino(self):            
-            mittente = input("Inserisci il mittente per la spedizione: ")
-            destinatario = input("Inserisci indirizzo destinatario per la spedizione: ")
+        # Esegui l'elaborazione dei dati      
+            mittente = data.get('mittente', '')   
+            destinatario = data.get('destinatario', '')   
 
             
             time.sleep(4)
@@ -136,26 +139,25 @@ class Magazzino:
             sped.aggiungi_evento_tracciamento(f"Pacco in preparazione consegna")
             sped.tracciamento()
                 
-            
-
+   
    
 
 
 
-    def aggiungi_pacco_cliente(self, cliente):
+    def aggiungi_pacco_cliente(self, cliente, data):
         self.ordini = []
         while True:
             # Ottieni l'ultimo codice presente nel magazzino
             while True:
                 try:
-                    peso = float(input("Inserisci il peso in grammi: "))
+                    peso = float(data.get('peso', ''))
                     break
                 except ValueError:
                     print("Errore: Inserisci un valore numerico.")
 
             
             while True:
-                dimensione = input("Inserisci la dimensione del nuovo pacco (piccolo/medio/grande): ").lower()
+                dimensione = data.get('dimensione', '')
     
                 if dimensione in ["piccolo", "medio", "grande"]:
                     break  # Esci dal ciclo se l'input è valido

@@ -2,57 +2,50 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Net.Http;
-using System.Text.Json;
 
 namespace Modulo_C_
 {
-    public partial class Form2 : Form
+    public partial class Form4 : Form
     {
-
-        public Form2()
+        public Form4()
         {
             InitializeComponent();
         }
 
-
-
-
-        public async void button_invia_Click(object sender, EventArgs e)
+        private async void button_invia_locazione_Click(object sender, EventArgs e)
         {
-            string nome = textBoxNome.Text;
-            string cognome = textBoxCognome.Text;
+            string mittente = textBoxMittente.Text;
+            string destinatario = textBoxDestinatario.Text;
 
-            // Esegui la richiesta POST
-           await InviaRichiestaPost(nome, cognome);
+            await InviaRichiestaPost(mittente, destinatario);
 
-           this.Hide();
-           //CustomControl customControl = new CustomControl();
-           Form newForm = new Form4();
-           //newForm.Controls.Add(customControl);
-           newForm.ShowDialog();
-           newForm = null;
+            this.Hide();
+            //CustomControl customControl = new CustomControl();
+            Form newForm = new FormDatiPacco();
+            //newForm.Controls.Add(customControl);
+            newForm.ShowDialog();
+            newForm = null;
 
-           this.Show();
+            this.Show();
         }
 
-        private async Task InviaRichiestaPost(string nome, string cognome)
+        private async Task InviaRichiestaPost(string mittente, string destinatario)
         {
-            string url = "http://localhost:8082/invia_dati"; // Cambia la porta e il percorso a seconda delle tue esigenze
+            string url = "http://localhost:8082/invia_dati_ordine"; // Cambia la porta e il percorso a seconda delle tue esigenze
 
             using (HttpClient client = new HttpClient())
             {
                 // Dati da inviare
                 var data = new
                 {
-                    nome = nome,
-                    cognome = cognome
+                    mittente = mittente,
+                    destinatario = destinatario
                 };
 
                 // Converti i dati in formato JSON
@@ -76,26 +69,7 @@ namespace Modulo_C_
                     MessageBox.Show($"Errore: {response.StatusCode}", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
-            
-        }
-
-
-        private void label_cognome(object sender, EventArgs e)
-        {
 
         }
-
-
-        private void label_Nome_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void Form2_Load(object sender, EventArgs e)
-        {
-
-        }
-
-
     }
 }
