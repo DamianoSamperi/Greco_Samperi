@@ -2,57 +2,43 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Net.Http;
-using System.Text.Json;
 
 namespace Modulo_C_
 {
-    public partial class Form2 : Form
+    public partial class FormDatiPacco : Form
     {
-
-        public Form2()
+        public FormDatiPacco()
         {
             InitializeComponent();
         }
 
-
-
-
-        public async void button_invia_Click(object sender, EventArgs e)
+    
+        private async void button_invia_dati_pacco_Click_1(object sender, EventArgs e)
         {
-            string nome = textBoxNome.Text;
-            string cognome = textBoxCognome.Text;
+            string peso = textBoxPeso.Text;
+            string dimensione = textBoxDimensione.Text;
 
-            // Esegui la richiesta POST
-           await InviaRichiestaPost(nome, cognome);
 
-           this.Hide();
-           //CustomControl customControl = new CustomControl();
-           Form newForm = new Form4();
-           //newForm.Controls.Add(customControl);
-           newForm.ShowDialog();
-           newForm = null;
-
-           this.Show();
+            await InviaRichiestaPost(peso, dimensione);
         }
 
-        private async Task InviaRichiestaPost(string nome, string cognome)
+        private async Task InviaRichiestaPost(string peso, string dimensione)
         {
-            string url = "http://localhost:8082/invia_dati"; // Cambia la porta e il percorso a seconda delle tue esigenze
+            string url = "http://localhost:8082/aggiungi_pacco_cliente"; // Cambia la porta e il percorso a seconda delle tue esigenze
 
             using (HttpClient client = new HttpClient())
             {
                 // Dati da inviare
                 var data = new
                 {
-                    nome = nome,
-                    cognome = cognome
+                    peso = peso,
+                    dimensione = dimensione,
                 };
 
                 // Converti i dati in formato JSON
@@ -76,26 +62,9 @@ namespace Modulo_C_
                     MessageBox.Show($"Errore: {response.StatusCode}", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
-            
-        }
-
-
-        private void label_cognome(object sender, EventArgs e)
-        {
 
         }
 
-
-        private void label_Nome_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void Form2_Load(object sender, EventArgs e)
-        {
-
-        }
-
-
+        
     }
 }
