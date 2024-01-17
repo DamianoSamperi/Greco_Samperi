@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -33,7 +34,7 @@ namespace Modulo_C_
                 try
                 {
                     HttpClient httpClient = new HttpClient();
-                    string jsonData = JsonSerializer.Serialize(id_spedizione);
+                    string jsonData = JsonSerializer.Serialize(sede);
                     HttpContent stringContent = new StringContent(jsonData, Encoding.UTF8, "application/json");
                     HttpResponseMessage response = await httpClient.PostAsync("http://localhost:8080/Ottieni_Percorso", stringContent);
                     var contents = await response.Content.ReadAsStringAsync();
