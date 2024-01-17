@@ -51,7 +51,13 @@ namespace Modulo_C_
 
         private void btn_consegna_Click(object sender, EventArgs e)
         {
-
+            this.Hide();
+            //CustomControl customControl = new CustomControl();
+            Form newForm = new Consegna();
+            //newForm.Controls.Add(customControl);
+            newForm.ShowDialog();
+            newForm = null;
+            this.Show();
         }
     }
 }
