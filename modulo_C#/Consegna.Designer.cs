@@ -52,6 +52,7 @@
             btn_consegna.TabIndex = 1;
             btn_consegna.Text = "Consegna";
             btn_consegna.UseVisualStyleBackColor = true;
+            btn_consegna.Click += btn_consegna_Click;
             // 
             // label_id
             // 

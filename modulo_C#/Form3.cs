@@ -33,8 +33,8 @@ namespace Modulo_C_
                 try
                 {
                     HttpClient httpClient = new HttpClient();
-
-                    HttpContent stringContent = new StringContent(sede, Encoding.UTF8, "application/json");
+                    string jsonData = JsonSerializer.Serialize(id_spedizione);
+                    HttpContent stringContent = new StringContent(jsonData, Encoding.UTF8, "application/json");
                     HttpResponseMessage response = await httpClient.PostAsync("http://localhost:8080/Ottieni_Percorso", stringContent);
                     var contents = await response.Content.ReadAsStringAsync();
                     MessageBox.Show(contents);
