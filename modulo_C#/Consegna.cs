@@ -19,7 +19,7 @@ namespace Modulo_C_
             InitializeComponent();
         }
 
-        private async Task btn_hub_ClickAsync(object sender, EventArgs e)
+        private async void btn_hub_ClickAsync(object sender, EventArgs e)
         {
             string id_spedizione = textBox_id.Text;
             if (id_spedizione!="")
