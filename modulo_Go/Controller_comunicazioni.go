@@ -302,7 +302,7 @@ func main() {
 	http.HandleFunc("/Inserisci_Prodotto_Hub", Inserimento_prodotto)
 	//TO_DO funzione che passa tutti gli id delle spedizioni
 	http.HandleFunc("/RitornaId_Spedizionie", Ritorna_id)
-	//TO_DO funzione che modifica lo stato della spedizione
+	//TO_DO funzione che modifica lo stato della spedizione, devi passare il nuovo stato e l'id
 	http.HandleFunc("/Modifica_Stato_Spedizione", Modifica_stato)
 	//passi l'indirizzo e ti torna la sede più vicina, il formato indirizzo deve essere Via, Città Provincia ex. "Via Cristoforo Colombo, Roma RM"
 	http.HandleFunc("/Ritorna_Sede", Ritorna_sede)
@@ -312,6 +312,7 @@ func main() {
 	http.HandleFunc("/Ottieni_data_spedizione", Ottieni_data)
 	//funzione che permette all'utente di scegliere una data di consegna, di default è impostata come il prima possibile
 	http.HandleFunc("/Scegli_data_consegna", Inserimento_data_consegna)
+	//TO_DO mi serve una funzione dove passi id_spedizione e cambia hub a tutti i pacchi presenti, viene passato il nuovo hub
 	err := http.ListenAndServe(":8080", nil)
 	if errors.Is(err, http.ErrServerClosed) {
 		fmt.Print("server closed\n")

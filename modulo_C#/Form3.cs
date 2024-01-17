@@ -28,7 +28,7 @@ namespace Modulo_C_
         private async void btn_percorso_Click(object sender, EventArgs e)
         {
             string sede = Microsoft.VisualBasic.Interaction.InputBox("Inserisci sede in cui ti trovi", "Scelta hub", "Catania");
-            if (sede!= "")
+            if (sede != "")
             {
                 try
                 {
@@ -46,6 +46,11 @@ namespace Modulo_C_
                 }
 
             }
+
+        }
+
+        private void btn_consegna_Click(object sender, EventArgs e)
+        {
 
         }
     }

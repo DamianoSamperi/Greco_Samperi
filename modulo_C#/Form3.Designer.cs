@@ -30,6 +30,7 @@
         {
             label1 = new Label();
             btn_percorso = new Button();
+            btn_consegna = new Button();
             SuspendLayout();
             // 
             // label1
@@ -53,11 +54,22 @@
             btn_percorso.UseVisualStyleBackColor = true;
             btn_percorso.Click += btn_percorso_Click;
             // 
+            // btn_consegna
+            // 
+            btn_consegna.Location = new Point(314, 174);
+            btn_consegna.Name = "btn_consegna";
+            btn_consegna.Size = new Size(162, 29);
+            btn_consegna.TabIndex = 2;
+            btn_consegna.Text = "Consegna";
+            btn_consegna.UseVisualStyleBackColor = true;
+            btn_consegna.Click += btn_consegna_Click;
+            // 
             // Form3
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(btn_consegna);
             Controls.Add(btn_percorso);
             Controls.Add(label1);
             Name = "Form3";
@@ -70,5 +82,6 @@
 
         private Label label1;
         private Button btn_percorso;
+        private Button btn_consegna;
     }
 }
