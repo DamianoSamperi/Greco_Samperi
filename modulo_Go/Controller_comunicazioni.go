@@ -199,6 +199,7 @@ func Ritorna_sede(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Formato json non corretto", http.StatusBadRequest)
 		return
 	}
+	print("ind ", dati.Indirizzo)
 	hub := g.Ritorna_hub_per_vicinanza(dati.Indirizzo)
 	if hub != "" {
 		fmt.Fprint(w, hub)

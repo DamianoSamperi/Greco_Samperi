@@ -35,10 +35,10 @@ type GestoreMagazzino struct {
 	ctx    context.Context
 }
 
-//	type RispostaAPI struct {
-//		Latitudine  float64 `json:"latitude"`
-//		Longitudine float64 `json:"longitude"`
-//	}
+type RispostaAPI struct {
+	Latitudine  float64 `bson:"latitude"`
+	Longitudine float64 `bson:"longitude"`
+}
 type Coordinate struct {
 	Latitudine  float64 `json:"latitude"`
 	Longitudine float64 `json:"longitude"`
@@ -99,13 +99,14 @@ func (g *GestoreMagazzino) Ritorna_hub_per_vicinanza(indirizzo string) string {
 	var sede string
 	for _, collezione := range collezioni {
 		if collezione != "spedizioni" {
-			collection := g.client.Database("APL").Collection(collezione)
-			var result Coordinate
-			// filtro := bson.M{"latitude": bson.M{"$exists": true}}
-			err := collection.FindOne(g.ctx, bson.M{}).Decode(&result)
-			if err != nil {
-				return "errore nella richesta al database " + err.Error()
-			}
+			// collection := g.client.Database("APL").Collection(collezione)
+			// var result Coordinate
+			// // filtro := bson.M{"latitude": bson.M{"$exists": true}}
+			// err := collection.FindOne(g.ctx, bson.M{}).Decode(&result)
+			// if err != nil {
+			// 	return "errore nella richesta al database " + err.Error()
+			// }
+			result := g.Ritorna_Coordinate_hub(collezione)
 			latB := result.Latitudine
 			lonB := result.Longitudine
 			fmt.Printf("latitudine ind. %f, longitudine ind. %f\n", latB, lonB)
@@ -154,12 +155,17 @@ func (g *GestoreMagazzino) Ritorna_hub_per_vicinanza(indirizzo string) string {
 //	}
 func (g *GestoreMagazzino) Ritorna_Coordinate_hub(sede string) Coordinate {
 	collection := g.client.Database("APL").Collection(sede)
-	var result Coordinate
-	err := collection.FindOne(g.ctx, bson.D{}).Decode(&result)
+	var result RispostaAPI
+	err := collection.FindOne(g.ctx, bson.M{"latitude": bson.M{"$exists": true}}).Decode(&result)
 	if err != nil {
+		print("error find")
 		return Coordinate{}
 	}
-	return result
+	var coordinate = Coordinate{
+		Latitudine:  result.Latitudine,
+		Longitudine: result.Longitudine,
+	}
+	return coordinate
 }
 func (g *GestoreMagazzino) Ottieni_Sedi(sede string) ([]Coordinate, []string) {
 	collezioni, _ := g.client.Database("APL").ListCollectionNames(g.ctx, bson.M{})
