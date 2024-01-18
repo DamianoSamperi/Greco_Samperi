@@ -25,7 +25,7 @@ class Spedizione:
             f"Stato attuale: {self.stato_attuale}\n"
             f"Data Spedizione: {self.data_spedizione.strftime('%Y-%m-%d %H:%M:%S')}\n"
             f"Data Consegna Stimata: {self.data_consegna_stimata.strftime('%Y-%m-%d %H:%M:%S')}\n"
-            "Eventi di Tracciamento:\n"
+            "Eventi di Tracciamento: in consegna\n"
         )
 
         for data, evento in self.eventi_tracciamento:

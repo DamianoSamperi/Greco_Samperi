@@ -24,7 +24,21 @@ namespace Modulo_C_
             string peso = textBoxPeso.Text;
             string dimensione = textBoxDimensione.Text;
 
+            //Nel contesto di decimal.TryParse, il metodo accetta un parametro out per memorizzare
+            //il risultato della conversione:
+            if (!decimal.TryParse(peso, out decimal pesoDecimal) || pesoDecimal <= 0)
+            {
+                MessageBox.Show("Inserire un peso valido.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
 
+            // Verifica che la dimensione sia tra le opzioni valide
+            List<string> opzioniDimensione = new List<string> { "piccolo", "medio", "grande" };
+            if (string.IsNullOrWhiteSpace(dimensione) || !opzioniDimensione.Contains(dimensione.ToLower()))
+            {
+                MessageBox.Show("Inserire una dimensione valida (piccolo, medio o grande).", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
 
 
             await InviaRichiestaPost(peso, dimensione);
