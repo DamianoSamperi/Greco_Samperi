@@ -122,6 +122,23 @@ func (g *GestoreSpedizioni) Trova_spedizioni_per_ID(ID string) Spedizione {
 	return result
 }
 
+// func (g *GestoreSpedizioni) Ritorna_pacchi_spedizione(ID string) []Pacco{
+// 	collection := g.client.Database("APL").Collection("spedizioni")
+// 	filter := bson.D{{Key: "id", Value: ID}}
+// 	cur, err := collection.Find(context.TODO(), filter)
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+// 	defer cur.Close(context.TODO())
+// 	var result Spedizione
+// 	err = cur.Decode(&result)
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+// 	return result.Pacchi
+
+// }
+
 func (g *GestoreSpedizioni) Insert_Spedizione(ID string, mittente string, destinatario string, sede string) {
 	collection := g.client.Database("APL").Collection("spedizioni")
 	var Stati []Stato

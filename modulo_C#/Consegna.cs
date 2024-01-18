@@ -24,16 +24,19 @@ namespace Modulo_C_
             string id_spedizione = textBox_id.Text;
             if (id_spedizione != "")
             {
-                string hub = Microsoft.VisualBasic.Interaction.InputBox("Inserisci sede in cui consegnare il pacco", "Scelta hub", "Catania");
-                if (hub != "")
+                string nuovo_hub = Microsoft.VisualBasic.Interaction.InputBox("Inserisci sede in cui consegnare il pacco", "Scelta hub", "Catania");
+                if (nuovo_hub != "")
                 {
+                    string vecchio_hub = Microsoft.VisualBasic.Interaction.InputBox("Inserisci sede in cui hai ricevuto il pacco", "Scelta hub", "Catania");
+
                     // Dati da inviare
                     var data = new
                     {
-                        stato = "Consegnato all'Hub",
-                        id = id_spedizione,
-                        hub = hub
+                        Nuovo_Hub = nuovo_hub,
+		                Vecchio_Hub   = vecchio_hub,
+		                Id_Spedizione =id_spedizione
                     };
+                    
 
                     // Converti i dati in formato JSON
                     string jsonData = JsonSerializer.Serialize(data);
@@ -43,7 +46,7 @@ namespace Modulo_C_
                         using (HttpClient client = new HttpClient())
                         {
                             HttpContent stringContent = new StringContent(jsonData, Encoding.UTF8, "application/json");
-                            HttpResponseMessage response = await client.PostAsync("http://localhost:8080//Modifica_Stato_Spedizione", stringContent);
+                            HttpResponseMessage response = await client.PostAsync("http://localhost:8080/Consegna_hub", stringContent);
                             var contents = await response.Content.ReadAsStringAsync();
                             MessageBox.Show(contents);
                         }

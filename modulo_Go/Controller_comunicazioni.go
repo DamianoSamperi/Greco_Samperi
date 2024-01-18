@@ -147,7 +147,39 @@ func Ottieni_prodotti(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Fprint(w, g.OttieniPacchiPerSede(dati.Sede))
 }
-
+func Consegna_hub(w http.ResponseWriter, r *http.Request) {
+	ctx := context.TODO()
+	g, err := magazzino.NuovoGestoreMagazzino(ctx, "mongodb+srv://root:yWP2DlLumOz07vNv@apl.yignw97.mongodb.net/?retryWrites=true&w=majority")
+	if err != nil {
+		log.Fatal(err)
+	}
+	s, err := spedizione.NuovoGestoreSpedizioni(ctx, "mongodb+srv://root:yWP2DlLumOz07vNv@apl.yignw97.mongodb.net/?retryWrites=true&w=majority")
+	if err != nil {
+		log.Fatal(err)
+	}
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		http.Error(w, "Errore nella lettura del corpo della richiesta", http.StatusBadRequest)
+		return
+	}
+	var dati = struct {
+		Nuovo_Hub     string `json:"nuovo_hub"`
+		Vecchio_Hub   string `json:"vecchio_hub"`
+		Id_Spedizione string `json:"id_Spedizione"`
+	}{}
+	err = json.Unmarshal(body, &dati)
+	if err != nil {
+		http.Error(w, "Formato json non corretto", http.StatusBadRequest)
+		return
+	}
+	// spedizione := s.Trova_spedizioni_per_ID(dati.Id_Spedizione)
+	// pacchi := spedizione.Pacchi
+	g.SpostaPacco(dati.Id_Spedizione, dati.Vecchio_Hub, dati.Nuovo_Hub)
+	s.Modifica_Stato_Spedizione(dati.Id_Spedizione, "Consegnato all'Hub")
+	// for _,_ = range pacchi{
+	// 	g.SpostaPacco(dati.Id_Spedizione,dati.vecchio_Hub,dati.nuovo_Hub)
+	// }
+}
 func Ritorna_sede(w http.ResponseWriter, r *http.Request) {
 	ctx := context.TODO()
 	g, err := magazzino.NuovoGestoreMagazzino(ctx, "mongodb+srv://root:yWP2DlLumOz07vNv@apl.yignw97.mongodb.net/?retryWrites=true&w=majority")
@@ -312,7 +344,8 @@ func main() {
 	http.HandleFunc("/Ottieni_data_spedizione", Ottieni_data)
 	//funzione che permette all'utente di scegliere una data di consegna, di default è impostata come il prima possibile
 	http.HandleFunc("/Scegli_data_consegna", Inserimento_data_consegna)
-	//TO_DO mi serve una funzione dove passi id_spedizione e cambia hub a tutti i pacchi presenti, viene passato il nuovo hub
+	//TO_DO mi serve una funzione dove passi id_spedizione e cambia hub a tutti i pacchi presenti, viene passato il nuovo hub,vecchio hub, id spedizione
+	http.HandleFunc("/Consegna_hub", Consegna_hub)
 	err := http.ListenAndServe(":8080", nil)
 	if errors.Is(err, http.ErrServerClosed) {
 		fmt.Print("server closed\n")

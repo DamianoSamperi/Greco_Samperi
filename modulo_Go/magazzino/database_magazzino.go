@@ -234,14 +234,28 @@ func (g *GestoreMagazzino) SpostaPacco(id string, vecchiaSede string, nuovaSede 
 	vecchiaCollection := g.client.Database("APL").Collection(vecchiaSede)
 	nuovaCollection := g.client.Database("APL").Collection(nuovaSede)
 
-	var p spedizione.Pacco
-	err := vecchiaCollection.FindOneAndDelete(g.ctx, bson.M{"_id": id}).Decode(&p)
+	cursor, err := vecchiaCollection.Find(g.ctx, bson.M{"spedizione_id": id})
 	if err != nil {
 		return err
 	}
+	var pacchi []spedizione.Pacco
+	if err = cursor.All(g.ctx, &pacchi); err != nil {
+		return err
+	}
 
-	_, err = nuovaCollection.InsertOne(g.ctx, p)
-	return err
+	for _, p := range pacchi {
+		_, err = nuovaCollection.InsertOne(g.ctx, p)
+		if err != nil {
+			return err
+		}
+
+		_, err = vecchiaCollection.DeleteOne(g.ctx, bson.M{"spedizione_id": id})
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func ToString(Pacchi []spedizione.Pacco, Sede string) string {
