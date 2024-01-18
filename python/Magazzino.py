@@ -145,8 +145,8 @@ class Magazzino:
 
 
     def aggiungi_pacco_cliente(self, cliente, data):
-        self.ordini = []
-        while True:
+            self.ordini = []
+        #while True:
             # Ottieni l'ultimo codice presente nel magazzino
             while True:
                 try:
@@ -181,7 +181,7 @@ class Magazzino:
 
                 if quantita_totale_dimensione > limite:
                     print(f"Attenzione: Limite di pacchi {nuovo_pacco.dimensione} raggiunto. Non è stato aggiunto nessun pacco del nuovo ordine, riprovare con meno pacchi")
-                    continue
+                    
                 else:
                     print(f"Pacco  aggiunto al magazzino e all'inventario con codice {nuovo_pacco.codice_sped}.")
             
@@ -224,14 +224,9 @@ class Magazzino:
             else:
                 print(f"Errore nella richiesta POST. Codice di stato: {response.status_code}")
                 print(response.text)
-           
-
-
-
+        
             cliente.aggiunge_ordine(nuovo_pacco)
-            continua = data.get('risposta', '')
-            if continua.lower() != 'si':
-                break
+            
 
            
 
