@@ -34,6 +34,11 @@ namespace Modulo_C_
                 MessageBox.Show("Inserire nome e cognome.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return; // Esce dalla funzione se i campi sono vuoti
             }
+            if (string.IsNullOrWhiteSpace(tb_Via_Mittente.Text) || string.IsNullOrWhiteSpace(tb_Città_Mittente.Text) || string.IsNullOrWhiteSpace(tb_Cod_Postale_Mittente.Text) || string.IsNullOrWhiteSpace(tb_Provincia_Mittente.Text))
+            {
+                MessageBox.Show("Compila tutti i campi del destinatario.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
 
             // Esegui la richiesta POST
             await InviaRichiestaPost(nome, cognome);

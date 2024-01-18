@@ -13,20 +13,21 @@ namespace Modulo_C_
 {
     public partial class FormDatiSpedizione : Form
     {
+        private string mittente = null;
         public FormDatiSpedizione()
         {
             InitializeComponent();
+        }
+        public FormDatiSpedizione(string mittente)
+        {
+            InitializeComponent();
+            this.mittente = mittente;
         }
 
         private async void button_invia_locazione_Click(object sender, EventArgs e)
         {
             string destinatario = tb_Via_Destinatario.Text + "," + tb_Città_Destinatario.Text + " " + tb_Cod_Postale_Destinatario.Text + " " + tb_Provincia_Destinatario.Text;
 
-            if (string.IsNullOrWhiteSpace(tb_Via_Mittente.Text) || string.IsNullOrWhiteSpace(tb_Città_Mittente.Text) || string.IsNullOrWhiteSpace(tb_Cod_Postale_Mittente.Text) || string.IsNullOrWhiteSpace(tb_Provincia_Mittente.Text))
-            {
-                MessageBox.Show("Compila tutti i campi del mittente.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
 
             if (string.IsNullOrWhiteSpace(tb_Via_Destinatario.Text) || string.IsNullOrWhiteSpace(tb_Città_Destinatario.Text) || string.IsNullOrWhiteSpace(tb_Cod_Postale_Destinatario.Text) || string.IsNullOrWhiteSpace(tb_Provincia_Destinatario.Text))
             {
