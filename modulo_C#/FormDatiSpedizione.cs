@@ -20,7 +20,6 @@ namespace Modulo_C_
 
         private async void button_invia_locazione_Click(object sender, EventArgs e)
         {
-            string mittente = tb_Via_Mittente.Text + "," + tb_Città_Mittente.Text + " " + tb_Cod_Postale_Mittente.Text + " " + tb_Provincia_Mittente.Text;
             string destinatario = tb_Via_Destinatario.Text + "," + tb_Città_Destinatario.Text + " " + tb_Cod_Postale_Destinatario.Text + " " + tb_Provincia_Destinatario.Text;
 
             await InviaRichiestaPost(mittente, destinatario);

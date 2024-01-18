@@ -28,12 +28,12 @@ namespace Modulo_C_
         {
             string nome = textBoxNome.Text;
             string cognome = textBoxCognome.Text;
-
+            string mittente = tb_Via_Mittente.Text + "," + tb_Città_Mittente.Text + " " + tb_Cod_Postale_Mittente.Text + " " + tb_Provincia_Mittente.Text;
             // Esegui la richiesta POST
             await InviaRichiestaPost(nome, cognome);
 
             this.Close();
-            Form newForm = new Cliente();
+            Form newForm = new Cliente(mittente);
             newForm.ShowDialog();
             newForm = null;
             

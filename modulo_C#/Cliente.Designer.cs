@@ -28,20 +28,21 @@
         /// </summary>
         private void InitializeComponent()
         {
-            btn_visualizza = new Button();
+            btn_traccia = new Button();
             btn_inserisci = new Button();
             label1 = new Label();
+            btn_visualizza = new Button();
             SuspendLayout();
             // 
-            // btn_visualizza
+            // btn_traccia
             // 
-            btn_visualizza.Location = new Point(290, 177);
-            btn_visualizza.Name = "btn_visualizza";
-            btn_visualizza.Size = new Size(162, 29);
-            btn_visualizza.TabIndex = 5;
-            btn_visualizza.Text = "Visualizza Spedizione";
-            btn_visualizza.UseVisualStyleBackColor = true;
-            btn_visualizza.Click += btn_visualizza_Click;
+            btn_traccia.Location = new Point(290, 177);
+            btn_traccia.Name = "btn_traccia";
+            btn_traccia.Size = new Size(162, 29);
+            btn_traccia.TabIndex = 5;
+            btn_traccia.Text = "Traccia Spedizione";
+            btn_traccia.UseVisualStyleBackColor = true;
+            btn_traccia.Click += btn_visualizza_Click;
             // 
             // btn_inserisci
             // 
@@ -63,12 +64,23 @@
             label1.Text = "Seleziona operazione";
             label1.UseCompatibleTextRendering = true;
             // 
+            // btn_visualizza
+            // 
+            btn_visualizza.Location = new Point(290, 257);
+            btn_visualizza.Name = "btn_visualizza";
+            btn_visualizza.Size = new Size(162, 29);
+            btn_visualizza.TabIndex = 6;
+            btn_visualizza.Text = "Visualizza Spedizioni";
+            btn_visualizza.UseVisualStyleBackColor = true;
+            btn_visualizza.Click += btn_visualizza_Click_1;
+            // 
             // Cliente
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
             Controls.Add(btn_visualizza);
+            Controls.Add(btn_traccia);
             Controls.Add(btn_inserisci);
             Controls.Add(label1);
             Name = "Cliente";
@@ -79,8 +91,9 @@
 
         #endregion
 
-        private Button btn_visualizza;
+        private Button btn_traccia;
         private Button btn_inserisci;
         private Label label1;
+        private Button btn_visualizza;
     }
 }

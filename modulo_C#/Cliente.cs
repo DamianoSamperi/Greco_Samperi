@@ -13,9 +13,15 @@ namespace Modulo_C_
 {
     public partial class Cliente : Form
     {
+        private string indirizzo = null;
         public Cliente()
         {
             InitializeComponent();
+        }
+        public Cliente(string indirizzo)
+        {
+            InitializeComponent();
+            this.indirizzo = indirizzo;
         }
 
         private void btn_inserisci_Click(object sender, EventArgs e)
@@ -60,6 +66,30 @@ namespace Modulo_C_
             else
             {
                 MessageBox.Show("Inserire un codice spedizione");
+            }
+        }
+
+        private async void btn_visualizza_Click_1(object sender, EventArgs e)
+        {
+
+            // Converti i dati in formato JSON
+            string jsonData = JsonSerializer.Serialize(indirizzo);
+
+            try
+            {
+                using (HttpClient client = new HttpClient())
+                {
+                    HttpContent stringContent = new StringContent(jsonData, Encoding.UTF8, "application/json");
+                    HttpResponseMessage response = await client.PostAsync("http://localhost:8080/Visualizza_Spedizioni", stringContent);
+                    var contents = await response.Content.ReadAsStringAsync();
+                    MessageBox.Show(contents);
+                }
+
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Connessione al server rifiutata");
+                throw;
             }
         }
     }
