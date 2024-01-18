@@ -20,8 +20,8 @@ namespace Modulo_C_
 
         private async void button_invia_locazione_Click(object sender, EventArgs e)
         {
-            string mittente = textBoxMittente.Text;
-            string destinatario = textBoxDestinatario.Text;
+            string mittente = tb_Via_Mittente.Text + "," + tb_Città_Mittente.Text + " " + tb_Cod_Postale_Mittente.Text + " " + tb_Provincia_Mittente.Text;
+            string destinatario = tb_Via_Destinatario.Text + "," + tb_Città_Destinatario.Text + " " + tb_Cod_Postale_Destinatario.Text + " " + tb_Provincia_Destinatario.Text;
 
             await InviaRichiestaPost(mittente, destinatario);
 
@@ -69,6 +69,26 @@ namespace Modulo_C_
                     MessageBox.Show($"Errore: {response.StatusCode}", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
+
+        }
+
+        private void LabelInserisciMittente_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBoxMittente_TextChanged(object sender, EventArgs e)
+        {
 
         }
     }
