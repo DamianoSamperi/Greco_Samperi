@@ -23,63 +23,58 @@ namespace Modulo_C_
         {
             string peso = textBoxPeso.Text;
             string dimensione = textBoxDimensione.Text;
-            string risposta = "";
 
-            for (int i = 0; i < checkedListBoxSiNo.Items.Count; i++)
+
+
+
+            await InviaRichiestaPost(peso, dimensione);
+
+            textBoxPeso.Text = string.Empty;
+            textBoxDimensione.Text = string.Empty;
+        }
+
+        private async Task InviaRichiestaPost(string peso, string dimensione)
+        {
+            string url = "http://localhost:8082/aggiungi_pacco_cliente"; // Cambia la porta e il percorso a seconda delle tue esigenze
+            try
             {
-                if (checkedListBoxSiNo.GetItemChecked(i))
+                using (HttpClient client = new HttpClient())
                 {
-                    risposta = checkedListBoxSiNo.GetItemText(checkedListBoxSiNo.Items[i]);
-                    break;  // Esci dal ciclo una volta trovata la checkbox selezionata
+                    // Dati da inviare
+                    var data = new
+                    {
+                        peso = peso,
+                        dimensione = dimensione
+                    };
+
+                    // Converti i dati in formato JSON
+                    string jsonData = JsonSerializer.Serialize(data);
+
+                    // Crea il contenuto della richiesta
+                    var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
+
+                    // Effettua la richiesta POST
+                    HttpResponseMessage response = await client.PostAsync(url, content);
+
+                    // Verifica se la richiesta ha avuto successo
+                    if (response.IsSuccessStatusCode)
+                    {
+                        // Leggi la risposta
+                        string responseContent = await response.Content.ReadAsStringAsync();
+                        MessageBox.Show(responseContent, "Risposta dal server", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+
                 }
             }
-
-
-
-            await InviaRichiestaPost(peso, dimensione, risposta);
-
-            if (risposta == "si")
+            catch (Exception ex)
             {
-                await InviaRichiestaPost(peso, dimensione, risposta);
+                MessageBox.Show($"Errore durante la richiesta POST: {ex.Message}", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
-        private async Task InviaRichiestaPost(string peso, string dimensione, string risposta)
+        private void buttonFineOrdine_Click(object sender, EventArgs e)
         {
-            string url = "http://localhost:8082/aggiungi_pacco_cliente"; // Cambia la porta e il percorso a seconda delle tue esigenze
-
-            using (HttpClient client = new HttpClient())
-            {
-                // Dati da inviare
-                var data = new
-                {
-                    peso = peso,
-                    dimensione = dimensione,
-                    risposta = risposta
-                };
-
-                // Converti i dati in formato JSON
-                string jsonData = JsonSerializer.Serialize(data);
-
-                // Crea il contenuto della richiesta
-                var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
-
-                // Effettua la richiesta POST
-                HttpResponseMessage response = await client.PostAsync(url, content);
-
-                // Verifica se la richiesta ha avuto successo
-                if (response.IsSuccessStatusCode)
-                {
-                    // Leggi la risposta
-                    string responseContent = await response.Content.ReadAsStringAsync();
-                    MessageBox.Show(responseContent, "Risposta dal server", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
-                else
-                {
-                    MessageBox.Show($"Errore: {response.StatusCode}", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
-            
+            this.Close();
         }
     }
 }
