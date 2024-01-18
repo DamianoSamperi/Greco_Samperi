@@ -52,7 +52,7 @@
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(444, 348);
+            ClientSize = new Size(492, 389);
             Controls.Add(label2);
             Controls.Add(label1);
             Name = "FormEpilogoOrdine";

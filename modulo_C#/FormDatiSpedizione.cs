@@ -23,6 +23,19 @@ namespace Modulo_C_
             string mittente = tb_Via_Mittente.Text + "," + tb_Città_Mittente.Text + " " + tb_Cod_Postale_Mittente.Text + " " + tb_Provincia_Mittente.Text;
             string destinatario = tb_Via_Destinatario.Text + "," + tb_Città_Destinatario.Text + " " + tb_Cod_Postale_Destinatario.Text + " " + tb_Provincia_Destinatario.Text;
 
+            if (string.IsNullOrWhiteSpace(tb_Via_Mittente.Text) || string.IsNullOrWhiteSpace(tb_Città_Mittente.Text) || string.IsNullOrWhiteSpace(tb_Cod_Postale_Mittente.Text) || string.IsNullOrWhiteSpace(tb_Provincia_Mittente.Text))
+            {
+                MessageBox.Show("Compila tutti i campi del mittente.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(tb_Via_Destinatario.Text) || string.IsNullOrWhiteSpace(tb_Città_Destinatario.Text) || string.IsNullOrWhiteSpace(tb_Cod_Postale_Destinatario.Text) || string.IsNullOrWhiteSpace(tb_Provincia_Destinatario.Text))
+            {
+                MessageBox.Show("Compila tutti i campi del destinatario.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+
             await InviaRichiestaPost(mittente, destinatario);
 
             this.Close();

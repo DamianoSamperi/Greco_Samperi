@@ -29,6 +29,12 @@ namespace Modulo_C_
             string nome = textBoxNome.Text;
             string cognome = textBoxCognome.Text;
 
+            if (string.IsNullOrWhiteSpace(nome) || string.IsNullOrWhiteSpace(cognome))
+            {
+                MessageBox.Show("Inserire nome e cognome.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return; // Esce dalla funzione se i campi sono vuoti
+            }
+
             // Esegui la richiesta POST
             await InviaRichiestaPost(nome, cognome);
 
