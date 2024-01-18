@@ -17,17 +17,21 @@ class Spedizione:
         self.stato_attuale = nuovo_stato
         self.eventi_tracciamento.append((datetime.now(), nuovo_stato))
 
-
     def tracciamento(self):
-        print(f"Codice Spedizione: {self.codice_spedizione}")
-        print(f"Mittente: {self.mittente}")
-        print(f"Destinatario: {self.destinatario}")
-        print(f"Stato attuale: {self.stato_attuale}")
-        print(f"Data Spedizione: {self.data_spedizione.strftime('%Y-%m-%d %H:%M:%S')}")
-        print(f"Data Consegna Stimata: {self.data_consegna_stimata.strftime('%Y-%m-%d %H:%M:%S')}")
-        print("Eventi di Tracciamento:")
+        tracciamento_str = (
+            f"Codice Spedizione: {self.codice_spedizione}\n"
+            f"Mittente: {self.mittente}\n"
+            f"Destinatario: {self.destinatario}\n"
+            f"Stato attuale: {self.stato_attuale}\n"
+            f"Data Spedizione: {self.data_spedizione.strftime('%Y-%m-%d %H:%M:%S')}\n"
+            f"Data Consegna Stimata: {self.data_consegna_stimata.strftime('%Y-%m-%d %H:%M:%S')}\n"
+            "Eventi di Tracciamento:\n"
+        )
+
         for data, evento in self.eventi_tracciamento:
-            print(f"{data.strftime('%Y-%m-%d %H:%M:%S')}: {evento}")
+            tracciamento_str += f"{data.strftime('%Y-%m-%d %H:%M:%S')}: {evento}\n"
+
+        return tracciamento_str
 
 
 class GestoreSpedizioni:

@@ -13,10 +13,10 @@ using System.Text.Json;
 
 namespace Modulo_C_
 {
-    public partial class Form2 : Form
+    public partial class Dati_Cliente : Form
     {
 
-        public Form2()
+        public Dati_Cliente()
         {
             InitializeComponent();
         }
@@ -32,19 +32,17 @@ namespace Modulo_C_
             // Esegui la richiesta POST
             await InviaRichiestaPost(nome, cognome);
 
-            this.Hide();
-            //CustomControl customControl = new CustomControl();
-            Form newForm = new Form4();
-            //newForm.Controls.Add(customControl);
+            this.Close();
+            Form newForm = new FormDatiSpedizione();
             newForm.ShowDialog();
             newForm = null;
+            
 
-            this.Show();
         }
 
         private async Task InviaRichiestaPost(string nome, string cognome)
         {
-            string url = "http://localhost:8082/invia_dati"; // Cambia la porta e il percorso a seconda delle tue esigenze
+            string url = "http://localhost:8082/invia_dati";
 
             using (HttpClient client = new HttpClient())
             {

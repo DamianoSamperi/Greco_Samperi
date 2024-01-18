@@ -1,6 +1,6 @@
 ﻿namespace Modulo_C_
 {
-    partial class Form4
+    partial class FormDatiSpedizione
     {
         /// <summary>
         /// Required designer variable.
@@ -56,7 +56,6 @@
             tb_Via_Mittente.PlaceholderText = "Inserisci indirizzo";
             tb_Via_Mittente.Size = new Size(184, 27);
             tb_Via_Mittente.TabIndex = 11;
-            tb_Via_Mittente.TextChanged += textBoxMittente_TextChanged;
             // 
             // button_invia_locazione
             // 
@@ -85,7 +84,6 @@
             label_via_mittente.Size = new Size(30, 20);
             label_via_mittente.TabIndex = 13;
             label_via_mittente.Text = "Via";
-            label_via_mittente.Click += label2_Click;
             // 
             // label_città_mittente
             // 
@@ -111,7 +109,6 @@
             tb_Città_Mittente.Name = "tb_Città_Mittente";
             tb_Città_Mittente.Size = new Size(97, 27);
             tb_Città_Mittente.TabIndex = 16;
-            tb_Città_Mittente.TextChanged += textBox1_TextChanged;
             // 
             // tb_Cod_Postale_Mittente
             // 
@@ -239,7 +236,7 @@
             Controls.Add(tb_Via_Mittente);
             Controls.Add(button_invia_locazione);
             Name = "Form4";
-            Text = "Form4";
+            Text = "Dati Spedizione";
             ResumeLayout(false);
             PerformLayout();
         }

@@ -1,6 +1,6 @@
 ﻿namespace Modulo_C_
 {
-    partial class Form2
+    partial class Dati_Cliente
     {
         /// <summary>
         /// Required designer variable.
@@ -77,7 +77,7 @@
             textBoxNome.Size = new Size(184, 27);
             textBoxNome.TabIndex = 6;
             // 
-            // Form2
+            // Dati_Cliente
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
@@ -87,8 +87,8 @@
             Controls.Add(button_invia);
             Controls.Add(labelInserisciCognome);
             Controls.Add(LabelInserisciNome);
-            Name = "Form2";
-            Text = "Form2";
+            Name = "Dati_Cliente";
+            Text = "Dati Cliente";
             ResumeLayout(false);
             PerformLayout();
         }

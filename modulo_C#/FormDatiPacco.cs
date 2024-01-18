@@ -75,6 +75,10 @@ namespace Modulo_C_
         private void buttonFineOrdine_Click(object sender, EventArgs e)
         {
             this.Close();
+
+            Form newForm = new FormEpilogoOrdine();
+            newForm.ShowDialog();
+            newForm = null;
         }
     }
 }

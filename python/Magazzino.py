@@ -39,10 +39,10 @@ class Magazzino:
 
     
 
-    def mostra_inventario(self):
-        print("Inventario del magazzino:")
-        for pacco in self.inventario:
-            print(pacco)
+    #def mostra_inventario(self):
+        #print("Inventario del magazzino:")
+        #for pacco in self.inventario:
+            #print(pacco) 
 
 
     
@@ -57,7 +57,7 @@ class Magazzino:
             time.sleep(4)
                 
             # Crea un'istanza di Spedizione utilizzando il GestoreSpedizioni
-            sped, self.cod_sped = self.gestore_spedizioni.crea_spedizione(mittente=mittente, destinatario=destinatario)
+            self.sped, self.cod_sped = self.gestore_spedizioni.crea_spedizione(mittente=mittente, destinatario=destinatario)
             
 
             print("Ritorna Sede")
@@ -135,16 +135,21 @@ class Magazzino:
             
 
 
+    def epilogo_ordine(self):            
+            tracciamento_corrente = self.sped.tracciamento()
+            evento_aggiunto = self.sped.aggiungi_evento_tracciamento(f"Pacco in preparazione consegna")
 
-            sped.aggiungi_evento_tracciamento(f"Pacco in preparazione consegna")
-            sped.tracciamento()
+            return {
+                "tracciamento": tracciamento_corrente,
+                "evento_aggiunto": evento_aggiunto
+                }
                 
    
    
 
 
 
-    def aggiungi_pacco_cliente(self, cliente, data):
+    def aggiungi_pacco_cliente(self, data):
             self.ordini = []
         #while True:
             # Ottieni l'ultimo codice presente nel magazzino
@@ -225,7 +230,7 @@ class Magazzino:
                 print(f"Errore nella richiesta POST. Codice di stato: {response.status_code}")
                 print(response.text)
         
-            cliente.aggiunge_ordine(nuovo_pacco)
+            #cliente.aggiunge_ordine(nuovo_pacco)
             
 
            

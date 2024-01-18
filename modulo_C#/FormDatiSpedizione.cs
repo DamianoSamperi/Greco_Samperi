@@ -11,9 +11,9 @@ using System.Windows.Forms;
 
 namespace Modulo_C_
 {
-    public partial class Form4 : Form
+    public partial class FormDatiSpedizione : Form
     {
-        public Form4()
+        public FormDatiSpedizione()
         {
             InitializeComponent();
         }
@@ -25,39 +25,33 @@ namespace Modulo_C_
 
             await InviaRichiestaPost(mittente, destinatario);
 
-            this.Hide();
-            //CustomControl customControl = new CustomControl();
+            this.Close();
             Form newForm = new FormDatiPacco();
-            //newForm.Controls.Add(customControl);
             newForm.ShowDialog();
             newForm = null;
-
-            this.Show();
         }
 
         private async Task InviaRichiestaPost(string mittente, string destinatario)
         {
-            string url = "http://localhost:8082/invia_dati_ordine"; // Cambia la porta e il percorso a seconda delle tue esigenze
+            string url = "http://localhost:8082/invia_dati_ordine";
 
             using (HttpClient client = new HttpClient())
             {
-                // Dati da inviare
+
                 var data = new
                 {
                     mittente = mittente,
                     destinatario = destinatario
                 };
 
-                // Converti i dati in formato JSON
+
                 string jsonData = JsonSerializer.Serialize(data);
 
-                // Crea il contenuto della richiesta
                 var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
 
-                // Effettua la richiesta POST
                 HttpResponseMessage response = await client.PostAsync(url, content);
 
-                // Verifica se la richiesta ha avuto successo
+
                 if (response.IsSuccessStatusCode)
                 {
                     // Leggi la risposta
@@ -69,26 +63,6 @@ namespace Modulo_C_
                     MessageBox.Show($"Errore: {response.StatusCode}", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
-
-        }
-
-        private void LabelInserisciMittente_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label2_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void textBox1_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void textBoxMittente_TextChanged(object sender, EventArgs e)
-        {
 
         }
     }

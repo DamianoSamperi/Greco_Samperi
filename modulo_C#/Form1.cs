@@ -20,7 +20,7 @@ namespace Modulo_C_
         {
             this.Hide();
             //CustomControl customControl = new CustomControl();
-            Form newForm = new Form2();
+            Form newForm = new Dati_Cliente();
             //newForm.Controls.Add(customControl);
             newForm.ShowDialog();
             newForm = null;

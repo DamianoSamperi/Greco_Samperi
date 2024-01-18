@@ -65,9 +65,9 @@
             labelInserisciPeso.AutoSize = true;
             labelInserisciPeso.Location = new Point(62, 47);
             labelInserisciPeso.Name = "labelInserisciPeso";
-            labelInserisciPeso.Size = new Size(107, 20);
+            labelInserisciPeso.Size = new Size(189, 20);
             labelInserisciPeso.TabIndex = 7;
-            labelInserisciPeso.Text = "Inserisci il Peso";
+            labelInserisciPeso.Text = "Inserisci il Peso (in grammi)";
             // 
             // LabelInserisciDimensione
             // 
@@ -100,7 +100,7 @@
             Controls.Add(labelInserisciPeso);
             Controls.Add(LabelInserisciDimensione);
             Name = "FormDatiPacco";
-            Text = "FormDatiPacco";
+            Text = "Dati Pacco";
             ResumeLayout(false);
             PerformLayout();
         }

@@ -1,7 +1,7 @@
 from Cliente import Cliente
 from Magazzino import Magazzino
 from Spedizione import GestoreSpedizioni
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, json
 
 app = Flask(__name__)
 gestore_spedizioni = GestoreSpedizioni()  
@@ -24,8 +24,8 @@ def invia_dati():
 
         cliente_data['cliente'] = cliente
         
-        return jsonify({'messaggio': 'Ordine completato. Inventario aggiornato.'})
-        # Gestisci il magazzino e aggiungi il pacco del cliente
+        return jsonify({'messaggio':'dati cliente inviati correttamnete'})
+        
 
 
 
@@ -35,10 +35,8 @@ def invia_dati_ordine():
     if request.method == 'POST':
         data = request.json
         magazzino.gestisci_magazzino(data)
-        return jsonify({'messaggio': 'Dati ordine inviati correttamente.'})
+        return jsonify({'messaggio':'Dati ordine inviati correttamente.'})
 
-
-        # Restituisci una risposta
 
 
 @app.route('/aggiungi_pacco_cliente', methods=['POST'])
@@ -48,14 +46,31 @@ def aggiungi_pacco_cliente():
         # Esegui l'elaborazione dei dati per aggiungere il pacco del cliente
         
         cliente = cliente_data.get('cliente')
-        magazzino.aggiungi_pacco_cliente(cliente, data)        
-        return jsonify({'messaggio': 'Pacco cliente aggiunto correttamente.'})
+        nome_cliente = cliente.nome
+        cognome_cliente = cliente.cognome
+
+        # Costruisci manualmente la risposta JSON senza ordinare i campi
+        response_data = {
+            'messaggio': 'Pacco aggiunto correttamente a nome del cliente',
+            'nome': nome_cliente,
+            'cognome': cognome_cliente
+        }
+
+        # Converti il dizionario in una stringa JSON mantenendo l'ordine dei campi
+        response_json = json.dumps(response_data, sort_keys=False)
+
+        magazzino.aggiungi_pacco_cliente(data)        
+        return response_json, 200, {'Content-Type': 'application/json'}
     
-    #magazzino.mostra_inventario()  
+@app.route('/epilogo_ordine', methods=['GET'])
+def epilogo_ordine():
+    dati_epilogo = magazzino.epilogo_ordine()
+    # Utilizza jsonify per convertire i dati in formato JSON e inviarli come risposta
+    return jsonify(dati_epilogo)
 
 
 if __name__ == '__main__':
-    app.run(debug=True,  host='0.0.0.0', port=8082)  # Cambia la porta se necessario
+    app.run(debug=True,  host='0.0.0.0', port=8082)  
 
 
    
