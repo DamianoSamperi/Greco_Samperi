@@ -105,6 +105,23 @@ func Visualizza_spedizioni(w http.ResponseWriter, r *http.Request) {
 	_ = json.Unmarshal(body, &dati)
 	fmt.Fprint(w, g.Visualizza_Spedizioni(dati.Mittente))
 }
+func Traccia_spedizione(w http.ResponseWriter, r *http.Request) {
+	ctx := context.TODO()
+	g, err := spedizione.NuovoGestoreSpedizioni(ctx, "mongodb+srv://root:yWP2DlLumOz07vNv@apl.yignw97.mongodb.net/?retryWrites=true&w=majority")
+	if err != nil {
+		log.Fatal(err)
+	}
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		http.Error(w, "Errore nella lettura del corpo della richiesta", http.StatusBadRequest)
+		return
+	}
+	var dati = struct {
+		Id_Spedizione string `json:"id_spedizione"`
+	}{}
+	_ = json.Unmarshal(body, &dati)
+	fmt.Fprint(w, g.Traccia_Spedizione(dati.Id_Spedizione))
+}
 func Inserimento_prodotto(w http.ResponseWriter, r *http.Request) {
 	ctx := context.TODO()
 	g, err := magazzino.NuovoGestoreMagazzino(ctx, "mongodb+srv://root:yWP2DlLumOz07vNv@apl.yignw97.mongodb.net/?retryWrites=true&w=majority")

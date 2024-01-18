@@ -106,6 +106,22 @@ func (g *GestoreSpedizioni) Visualizza_Spedizioni(Mittente string) string {
 
 	return ToString(spedizioni)
 }
+func (g *GestoreSpedizioni) Traccia_Spedizione(ID string) string {
+	collection := g.client.Database("APL").Collection("spedizioni")
+	filter := bson.D{{Key: "id", Value: ID}}
+	cur, err := collection.Find(context.TODO(), filter)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer cur.Close(context.TODO())
+	var result Spedizione
+	err = cur.Decode(&result)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return Tracciamento(result)
+
+}
 func (g *GestoreSpedizioni) Trova_spedizioni_per_ID(ID string) Spedizione {
 	collection := g.client.Database("APL").Collection("spedizioni")
 	filter := bson.D{{Key: "id", Value: ID}}
@@ -239,16 +255,32 @@ func (g *GestoreSpedizioni) Modifica_Stato_Spedizione(id string, stato string) {
 	fmt.Printf("Modificati %v documenti\n", updateResult.ModifiedCount)
 }
 
+func Tracciamento(spedizione Spedizione) string {
+	// var String string
+	SpedizioneString := "Id " + spedizione.ID + " Mittente" + spedizione.Mittente + "Destinatario " + spedizione.Destinatario + " Numero Pacchi: " + strconv.Itoa(spedizione.NumeroPacchi) + "Pacchi: "
+	for _, pacco := range spedizione.Pacchi {
+		// Pacco := "Peso" + strconv.FormatFloat(pacco.Peso, 'f', -1, 64) + "Lunghezza" + strconv.FormatFloat(pacco.Lunghezza, 'f', -1, 64) + "Altezza" + strconv.FormatFloat(pacco.Altezza, 'f', -1, 64) + "Profondità" + strconv.FormatFloat(pacco.Profondità, 'f', -1, 64) + "Prezzo" + strconv.FormatFloat(pacco.Prezzo, 'f', -1, 64)
+		Pacco := "Peso" + strconv.FormatFloat(pacco.Peso, 'f', -1, 64) + "Dimensione" + pacco.Dimensione + "Prezzo" + strconv.FormatFloat(pacco.Prezzo, 'f', -1, 64)
+		SpedizioneString = SpedizioneString + Pacco
+	}
+	SpedizioneString = SpedizioneString + "Tracciamento eventi: "
+	for _, stato := range spedizione.Stato {
+		SpedizioneString = SpedizioneString + stato.String()
+	}
+	// String = SpedizioneString
+	return SpedizioneString
+}
 func ToString(spedizioni []Spedizione) string {
-	var String string
+	var SpedizioneString string
 	for _, s := range spedizioni {
-		SpedizioneString := "Id " + s.ID + " Mittente" + s.Mittente + "Destinatario " + s.Destinatario + " Stato " + s.Stato[len(s.Stato)-1].String() + " Numero Pacchi: " + strconv.Itoa(s.NumeroPacchi)
+		SpedizioneString := "Id " + s.ID + " Mittente" + s.Mittente + "Destinatario " + s.Destinatario + "Stato: " + s.Stato[len(s.Stato)-1].String() + " Numero Pacchi: " + strconv.Itoa(s.NumeroPacchi) + "Pacchi: "
 		for _, pacco := range s.Pacchi {
 			// Pacco := "Peso" + strconv.FormatFloat(pacco.Peso, 'f', -1, 64) + "Lunghezza" + strconv.FormatFloat(pacco.Lunghezza, 'f', -1, 64) + "Altezza" + strconv.FormatFloat(pacco.Altezza, 'f', -1, 64) + "Profondità" + strconv.FormatFloat(pacco.Profondità, 'f', -1, 64) + "Prezzo" + strconv.FormatFloat(pacco.Prezzo, 'f', -1, 64)
 			Pacco := "Peso" + strconv.FormatFloat(pacco.Peso, 'f', -1, 64) + "Dimensione" + pacco.Dimensione + "Prezzo" + strconv.FormatFloat(pacco.Prezzo, 'f', -1, 64)
 			SpedizioneString = SpedizioneString + Pacco
 		}
-		String = String + SpedizioneString
 	}
-	return String
+
+	// String = SpedizioneString
+	return SpedizioneString
 }
