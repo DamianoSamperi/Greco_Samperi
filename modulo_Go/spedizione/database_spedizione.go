@@ -119,7 +119,7 @@ func (g *GestoreSpedizioni) Traccia_Spedizione(ID string) string {
 	if err != nil {
 		log.Fatal(err)
 	}
-	return ToString(result)
+	return Tracciamento(result)
 
 }
 func (g *GestoreSpedizioni) Trova_spedizioni_per_ID(ID string) Spedizione {
@@ -255,7 +255,7 @@ func (g *GestoreSpedizioni) Modifica_Stato_Spedizione(id string, stato string) {
 	fmt.Printf("Modificati %v documenti\n", updateResult.ModifiedCount)
 }
 
-func ToString(spedizione Spedizione) string {
+func Tracciamento(spedizione Spedizione) string {
 	// var String string
 	SpedizioneString := "Id " + spedizione.ID + " Mittente" + spedizione.Mittente + "Destinatario " + spedizione.Destinatario + " Numero Pacchi: " + strconv.Itoa(spedizione.NumeroPacchi) + "Pacchi: "
 	for _, pacco := range spedizione.Pacchi {
@@ -267,6 +267,20 @@ func ToString(spedizione Spedizione) string {
 	for _, stato := range spedizione.Stato {
 		SpedizioneString = SpedizioneString + stato.String()
 	}
+	// String = SpedizioneString
+	return SpedizioneString
+}
+func ToString(spedizioni []Spedizione) string {
+	var SpedizioneString string
+	for _, s := range spedizioni {
+		SpedizioneString := "Id " + s.ID + " Mittente" + s.Mittente + "Destinatario " + s.Destinatario + "Stato: " + s.Stato[len(s.Stato)-1].String() + " Numero Pacchi: " + strconv.Itoa(s.NumeroPacchi) + "Pacchi: "
+		for _, pacco := range s.Pacchi {
+			// Pacco := "Peso" + strconv.FormatFloat(pacco.Peso, 'f', -1, 64) + "Lunghezza" + strconv.FormatFloat(pacco.Lunghezza, 'f', -1, 64) + "Altezza" + strconv.FormatFloat(pacco.Altezza, 'f', -1, 64) + "Profondità" + strconv.FormatFloat(pacco.Profondità, 'f', -1, 64) + "Prezzo" + strconv.FormatFloat(pacco.Prezzo, 'f', -1, 64)
+			Pacco := "Peso" + strconv.FormatFloat(pacco.Peso, 'f', -1, 64) + "Dimensione" + pacco.Dimensione + "Prezzo" + strconv.FormatFloat(pacco.Prezzo, 'f', -1, 64)
+			SpedizioneString = SpedizioneString + Pacco
+		}
+	}
+
 	// String = SpedizioneString
 	return SpedizioneString
 }
