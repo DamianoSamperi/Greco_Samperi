@@ -33,7 +33,7 @@ namespace Modulo_C_
             await InviaRichiestaPost(nome, cognome);
 
             this.Close();
-            Form newForm = new FormDatiSpedizione();
+            Form newForm = new Cliente();
             newForm.ShowDialog();
             newForm = null;
             

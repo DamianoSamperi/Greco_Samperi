@@ -347,6 +347,9 @@ func main() {
 	http.HandleFunc("/Scegli_data_consegna", Inserimento_data_consegna)
 	//TO_DO mi serve una funzione dove passi id_spedizione e cambia hub a tutti i pacchi presenti, viene passato il nuovo hub,vecchio hub, id spedizione
 	http.HandleFunc("/Consegna_hub", Consegna_hub)
+	//Visualizza TRacciamento dato id spedizione
+	http.HandleFunc("/tracciamento_spedizione", Traccia_spedizione)
+
 	err := http.ListenAndServe(":8080", nil)
 	if errors.Is(err, http.ErrServerClosed) {
 		fmt.Print("server closed\n")
