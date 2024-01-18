@@ -53,7 +53,14 @@ namespace Modulo_C_
                         HttpContent stringContent = new StringContent(jsonData, Encoding.UTF8, "application/json");
                         HttpResponseMessage response = await client.PostAsync("http://localhost:8080/tracciamento_spedizione", stringContent);
                         var contents = await response.Content.ReadAsStringAsync();
-                        MessageBox.Show(contents);
+                        if (contents != "")
+                        {
+                            MessageBox.Show(contents);
+                        }
+                        else
+                        {
+                            MessageBox.Show("Codice non valido");
+                        }
                     }
 
                 }
@@ -82,7 +89,14 @@ namespace Modulo_C_
                     HttpContent stringContent = new StringContent(jsonData, Encoding.UTF8, "application/json");
                     HttpResponseMessage response = await client.PostAsync("http://localhost:8080/Visualizza_Spedizioni", stringContent);
                     var contents = await response.Content.ReadAsStringAsync();
-                    MessageBox.Show(contents);
+                    if (contents != "")
+                    {
+                        MessageBox.Show(contents);
+                    }
+                    else
+                    {
+                        MessageBox.Show("non hai nessuna spedizione effettuata");
+                    }
                 }
 
             }
