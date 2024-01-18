@@ -66,7 +66,7 @@ class Magazzino:
             payload = {"indirizzo": mittente }
             payload_json = json.dumps(payload)
             headers = {"Content-Type": "application/json"}
-            response = requests.post(url2, data=payload_json, headers=headers)
+            response = requests.post(url2, json=payload_json, headers=headers)
 
             if response.status_code == 200:
                 print("Richiesta POST eseguita con successo!")
