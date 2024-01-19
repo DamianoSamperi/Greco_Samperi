@@ -181,7 +181,7 @@ func Calcola_distanza_minima(origine Punto_geografico, Diramazioni []Punto_geogr
 			print("distanza ", d)
 			if d <= distanza_massima_percorribile {
 				if (distanza_residua_percorribile - d) >= 0 {
-					if p.Consegna_Stimata.IsZero() || p.Consegna_Stimata == time.Now().AddDate(0, 0, 1) {
+					if p.Consegna_Stimata.IsZero() || p.Consegna_Stimata.Format("2006/01/02") == time.Now().AddDate(0, 0, 1).Format("2006/01/02") {
 						if d < minDistanza {
 							minDistanza = d
 							minDiramazione = p

@@ -12,7 +12,6 @@ import (
 	"modulo_Go/spedizione"
 	"net/http"
 	"os"
-	"time"
 )
 
 type richiesta struct {
@@ -24,8 +23,8 @@ type modifica_stato struct {
 	Id_spedizione string `json:"id"`
 }
 type modifica_data struct {
-	Id_spedizione string    `json:"id"`
-	Data          time.Time `json:"data"`
+	Id_spedizione string `json:"id"`
+	Data          string `json:"data"`
 }
 type richiesta_spedizione struct {
 	ID           string `json:"id"`

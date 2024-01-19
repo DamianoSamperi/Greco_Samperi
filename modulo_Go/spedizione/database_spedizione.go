@@ -211,8 +211,11 @@ func (g *GestoreSpedizioni) RitornaID() []string {
 	}
 	return IDs
 }
-func (g *GestoreSpedizioni) Modifica_Data_Consegna_Spedizione(id string, date time.Time) {
-	//TO_DO funzione modifica, però prima va cambiato il database in non relazionale
+func (g *GestoreSpedizioni) Modifica_Data_Consegna_Spedizione(id string, data string) {
+	date, err := time.Parse("2006/01/02", data)
+	if err != nil {
+		log.Fatal(err)
+	}
 	collection := g.client.Database("APL").Collection("spedizioni")
 	filter := bson.D{{Key: "idspedizione", Value: id}}
 	update := bson.D{{Key: "$push", Value: bson.D{{Key: "data_consegna", Value: date}}}}
