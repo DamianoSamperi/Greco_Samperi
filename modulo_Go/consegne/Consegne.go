@@ -89,25 +89,27 @@ func Todirezione(angolo float64) string {
 }
 func Calcola_distanza_punti(destinatario Punto_geografico, origine Punto_geografico) float64 {
 	R := 6372795.477598
-	latA := destinatario.Latitudine
-	lonA := destinatario.Longitudine
-	latB := origine.Latitudine
-	lonB := origine.Longitudine
+	latA := destinatario.Latitudine * (math.Pi / 180)
+	lonA := destinatario.Longitudine * (math.Pi / 180)
+	latB := origine.Latitudine * (math.Pi / 180)
+	lonB := origine.Longitudine * (math.Pi / 180)
+	fmt.Printf("%f,%f,%f,%f \n", latA/math.Pi*180, lonA/math.Pi*180, latB/math.Pi*180, lonB/math.Pi*180)
+	// print("seno ", math.Sin(latA*math.Pi/180))
 	distanza := R * math.Acos(math.Sin(latA)*math.Sin(latB)+math.Cos(latA)*math.Cos(latB)*math.Cos(lonA-lonB))
 	return distanza
 }
 func calcola_direzione_punti(destinatario Punto_geografico, origine Punto_geografico) float64 {
-	latA := origine.Latitudine
-	lonA := origine.Longitudine
-	latB := destinatario.Latitudine
-	lonB := destinatario.Longitudine
-	delta := math.Log2(math.Tan(latB/2+math.Pi/4) / math.Tan(latA/2+math.Pi/4))
+	latA := origine.Latitudine * (math.Pi / 180)
+	lonA := origine.Longitudine * (math.Pi / 180)
+	latB := destinatario.Latitudine * (math.Pi / 180)
+	lonB := destinatario.Longitudine * (math.Pi / 180)
+	delta := math.Log(math.Tan(latB/2+math.Pi/4) / math.Tan(latA/2+math.Pi/4))
 	delta_lon := math.Abs(lonA - lonB)
 	if delta_lon > 180 {
 		delta_lon = math.Mod(delta_lon, 180.00)
 	}
 	angolo := math.Atan2(delta_lon, delta)
-	return angolo
+	return angolo * 180 / math.Pi
 	// direzione := direzione(angolo)
 	// return direzione
 }
@@ -116,7 +118,7 @@ func calcola_punti(spedizioni []spedizione.Spedizione, sede Punto_geografico) []
 	var punti []Punto_geografico
 	punti = append(punti, sede)
 	for _, spedizione := range spedizioni {
-		payload := strings.NewReader("{\"address\":" + spedizione.Destinatario + "}")
+		payload := strings.NewReader(`{"address":"` + spedizione.Destinatario + `"}`)
 		req, _ := http.NewRequest("POST", url, payload)
 
 		req.Header.Add("content-type", "application/json")
@@ -137,7 +139,7 @@ func calcola_punti(spedizioni []spedizione.Spedizione, sede Punto_geografico) []
 		}{}
 		err = json.Unmarshal(body, &risposta)
 		if err != nil {
-			log.Fatal(err)
+			log.Fatal("Errore ricerca coordinate ", err)
 		}
 		latA := risposta.Element.Latitude
 		lonA := risposta.Element.Longitude
@@ -171,18 +173,22 @@ func Calcola_distanza_minima(origine Punto_geografico, Diramazioni []Punto_geogr
 	minIndice := -1
 	nuovaDirezione := -1.0
 	for i, p := range Diramazioni {
-		direzione := calcola_direzione_punti(origine, p)
+		direzione := calcola_direzione_punti(p, origine)
+		print("direzione ", direzione, "\n")
+		fmt.Printf("direzione non ammessa %f - %f \n", direzione_non_ammessa.angolo_inf, direzione_non_ammessa.angolo_sup)
 		if direzione >= direzione_non_ammessa.angolo_sup || direzione < direzione_non_ammessa.angolo_inf {
 			d := Calcola_distanza_punti(origine, p)
+			print("distanza ", d)
 			if d <= distanza_massima_percorribile {
 				if (distanza_residua_percorribile - d) >= 0 {
-					if !p.Consegna_Stimata.IsZero() && p.Consegna_Stimata == time.Now().AddDate(0, 0, 1) {
+					if p.Consegna_Stimata.IsZero() || p.Consegna_Stimata == time.Now().AddDate(0, 0, 1) {
 						if d < minDistanza {
 							minDistanza = d
 							minDiramazione = p
 							minIndice = i
 							nuovaDirezione = direzione
 							distanza_residua_percorribile = distanza_residua_percorribile - d
+							print("distanza ancora percoribile ", distanza_residua_percorribile, "\n")
 						}
 					}
 				} else {
@@ -222,15 +228,20 @@ func Trova_percorso(spedizioni []spedizione.Spedizione, sede Punto_geografico, l
 	percorso := []Punto_geografico{}
 	puntoCorrente := punti[0]               // Scelgo la sede come origine
 	punti = append(punti[:0], punti[1:]...) // Rimuovo la sede dalla lista dei punti
-	var direzione_non_ammessa = Direzione{angolo_inf: -1, angolo_sup: 361}
+	var direzione_non_ammessa = Direzione{angolo_inf: 361, angolo_sup: -1}
 	var distanza_residua_percorribile = distanza_massima_percorribile
 	for len(punti) > 0 {
 
 		puntoCorrente, indice, direzione_non_ammessa, distanza_residua_percorribile = Calcola_distanza_minima(puntoCorrente, punti, direzione_non_ammessa, distanza_residua_percorribile, lista_magazzini)
-		punti = append(punti[:indice], punti[indice+1:]...)
+		if indice != -1 {
+			punti = append(punti[:indice], punti[indice+1:]...)
+		} else {
+			break
+		}
 		if (puntoCorrente != Punto_geografico{}) {
 			percorso = append(percorso, puntoCorrente)
 		}
+		print("ciclo ", indice)
 	}
 	for _, punto := range percorso {
 		fmt.Println(punto)

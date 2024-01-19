@@ -125,15 +125,10 @@ func (g *GestoreSpedizioni) Traccia_Spedizione(ID string) string {
 func (g *GestoreSpedizioni) Trova_spedizioni_per_ID(ID string) Spedizione {
 	collection := g.client.Database("APL").Collection("spedizioni")
 	filter := bson.D{{Key: "id", Value: ID}}
-	cur, err := collection.Find(context.TODO(), filter)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer cur.Close(context.TODO())
 	var result Spedizione
-	err = cur.Decode(&result)
+	err := collection.FindOne(context.TODO(), filter).Decode(&result)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Errore ricerca nella collezione ", err)
 	}
 	return result
 }
@@ -246,7 +241,7 @@ func (g *GestoreSpedizioni) Ritorna_Data_Spedizione(id string) time.Time {
 func (g *GestoreSpedizioni) Modifica_Stato_Spedizione(id string, stato string) {
 	//TO_DO funzione modifica, però prima va cambiato il database in non relazionale
 	collection := g.client.Database("APL").Collection("spedizioni")
-	filter := bson.D{{Key: "idspedizione", Value: id}}
+	filter := bson.D{{Key: "id", Value: id}}
 	update := bson.D{{Key: "$push", Value: bson.D{{Key: "stato", Value: ToStato(stato)}}}}
 	updateResult, err := collection.UpdateOne(context.TODO(), filter, update)
 	if err != nil {

@@ -296,11 +296,11 @@ func Ottieni_percorso(w http.ResponseWriter, r *http.Request) {
 	ctx := context.TODO()
 	g, err := magazzino.NuovoGestoreMagazzino(ctx, "mongodb+srv://root:yWP2DlLumOz07vNv@apl.yignw97.mongodb.net/?retryWrites=true&w=majority")
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Errore connessione magazzino ", err)
 	}
 	s, err := spedizione.NuovoGestoreSpedizioni(ctx, "mongodb+srv://root:yWP2DlLumOz07vNv@apl.yignw97.mongodb.net/?retryWrites=true&w=majority")
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Errore connessione spedizioni ", err)
 	}
 	if r.Method == http.MethodPost {
 		body, err := io.ReadAll(r.Body)
