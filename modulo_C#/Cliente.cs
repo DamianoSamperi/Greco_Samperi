@@ -27,7 +27,7 @@ namespace Modulo_C_
         private void btn_inserisci_Click(object sender, EventArgs e)
         {
             this.Close();
-            Form newForm = new FormDatiSpedizione();
+            Form newForm = new FormDatiSpedizione(indirizzo);
             newForm.ShowDialog();
             newForm = null;
         }

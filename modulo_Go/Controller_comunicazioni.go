@@ -139,7 +139,12 @@ func Inserimento_prodotto(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Formato json non corretto", http.StatusBadRequest)
 		return
 	}
-	fmt.Fprint(w, g.InserisciPaccoInSede(dati.Sede, dati.Pacco))
+	result := g.InserisciPaccoInSede(dati.Sede, dati.Pacco)
+	if result != "Inserimento completato" {
+		http.Error(w, result, http.StatusBadRequest)
+	} else {
+		fmt.Fprint(w, result)
+	}
 
 }
 

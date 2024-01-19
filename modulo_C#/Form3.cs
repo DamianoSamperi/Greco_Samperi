@@ -33,8 +33,12 @@ namespace Modulo_C_
             {
                 try
                 {
+                    var data = new
+                    {
+                        sede = sede
+                    };
                     HttpClient httpClient = new HttpClient();
-                    string jsonData = JsonSerializer.Serialize(sede);
+                    string jsonData = JsonSerializer.Serialize(data);
                     HttpContent stringContent = new StringContent(jsonData, Encoding.UTF8, "application/json");
                     HttpResponseMessage response = await httpClient.PostAsync("http://localhost:8080/Ottieni_Percorso", stringContent);
                     var contents = await response.Content.ReadAsStringAsync();

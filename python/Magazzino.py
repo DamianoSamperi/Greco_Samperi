@@ -64,9 +64,10 @@ class Magazzino:
             url2 = "http://localhost:8080/Ritorna_Sede"
 
             payload = {"indirizzo": mittente }
-            payload_json = json.dumps(payload)
+            # payload_json = json.dumps(payload)
+            print("prova")
             headers = {"Content-Type": "application/json"}
-            response = requests.post(url2, json=payload_json, headers=headers)
+            response = requests.post(url2, json=payload, headers=headers)
 
             if response.status_code == 200:
                 print("Richiesta POST eseguita con successo!")
@@ -75,7 +76,6 @@ class Magazzino:
                 print(f"Errore nella richiesta POST. Codice di stato: {response.status_code}")
                 print(response.text)
 
-            
             self.sede = response.text
             
 
