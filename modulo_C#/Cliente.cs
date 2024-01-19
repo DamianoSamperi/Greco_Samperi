@@ -106,5 +106,45 @@ namespace Modulo_C_
                 throw;
             }
         }
+
+        private async void btn_data_Click(object sender, EventArgs e)
+        {
+            string id_spedizione = Microsoft.VisualBasic.Interaction.InputBox("Inserisci codice tracciamento spedizione", "Inserimento codice tracciamento", "xxxxxxx");
+            if (id_spedizione != "")
+            {
+                string nuova_data = Microsoft.VisualBasic.Interaction.InputBox("Inserisci nuova data consegna (superiore a 4 giorni da oggi)", "Inserimento data consegna", DateTime.Today.AddDays(4).ToString("yyyy/MM/dd"));
+                if (DateTime.Parse(nuova_data)>= DateTime.Today.AddDays(4)){
+
+                    var data = new
+                    {
+                        id = id_spedizione,
+                        data = nuova_data
+
+                    };
+                    string jsonData = JsonSerializer.Serialize(indirizzo);
+
+                    try
+                    {
+                        using (HttpClient client = new HttpClient())
+                        {
+                            HttpContent stringContent = new StringContent(jsonData, Encoding.UTF8, "application/json");
+                            HttpResponseMessage response = await client.PostAsync("http://localhost:8080/Scegli_data_consegna", stringContent);
+                            MessageBox.Show("Data consegna selezionata");
+                          
+                        }
+
+                    }
+                    catch (Exception)
+                    {
+                        MessageBox.Show("Connessione al server rifiutata");
+                        throw;
+                    }
+                }
+
+            }else{
+                MessageBox.Show("Inserire un codice spedizione");
+            }
+            
+        }
     }
 }
