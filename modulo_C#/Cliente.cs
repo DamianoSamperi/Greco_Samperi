@@ -78,9 +78,12 @@ namespace Modulo_C_
 
         private async void btn_visualizza_Click_1(object sender, EventArgs e)
         {
-
+            var data = new
+            {
+                mittente = indirizzo
+            };
             // Converti i dati in formato JSON
-            string jsonData = JsonSerializer.Serialize(indirizzo);
+            string jsonData = JsonSerializer.Serialize(data);
 
             try
             {
@@ -139,6 +142,10 @@ namespace Modulo_C_
                         MessageBox.Show("Connessione al server rifiutata");
                         throw;
                     }
+                }
+                else
+                {
+                    MessageBox.Show("Inserire data consegna valida");
                 }
 
             }else{

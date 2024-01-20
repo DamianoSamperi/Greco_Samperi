@@ -108,7 +108,7 @@ func Traccia_spedizione(w http.ResponseWriter, r *http.Request) {
 	ctx := context.TODO()
 	g, err := spedizione.NuovoGestoreSpedizioni(ctx, "mongodb+srv://root:yWP2DlLumOz07vNv@apl.yignw97.mongodb.net/?retryWrites=true&w=majority")
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Errore connessione spedizioni ", err)
 	}
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
