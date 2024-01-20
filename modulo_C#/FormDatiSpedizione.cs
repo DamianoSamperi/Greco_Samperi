@@ -36,7 +36,8 @@ namespace Modulo_C_
             }
 
 
-            await InviaRichiestaPost(mittente, destinatario);
+            await InviaRichiestaPost(mittente, destinatario); // meccanismo che permette di gestire delle 
+            //espressioni async, permette di ritornare il controllo al chiamante della funzione.
 
             this.Close();
             Form newForm = new FormDatiPacco();
