@@ -1,13 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
+﻿using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace Modulo_C_
 {
@@ -43,7 +35,7 @@ namespace Modulo_C_
                 };
 
 
-                // Converti i dati in formato JSON
+                
                 string jsonData = JsonSerializer.Serialize(data);
 
                 try
@@ -82,7 +74,7 @@ namespace Modulo_C_
             {
                 mittente = indirizzo
             };
-            // Converti i dati in formato JSON
+            
             string jsonData = JsonSerializer.Serialize(data);
 
             try

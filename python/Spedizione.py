@@ -12,7 +12,7 @@ class Spedizione:
         self.data_consegna_stimata = datetime.min
         self.eventi_tracciamento = []
 
-    #aggiorna stato e aggiungi tracciamento sono insieme, bisogna chiamare la funzione che farà Damiano
+    
     def aggiungi_evento_tracciamento(self, nuovo_stato):
         self.stato_attuale = nuovo_stato
         self.eventi_tracciamento.append((datetime.now(), nuovo_stato))

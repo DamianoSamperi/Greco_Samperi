@@ -1,13 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
+﻿using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace Modulo_C_
 {
@@ -49,31 +41,26 @@ namespace Modulo_C_
 
         private async Task InviaRichiestaPost(string peso, string dimensione)
         {
-            string url = "http://localhost:8082/aggiungi_pacco_cliente"; // Cambia la porta e il percorso a seconda delle tue esigenze
+            string url = "http://localhost:8082/aggiungi_pacco_cliente";
             try
             {
                 using (HttpClient client = new HttpClient())
                 {
-                    // Dati da inviare
+                    
                     var data = new
                     {
                         peso = peso,
                         dimensione = dimensione
                     };
 
-                    // Converti i dati in formato JSON
-                    string jsonData = JsonSerializer.Serialize(data);
-
-                    // Crea il contenuto della richiesta
-                    var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
-
-                    // Effettua la richiesta POST
+                    
+                    string jsonData = JsonSerializer.Serialize(data);                   
+                    var content = new StringContent(jsonData, Encoding.UTF8, "application/json");                    
                     HttpResponseMessage response = await client.PostAsync(url, content);
 
-                    // Verifica se la richiesta ha avuto successo
+                   
                     if (response.IsSuccessStatusCode)
-                    {
-                        // Leggi la risposta
+                    {                     
                         string responseContent = await response.Content.ReadAsStringAsync();
                         MessageBox.Show(responseContent, "Risposta dal server", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
