@@ -1,4 +1,3 @@
-'''
 from Cliente import Cliente
 from Magazzino import Magazzino
 from Spedizione import GestoreSpedizioni
@@ -72,8 +71,8 @@ def epilogo_ordine():
 
 if __name__ == '__main__':
     app.run(debug=True,  host='0.0.0.0', port=8082)  
-'''
 
+'''
 from flask import Flask, request, jsonify
 from concurrent.futures import ThreadPoolExecutor
 import json
@@ -132,7 +131,7 @@ thread_manager = ThreadManager()
 def invia_dati_route():
     if request.method == 'POST':
         data = request.json
-        for _ in range(5):  # Esegui la funzione invia_dati 10 volte
+        for _ in range(1):  # Esegui la funzione invia_dati 10 volte
             result = thread_manager.invia_dati(data)
         return jsonify(result)
 
@@ -140,7 +139,7 @@ def invia_dati_route():
 def invia_dati_ordine_route():
     if request.method == 'POST':
         data = request.json
-        for _ in range(5):  # Esegui la funzione invia_dati_ordine 10 volte
+        for _ in range(1):  # Esegui la funzione invia_dati_ordine 10 volte
             result = thread_manager.invia_dati_ordine(data)
         return jsonify(result)
 
@@ -148,19 +147,19 @@ def invia_dati_ordine_route():
 def aggiungi_pacco_cliente_route():
     if request.method == 'POST':
         data = request.json
-        for _ in range(5):  # Esegui la funzione aggiungi_pacco_cliente 10 volte
+        for _ in range(1):  # Esegui la funzione aggiungi_pacco_cliente 10 volte
             result = thread_manager.aggiungi_pacco_cliente(data)
         return jsonify(result)
 
 @app.route('/epilogo_ordine', methods=['GET'])
 def epilogo_ordine_route():
-    for _ in range(5):  # Esegui la funzione epilogo_ordine 10 volte
+    for _ in range(1):  # Esegui la funzione epilogo_ordine 10 volte
         result = thread_manager.epilogo_ordine()
     return jsonify(result)
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=8082)
-
+'''
 
    
 
