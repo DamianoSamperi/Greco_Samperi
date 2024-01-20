@@ -243,6 +243,25 @@ func (g *GestoreSpedizioni) Ritorna_Data_Spedizione(id string) time.Time {
 	}
 	return date
 }
+func (g *GestoreSpedizioni) Ritorna_Destinatario_Spedizione(id string) string {
+	//TO_DO funzione modifica, però prima va cambiato il database in non relazionale
+	collection := g.client.Database("APL").Collection("spedizioni")
+	filter := bson.D{{Key: "idspedizione", Value: id}}
+	cur, err := collection.Find(context.TODO(), filter)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer cur.Close(context.TODO())
+	// var date string `bson:"destinatario"`
+	var date = struct {
+		Destinatario string `bson:"destinatario"`
+	}{}
+	err = cur.Decode(&date)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return date.Destinatario
+}
 func (g *GestoreSpedizioni) Modifica_Stato_Spedizione(id string, stato string) string {
 	//TO_DO funzione modifica, però prima va cambiato il database in non relazionale
 	collection := g.client.Database("APL").Collection("spedizioni")

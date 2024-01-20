@@ -345,7 +345,8 @@ func Ottieni_percorso(w http.ResponseWriter, r *http.Request) {
 			percorso := consegne.Trova_percorso(spedizioni, Sede, lista_magazzini)
 			var indirizzi []string
 			for _, p := range percorso {
-				indirizzi = append(indirizzi, p.Indirizzo)
+				destinatario := s.Ritorna_Destinatario_Spedizione(p.Indirizzo)
+				indirizzi = append(indirizzi, p.Indirizzo+" "+destinatario+"\n")
 				s.Modifica_Stato_Spedizione(p.Indirizzo, "InTransito")
 			}
 			if len(indirizzi) > 0 {
