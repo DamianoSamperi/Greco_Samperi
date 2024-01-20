@@ -1,14 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Diagnostics;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using System.Net.Http;
+﻿using System.Text;
 using System.Text.Json;
 
 namespace Modulo_C_
@@ -32,7 +22,7 @@ namespace Modulo_C_
             if (string.IsNullOrWhiteSpace(nome) || string.IsNullOrWhiteSpace(cognome))
             {
                 MessageBox.Show("Inserire nome e cognome.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return; // Esce dalla funzione se i campi sono vuoti
+                return;
             }
             if (string.IsNullOrWhiteSpace(tb_Via_Mittente.Text) || string.IsNullOrWhiteSpace(tb_Città_Mittente.Text) || string.IsNullOrWhiteSpace(tb_Cod_Postale_Mittente.Text) || string.IsNullOrWhiteSpace(tb_Provincia_Mittente.Text))
             {
@@ -40,7 +30,7 @@ namespace Modulo_C_
                 return;
             }
 
-            // Esegui la richiesta POST
+            
             await InviaRichiestaPost(nome, cognome);
 
             this.Close();
@@ -56,27 +46,21 @@ namespace Modulo_C_
             string url = "http://localhost:8082/invia_dati";
 
             using (HttpClient client = new HttpClient())
-            {
-                // Dati da inviare
+            {               
                 var data = new
                 {
                     nome = nome,
                     cognome = cognome
                 };
 
-                // Converti i dati in formato JSON
+                
                 string jsonData = JsonSerializer.Serialize(data);
-
-                // Crea il contenuto della richiesta
                 var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
-
-                // Effettua la richiesta POST
                 HttpResponseMessage response = await client.PostAsync(url, content);
 
-                // Verifica se la richiesta ha avuto successo
+                
                 if (response.IsSuccessStatusCode)
                 {
-                    // Leggi la risposta
                     string responseContent = await response.Content.ReadAsStringAsync();
                     MessageBox.Show(responseContent, "Risposta dal server", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }

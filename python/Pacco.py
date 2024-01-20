@@ -9,7 +9,6 @@ class Pacco:
     
 
     def calcola_prezzo(self):
-        # Calcolo del prezzo basato sulla dimensione
         if self.dimensione == 'piccolo':
             coefficiente_dimensione = 1.0
         elif self.dimensione == 'medio':
@@ -24,9 +23,7 @@ class Pacco:
         elif self.peso > 20000:
             coefficiente_peso = 3.0
 
-        # Calcolo del prezzo finale
         prezzo_finale = self.prezzo_base_unita * coefficiente_dimensione * coefficiente_peso
-
         return prezzo_finale
 
 

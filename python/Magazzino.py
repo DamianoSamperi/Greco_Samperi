@@ -8,9 +8,8 @@ from flask import Flask, request, jsonify
 class Magazzino:
     def __init__(self, gestore_spedizioni):
         self.cod_sped = None
-        #self.codice_prodotto = None
         self.sede = None
-        #Crea un dizionario vuoto e lo assegna all'attributo di istanza 'inventario'
+        #lista vuota assegnata all'attributo di istanza 'inventario'
         self.inventario = []
 
         self.limiti_dimensione = {
@@ -33,42 +32,29 @@ class Magazzino:
             if quantita_totale_dimensione >= limite:
                 print(f"Errore: Limite di pacchi {pacco.dimensione} raggiunto ({limite}).")
                 return
-
         if pacco not in self.inventario:
             self.inventario.append(pacco)
 
     
 
-    #def mostra_inventario(self):
-        #print("Inventario del magazzino:")
-        #for pacco in self.inventario:
-            #print(pacco) 
-
-
     
     def gestisci_magazzino(self, data):
-
-
-        # Esegui l'elaborazione dei dati      
+            #elaborazione dei dati passati tramite richiesta Post     
             mittente = data.get('mittente', '')   
             destinatario = data.get('destinatario', '')   
 
             
             time.sleep(4)
                 
-            # Crea un'istanza di Spedizione utilizzando il GestoreSpedizioni
+            # Creazione istanza Spedizione utilizzando il GestoreSpedizioni
             self.sped, self.cod_sped = self.gestore_spedizioni.crea_spedizione(mittente=mittente, destinatario=destinatario)
             
 
             print("Ritorna Sede")
             url2 = "http://localhost:8080/Ritorna_Sede"
-
             payload = {"indirizzo": mittente }
-            # payload_json = json.dumps(payload)
-            print("prova")
             headers = {"Content-Type": "application/json"}
             response = requests.post(url2, json=payload, headers=headers)
-
             if response.status_code == 200:
                 print("Richiesta POST eseguita con successo!")
                 print(response.text)
@@ -90,7 +76,6 @@ class Magazzino:
                     "sede": self.sede                    
                       }   
             print("Id ",self.cod_sped)
-            # Effettua la richiesta POST
             headers = {"Content-Type": "application/json"}
             response = requests.post(url, json=payload, headers=headers)
             if response.status_code == 200:
@@ -100,13 +85,14 @@ class Magazzino:
                 print(f"Errore nella richiesta POST. Codice di stato: {response.status_code}")
                 print(response.text)
 
+
+
+
             print("Ottieni Prodotti")
             url3 = "http://localhost:8080/Ottieni_Prodotti_Hub"
             payload = {
                     "sede": self.sede                   
                       }   
-
-            #payload_json = json.dumps(payload)
             headers = {"Content-Type": "application/json"}
             # Effettua la richiesta POST
             response = requests.post(url3, json=payload, headers=headers)
@@ -116,15 +102,15 @@ class Magazzino:
             else:
                 print(f"Errore nella richiesta POST. Codice di stato: {response.status_code}")
                 print(response.text)
-             
+
+
+
             print("Visualizza Spedizioni")
             url5 = "http://localhost:8080/Visualizza_Spedizioni"
-
             payload = {"Mittente": mittente }
             payload_json = json.dumps(payload)  
             headers = {"Content-Type": "application/json"}
             response = requests.post(url5, json=payload_json, headers=headers)
-
             if response.status_code == 200:
                 print("Richiesta POST eseguita con successo!")
                 print(response.text)
@@ -138,7 +124,6 @@ class Magazzino:
     def epilogo_ordine(self):            
             tracciamento_corrente = self.sped.tracciamento()
             evento_aggiunto = self.sped.aggiungi_evento_tracciamento(f"Pacco in preparazione consegna")
-
             return {
                 "tracciamento": tracciamento_corrente,
                 "evento_aggiunto": evento_aggiunto
@@ -151,8 +136,6 @@ class Magazzino:
 
     def aggiungi_pacco_cliente(self, data):
             self.ordini = []
-        #while True:
-            # Ottieni l'ultimo codice presente nel magazzino
             while True:
                 try:
                     peso = float(data.get('peso', ''))
@@ -162,17 +145,16 @@ class Magazzino:
 
             
             while True:
-                dimensione = data.get('dimensione', '')
-    
+                dimensione = data.get('dimensione', '')    
                 if dimensione in ["piccolo", "medio", "grande"]:
-                    break  # Esci dal ciclo se l'input è valido
+                    break 
                 else:
                     print("Errore: Inserisci una dimensione valida (piccolo, medio o grande).")
 
-            # Crea un nuovo oggetto Pacco con il nuovo codice
+            #nuovo oggetto Pacco con il nuovo codice
             nuovo_pacco = Pacco(codice_sped=self.cod_sped, peso=peso, prezzo=100, dimensione=dimensione)
 
-            # Aggiungi il nuovo pacco al magazzino
+            # Aggiunta nuovo pacco al magazzino
             self.aggiungi_pacco(nuovo_pacco)
             if nuovo_pacco.dimensione in self.limiti_dimensione:
                 limite = self.limiti_dimensione[nuovo_pacco.dimensione]
@@ -189,8 +171,10 @@ class Magazzino:
                     
                 else:
                     print(f"Pacco  aggiunto al magazzino e all'inventario con codice {nuovo_pacco.codice_sped}.")
-            
-            #pacco_json = json.dumps(nuovo_pacco.to_dict())
+
+
+
+           
             print("Inserisci Prodotto Hub")
             url4 = "http://localhost:8080/Inserisci_Prodotto_Hub"
             payload = {
@@ -198,9 +182,7 @@ class Magazzino:
                        "pacco": nuovo_pacco.to_dict()              
                       }   
             
-            #payload_json = json.dumps(payload)
             headers = {"Content-Type": "application/json"}
-            # Effettua la richiesta POST
             response = requests.post(url4, json=payload, headers=headers)
             if response.status_code == 200:
                 print("Richiesta POST eseguita con successo!")
@@ -209,6 +191,8 @@ class Magazzino:
                 print(f"Errore nella richiesta POST. Codice di stato: {response.status_code}")
                 print(response.text)
            
+
+
 
             print("Inserisci Pacco spedizione")
             url7 = "http://localhost:8080/Inserisci_Pacco_spedizione"
@@ -219,9 +203,7 @@ class Magazzino:
                        "prezzo": nuovo_pacco.calcola_prezzo()          
                       }   
             
-            #payload_json = json.dumps(payload)
             headers = {"Content-Type": "application/json"}
-            # Effettua la richiesta POST
             response = requests.post(url7, json=payload, headers=headers)
             if response.status_code == 200:
                 print("Richiesta POST eseguita con successo!")
@@ -230,7 +212,7 @@ class Magazzino:
                 print(f"Errore nella richiesta POST. Codice di stato: {response.status_code}")
                 print(response.text)
         
-            #cliente.aggiunge_ordine(nuovo_pacco)
+
             
 
            

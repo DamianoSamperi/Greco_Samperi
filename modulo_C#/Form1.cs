@@ -1,7 +1,3 @@
-using System.Windows.Forms;
-using System;
-using System.Diagnostics;
-
 namespace Modulo_C_
 {
     public partial class Form1 : Form

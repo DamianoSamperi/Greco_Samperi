@@ -12,6 +12,7 @@ cliente_data = {}
 @app.route('/invia_dati', methods=['POST'])
 def invia_dati():
     if request.method == 'POST':
+
         # Ottieni i dati dal corpo della richiesta
         data = request.json
 
@@ -21,12 +22,9 @@ def invia_dati():
 
         # Crea un oggetto Cliente con i dati ricevuti
         cliente = Cliente(nome=nome, cognome=cognome)
-
         cliente_data['cliente'] = cliente
-        
         return jsonify({'messaggio':'dati cliente inviati correttamnete'})
         
-
 
 
 
@@ -39,33 +37,36 @@ def invia_dati_ordine():
 
 
 
+
 @app.route('/aggiungi_pacco_cliente', methods=['POST'])
 def aggiungi_pacco_cliente():
     if request.method == 'POST':
         data = request.json
-        # Esegui l'elaborazione dei dati per aggiungere il pacco del cliente
+        
         
         cliente = cliente_data.get('cliente')
         nome_cliente = cliente.nome
         cognome_cliente = cliente.cognome
 
-        # Costruisci manualmente la risposta JSON senza ordinare i campi
+        #risposta JSON senza ordinare i campi
         response_data = {
             'messaggio': 'Pacco aggiunto correttamente a nome del cliente',
             'nome': nome_cliente,
             'cognome': cognome_cliente
         }
 
-        # Converti il dizionario in una stringa JSON mantenendo l'ordine dei campi
+        # Conversione dizionario in una stringa JSON mantenendo l'ordine dei campi
         response_json = json.dumps(response_data, sort_keys=False)
-
         magazzino.aggiungi_pacco_cliente(data)        
         return response_json, 200, {'Content-Type': 'application/json'}
+    
+
+
     
 @app.route('/epilogo_ordine', methods=['GET'])
 def epilogo_ordine():
     dati_epilogo = magazzino.epilogo_ordine()
-    # Utilizza jsonify per convertire i dati in formato JSON e inviarli come risposta
+    #jsonify per convertire i dati in formato JSON e inviarli come risposta
     return jsonify(dati_epilogo)
 
 
