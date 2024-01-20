@@ -48,7 +48,14 @@ namespace Modulo_C_
                             HttpContent stringContent = new StringContent(jsonData, Encoding.UTF8, "application/json");
                             HttpResponseMessage response = await client.PostAsync("http://localhost:8080/Consegna_hub", stringContent);
                             var contents = await response.Content.ReadAsStringAsync();
-                            MessageBox.Show(contents);
+                            if(contents == "codice spedizione non valido")
+                            {
+                                MessageBox.Show(contents);
+                            }
+                            else
+                            {
+                                MessageBox.Show(contents + nuovo_hub);
+                            }
                         }
 
                     }
@@ -79,14 +86,14 @@ namespace Modulo_C_
                     id = id_spedizione
                 };
                 // Converti i dati in formato JSON
-                string jsonData = JsonSerializer.Serialize(id_spedizione);
+                string jsonData = JsonSerializer.Serialize(data);
 
                 try
                 {
                     using (HttpClient client = new HttpClient())
                     {
                         HttpContent stringContent = new StringContent(jsonData, Encoding.UTF8, "application/json");
-                        HttpResponseMessage response = await client.PostAsync("http://localhost:8080//Modifica_Stato_Spedizione", stringContent);
+                        HttpResponseMessage response = await client.PostAsync("http://localhost:8080/Modifica_Stato_Spedizione", stringContent);
                         var contents = await response.Content.ReadAsStringAsync();
                         MessageBox.Show(contents);
                     }

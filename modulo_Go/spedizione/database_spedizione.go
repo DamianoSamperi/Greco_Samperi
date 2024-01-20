@@ -128,7 +128,11 @@ func (g *GestoreSpedizioni) Trova_spedizioni_per_ID(ID string) Spedizione {
 	if err != nil {
 		log.Fatal("Errore ricerca nella collezione ", err)
 	}
-	return result
+	if result.Stato[len(result.Stato)-1] == 0 || result.Stato[len(result.Stato)-1] == 2 {
+		return result
+	}
+	return Spedizione{ID: "nulla"}
+
 }
 
 // func (g *GestoreSpedizioni) Ritorna_pacchi_spedizione(ID string) []Pacco{
@@ -210,14 +214,13 @@ func (g *GestoreSpedizioni) RitornaID() []string {
 	return IDs
 }
 func (g *GestoreSpedizioni) Modifica_Data_Consegna_Spedizione(id string, data string) {
-	print("data ", data)
 	date, err := time.Parse("2006/01/02", data)
 	if err != nil {
 		log.Fatal(err)
 	}
 	collection := g.client.Database("APL").Collection("spedizioni")
 	filter := bson.D{{Key: "id", Value: id}}
-	update := bson.D{{Key: "$push", Value: bson.D{{Key: "data_consegna", Value: date}}}}
+	update := bson.D{{Key: "$set", Value: bson.D{{Key: "data_consegna", Value: date}}}}
 	updateResult, err := collection.UpdateOne(context.TODO(), filter, update)
 	if err != nil {
 		log.Fatal(err)
@@ -240,7 +243,7 @@ func (g *GestoreSpedizioni) Ritorna_Data_Spedizione(id string) time.Time {
 	}
 	return date
 }
-func (g *GestoreSpedizioni) Modifica_Stato_Spedizione(id string, stato string) {
+func (g *GestoreSpedizioni) Modifica_Stato_Spedizione(id string, stato string) string {
 	//TO_DO funzione modifica, però prima va cambiato il database in non relazionale
 	collection := g.client.Database("APL").Collection("spedizioni")
 	filter := bson.D{{Key: "id", Value: id}}
@@ -250,6 +253,12 @@ func (g *GestoreSpedizioni) Modifica_Stato_Spedizione(id string, stato string) {
 		log.Fatal(err)
 	}
 	fmt.Printf("Modificati %v documenti\n", updateResult.ModifiedCount)
+	if updateResult.ModifiedCount > 0 {
+		return "Pacco " + stato
+	} else {
+		return "codice spedizione non valido"
+	}
+
 }
 
 func Tracciamento(spedizione Spedizione) string {

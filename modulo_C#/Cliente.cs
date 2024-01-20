@@ -124,7 +124,7 @@ namespace Modulo_C_
                         data = nuova_data
 
                     };
-                    string jsonData = JsonSerializer.Serialize(indirizzo);
+                    string jsonData = JsonSerializer.Serialize(data);
 
                     try
                     {
@@ -140,7 +140,7 @@ namespace Modulo_C_
                     catch (Exception)
                     {
                         MessageBox.Show("Connessione al server rifiutata");
-                        throw;
+                        //throw;
                     }
                 }
                 else

@@ -181,6 +181,7 @@ func Calcola_distanza_minima(origine Punto_geografico, Diramazioni []Punto_geogr
 			print("distanza ", d)
 			if d <= distanza_massima_percorribile {
 				if (distanza_residua_percorribile - d) >= 0 {
+					print("if ", p.Consegna_Stimata.Format("2006/01/02") == time.Now().AddDate(0, 0, 1).Format("2006/01/02"), p.Consegna_Stimata.Format("2006/01/02"), time.Now().AddDate(0, 0, 1).Format("2006/01/02"))
 					if p.Consegna_Stimata.IsZero() || p.Consegna_Stimata.Format("2006/01/02") == time.Now().AddDate(0, 0, 1).Format("2006/01/02") {
 						if d < minDistanza {
 							minDistanza = d
@@ -241,7 +242,6 @@ func Trova_percorso(spedizioni []spedizione.Spedizione, sede Punto_geografico, l
 		if (puntoCorrente != Punto_geografico{}) {
 			percorso = append(percorso, puntoCorrente)
 		}
-		print("ciclo ", indice)
 	}
 	for _, punto := range percorso {
 		fmt.Println(punto)

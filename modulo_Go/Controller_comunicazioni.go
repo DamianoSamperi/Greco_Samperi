@@ -197,6 +197,7 @@ func Consegna_hub(w http.ResponseWriter, r *http.Request) {
 	// pacchi := spedizione.Pacchi
 	g.SpostaPacco(dati.Id_Spedizione, dati.Vecchio_Hub, dati.Nuovo_Hub)
 	s.Modifica_Stato_Spedizione(dati.Id_Spedizione, "Consegnato all'Hub")
+	fmt.Fprint(w, s.Modifica_Stato_Spedizione(dati.Id_Spedizione, "Consegnato all'Hub"))
 	// for _,_ = range pacchi{
 	// 	g.SpostaPacco(dati.Id_Spedizione,dati.vecchio_Hub,dati.nuovo_Hub)
 	// }
@@ -264,9 +265,12 @@ func Modifica_stato(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		var dati modifica_stato
-		_ = json.Unmarshal(body, &dati)
-		g.Modifica_Stato_Spedizione(dati.Id_spedizione, dati.Stato)
-
+		err = json.Unmarshal(body, &dati)
+		if err != nil {
+			http.Error(w, "Formato json non corretto", http.StatusBadRequest)
+			return
+		}
+		fmt.Fprint(w, g.Modifica_Stato_Spedizione(dati.Id_spedizione, dati.Stato))
 	} else {
 		http.Error(w, "Metodo non valido", http.StatusMethodNotAllowed)
 	}
@@ -284,7 +288,11 @@ func Inserimento_data_consegna(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		var dati modifica_data
-		_ = json.Unmarshal(body, &dati)
+		err = json.Unmarshal(body, &dati)
+		if err != nil {
+			http.Error(w, "Formato json non corretto", http.StatusBadRequest)
+			return
+		}
 		g.Modifica_Data_Consegna_Spedizione(dati.Id_spedizione, dati.Data)
 
 	} else {
@@ -318,26 +326,37 @@ func Ottieni_percorso(w http.ResponseWriter, r *http.Request) {
 		for _, id := range ids {
 			//TO_DO andrebbero tornate solo quelle che sono in preparazione
 			spedizione := s.Trova_spedizioni_per_ID(id)
-			spedizioni = append(spedizioni, spedizione)
+			if spedizione.ID != "nulla" {
+				spedizioni = append(spedizioni, spedizione)
+			}
 		}
-		Coordinata_Sede := g.Ritorna_Coordinate_hub(dati.Sede)
-		if Coordinata_Sede == (magazzino.Coordinate{}) {
-			http.Error(w, "Sede non valida", http.StatusMethodNotAllowed)
+		if len(spedizioni) > 0 {
+			Coordinata_Sede := g.Ritorna_Coordinate_hub(dati.Sede)
+			if Coordinata_Sede == (magazzino.Coordinate{}) {
+				http.Error(w, "Sede non valida", http.StatusMethodNotAllowed)
+			}
+			var Sede = consegne.Punto_geografico{Indirizzo: dati.Sede, Latitudine: Coordinata_Sede.Latitudine, Longitudine: Coordinata_Sede.Longitudine}
+			Lista_coordinate_magazzini, sedi_magazzini := g.Ottieni_Sedi(Sede.Indirizzo)
+			var lista_magazzini []consegne.Punto_geografico
+			for i, coordinate := range Lista_coordinate_magazzini {
+				magazzino := consegne.Punto_geografico{Indirizzo: sedi_magazzini[i], Latitudine: coordinate.Latitudine, Longitudine: coordinate.Longitudine}
+				lista_magazzini = append(lista_magazzini, magazzino)
+			}
+			percorso := consegne.Trova_percorso(spedizioni, Sede, lista_magazzini)
+			var indirizzi []string
+			for _, p := range percorso {
+				indirizzi = append(indirizzi, p.Indirizzo)
+				s.Modifica_Stato_Spedizione(p.Indirizzo, "InTransito")
+			}
+			if len(indirizzi) > 0 {
+				fmt.Fprint(w, indirizzi)
+			} else {
+				fmt.Fprint(w, "Nessuna spedizione da consegnare")
+			}
+		} else {
+			fmt.Fprint(w, "Nessuna spedizione da consegnare")
 		}
-		var Sede = consegne.Punto_geografico{Indirizzo: dati.Sede, Latitudine: Coordinata_Sede.Latitudine, Longitudine: Coordinata_Sede.Longitudine}
-		Lista_coordinate_magazzini, sedi_magazzini := g.Ottieni_Sedi(Sede.Indirizzo)
-		var lista_magazzini []consegne.Punto_geografico
-		for i, coordinate := range Lista_coordinate_magazzini {
-			magazzino := consegne.Punto_geografico{Indirizzo: sedi_magazzini[i], Latitudine: coordinate.Latitudine, Longitudine: coordinate.Longitudine}
-			lista_magazzini = append(lista_magazzini, magazzino)
-		}
-		percorso := consegne.Trova_percorso(spedizioni, Sede, lista_magazzini)
-		var indirizzi []string
-		for _, p := range percorso {
-			indirizzi = append(indirizzi, p.Indirizzo)
-			s.Modifica_Stato_Spedizione(p.Indirizzo, "InTransito")
-		}
-		fmt.Fprint(w, indirizzi)
+
 	} else {
 		http.Error(w, "Metodo non valido", http.StatusMethodNotAllowed)
 	}
