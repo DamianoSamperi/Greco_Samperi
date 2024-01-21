@@ -397,3 +397,4 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 Greco_Samperi.sln
+modulo_C#/bin/Debug/net8.0-windows/

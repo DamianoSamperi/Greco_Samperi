@@ -155,6 +155,7 @@ func calcola_punti(spedizioni []spedizione.Spedizione, sede Punto_geografico) []
 }
 
 func trovaMagazzino_più_vicino(destinatario Punto_geografico, origine Punto_geografico, lista_magazzini []Punto_geografico) (float64, Punto_geografico) {
+	var distanza_magazzino float64 = distanza_massima_percorribile
 	for _, magazzino := range lista_magazzini {
 		direzione := Todirezione(calcola_direzione_punti(destinatario, origine))
 		direzione_magazzino := Todirezione(calcola_direzione_punti(magazzino, origine))
@@ -165,7 +166,7 @@ func trovaMagazzino_più_vicino(destinatario Punto_geografico, origine Punto_geo
 			}
 		}
 	}
-	return distanza_massima_percorribile + 1, Punto_geografico{}
+	return distanza_magazzino + 1, Punto_geografico{}
 }
 func Calcola_distanza_minima(origine Punto_geografico, Diramazioni []Punto_geografico, direzione_non_ammessa Direzione, distanza_residua_percorribile float64, lista_magazzini []Punto_geografico) (Punto_geografico, int, Direzione, float64) {
 	minDistanza := math.MaxFloat64

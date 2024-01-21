@@ -78,6 +78,16 @@ func ToStato(s string) Stato {
 	}
 	return Errore
 }
+
+func contiene(slice []string, str string) bool {
+	for _, item := range slice {
+		if item == str {
+			return true
+		}
+	}
+	return false
+}
+
 func NuovoGestoreSpedizioni(ctx context.Context, uri string) (*GestoreSpedizioni, error) {
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(uri))
 	if err != nil {
@@ -250,14 +260,9 @@ func (g *GestoreSpedizioni) Modifica_Data_Consegna_Spedizione(id string, data st
 func (g *GestoreSpedizioni) Ritorna_Data_Spedizione(id string) time.Time {
 	//TO_DO funzione modifica, però prima va cambiato il database in non relazionale
 	collection := g.client.Database("APL").Collection("spedizioni")
-	filter := bson.D{{Key: "idspedizione", Value: id}}
-	cur, err := collection.Find(context.TODO(), filter)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer cur.Close(context.TODO())
+	filter := bson.D{{Key: "id", Value: id}}
 	var date time.Time
-	err = cur.Decode(&date)
+	err := collection.FindOne(context.TODO(), filter).Decode(&date)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -265,18 +270,17 @@ func (g *GestoreSpedizioni) Ritorna_Data_Spedizione(id string) time.Time {
 }
 func (g *GestoreSpedizioni) Ritorna_Destinatario_Spedizione(id string) string {
 	//TO_DO funzione modifica, però prima va cambiato il database in non relazionale
-	collection := g.client.Database("APL").Collection("spedizioni")
-	filter := bson.D{{Key: "idspedizione", Value: id}}
-	cur, err := collection.Find(context.TODO(), filter)
-	if err != nil {
-		log.Fatal(err)
+	collezioni, _ := g.client.Database("APL").ListCollectionNames(g.ctx, bson.M{})
+	if contiene(collezioni, id) {
+		return id
 	}
-	defer cur.Close(context.TODO())
-	// var date string `bson:"destinatario"`
-	var date = struct {
+	collection := g.client.Database("APL").Collection("spedizioni")
+	filter := bson.D{{Key: "id", Value: id}}
+	// cur, err := collection.Find(context.TODO(), filter)
+	var date struct {
 		Destinatario string `bson:"destinatario"`
-	}{}
-	err = cur.Decode(&date)
+	}
+	err := collection.FindOne(context.TODO(), filter).Decode(&date)
 	if err != nil {
 		log.Fatal(err)
 	}
