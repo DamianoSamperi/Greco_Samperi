@@ -7,8 +7,8 @@ WORKDIR /src
 COPY ["./Modulo_C#.csproj", "modulo_C#/"]
 RUN dotnet restore "modulo_C#\Modulo_C#.csproj"
 COPY . .
-WORKDIR "/src/modulo_C#"
-RUN dotnet build "program.cs" -c $configuration -o /app/build
+WORKDIR "/src"
+RUN dotnet build "Modulo_C#.csproj" -c $configuration -o /app/build
 
 FROM build AS publish
 ARG configuration=Release
