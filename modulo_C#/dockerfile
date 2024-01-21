@@ -1,0 +1,10 @@
+# Usa un'immagine di runtime .NET Core per Windows con supporto per WinForms
+FROM mcr.microsoft.com/dotnet/core/runtime:3.1-nanoserver-1903 AS base
+WORKDIR /app
+
+# Copia i file necessari per l'applicazione
+COPY ./path/to/your/csharp/module.dll .
+COPY ./path/to/your/csharp/Form1.dll .  
+
+# Comando per eseguire l'applicazione C#
+CMD ["dotnet", "module.dll"]
