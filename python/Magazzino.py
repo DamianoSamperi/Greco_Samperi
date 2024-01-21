@@ -2,7 +2,7 @@ import requests
 import time
 from Pacco import Pacco
 import json
-from flask import Flask, request, jsonify
+
 
 
 class Magazzino:
@@ -21,7 +21,7 @@ class Magazzino:
         self.gestore_spedizioni = gestore_spedizioni
 
 
-
+    
     def aggiungi_pacco(self, pacco):
         if pacco.dimensione in self.limiti_dimensione:
             limite = self.limiti_dimensione[pacco.dimensione]
@@ -156,23 +156,7 @@ class Magazzino:
 
             # Aggiunta nuovo pacco al magazzino
             self.aggiungi_pacco(nuovo_pacco)
-            if nuovo_pacco.dimensione in self.limiti_dimensione:
-                limite = self.limiti_dimensione[nuovo_pacco.dimensione]
-
-                # Calcola il numero totale di pacchi della dimensione specificata presenti nell'inventario
-                quantita_totale_dimensione = sum(
-                    1 for ordine in self.ordini if ordine['dimensione'] == dimensione
-                ) + sum(
-                    1 for p in self.inventario if p.dimensione == nuovo_pacco.dimensione
-                )
-
-                if quantita_totale_dimensione > limite:
-                    print(f"Attenzione: Limite di pacchi {nuovo_pacco.dimensione} raggiunto. Non è stato aggiunto nessun pacco del nuovo ordine, riprovare con meno pacchi")
-                    
-                else:
-                    print(f"Pacco  aggiunto al magazzino e all'inventario con codice {nuovo_pacco.codice_sped}.")
-
-
+            
 
            
             print("Inserisci Prodotto Hub")

@@ -1,6 +1,6 @@
 import random
 import string
-from datetime import datetime, timedelta
+from datetime import datetime
 
 class Spedizione:
     def __init__(self, codice_spedizione, mittente, destinatario):
