@@ -17,5 +17,5 @@ services:
 
   csharp-module:
     build:
-      context: .
-      dockerfile: Dockerfile_csharp
+      context: ./modulo_C#
+      dockerfile: dockerfile
