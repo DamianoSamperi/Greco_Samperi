@@ -124,7 +124,8 @@ namespace Modulo_C_
                         {
                             HttpContent stringContent = new StringContent(jsonData, Encoding.UTF8, "application/json");
                             HttpResponseMessage response = await client.PostAsync("http://localhost:8080/Scegli_data_consegna", stringContent);
-                            MessageBox.Show("Data consegna selezionata");
+                            var contents = await response.Content.ReadAsStringAsync();
+                            MessageBox.Show(contents);
                           
                         }
 

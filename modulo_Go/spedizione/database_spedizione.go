@@ -213,19 +213,39 @@ func (g *GestoreSpedizioni) RitornaID() []string {
 	}
 	return IDs
 }
-func (g *GestoreSpedizioni) Modifica_Data_Consegna_Spedizione(id string, data string) {
+func (g *GestoreSpedizioni) Modifica_Data_Consegna_Spedizione(id string, data string) string {
+	collection := g.client.Database("APL").Collection("spedizioni")
+	filter := bson.D{{Key: "id", Value: id}}
+
+	var result struct {
+		Stato []Stato `bson:"stato"`
+	}
+	err := collection.FindOne(context.TODO(), filter).Decode(&result)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Controlla se lo stato è già "Consegnato"
+	print("stato ", result.Stato[len(result.Stato)-1])
+	if result.Stato[len(result.Stato)-1] == 3 {
+		return "Il pacco è già stato consegnato"
+	}
+
 	date, err := time.Parse("2006/01/02", data)
 	if err != nil {
 		log.Fatal(err)
 	}
-	collection := g.client.Database("APL").Collection("spedizioni")
-	filter := bson.D{{Key: "id", Value: id}}
 	update := bson.D{{Key: "$set", Value: bson.D{{Key: "data_consegna", Value: date}}}}
 	updateResult, err := collection.UpdateOne(context.TODO(), filter, update)
 	if err != nil {
 		log.Fatal(err)
 	}
 	fmt.Printf("Modificati %v documenti\n", updateResult.ModifiedCount)
+	if updateResult.ModifiedCount > 0 {
+		return "Data consegna selezionata"
+	} else {
+		return "codice spedizione non valido"
+	}
 }
 func (g *GestoreSpedizioni) Ritorna_Data_Spedizione(id string) time.Time {
 	//TO_DO funzione modifica, però prima va cambiato il database in non relazionale
@@ -266,6 +286,21 @@ func (g *GestoreSpedizioni) Modifica_Stato_Spedizione(id string, stato string) s
 	//TO_DO funzione modifica, però prima va cambiato il database in non relazionale
 	collection := g.client.Database("APL").Collection("spedizioni")
 	filter := bson.D{{Key: "id", Value: id}}
+
+	var result struct {
+		Stato []Stato `bson:"stato"`
+	}
+	err := collection.FindOne(context.TODO(), filter).Decode(&result)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Controlla se lo stato è già "Consegnato"
+	print("stato ", result.Stato[len(result.Stato)-1])
+	if result.Stato[len(result.Stato)-1] == 3 {
+		return "Il pacco è già stato consegnato"
+	}
+
 	update := bson.D{{Key: "$push", Value: bson.D{{Key: "stato", Value: ToStato(stato)}}}}
 	updateResult, err := collection.UpdateOne(context.TODO(), filter, update)
 	if err != nil {

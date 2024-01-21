@@ -284,6 +284,23 @@ func (g *GestoreMagazzino) SpostaPacco(id string, vecchiaSede string, nuovaSede 
 
 	return nil
 }
+func (g *GestoreMagazzino) Delete_pacchi(id string) error {
+	database := g.client.Database("APL")
+	collezioni, err := database.ListCollectionNames(g.ctx, bson.M{})
+	if err != nil {
+		return err
+	}
+	for _, collezione := range collezioni {
+		if collezione != "spedizioni" {
+			collection := g.client.Database("APL").Collection(collezione)
+			_, err := collection.DeleteMany(g.ctx, bson.M{"spedizione_id": id})
+			if err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
 
 func ToString(Pacchi []spedizione.Pacco, Sede string) string {
 	String := "Hub sede: " + Sede + " prodotti:\n"

@@ -266,6 +266,10 @@ func Modifica_stato(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Fatal(err)
 	}
+	m, err := magazzino.NuovoGestoreMagazzino(ctx, "mongodb+srv://root:yWP2DlLumOz07vNv@apl.yignw97.mongodb.net/?retryWrites=true&w=majority")
+	if err != nil {
+		log.Fatal(err)
+	}
 	if r.Method == http.MethodPost {
 		body, err := io.ReadAll(r.Body)
 		if err != nil {
@@ -278,7 +282,15 @@ func Modifica_stato(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Formato json non corretto", http.StatusBadRequest)
 			return
 		}
-		fmt.Fprint(w, g.Modifica_Stato_Spedizione(dati.Id_spedizione, dati.Stato))
+		result := g.Modifica_Stato_Spedizione(dati.Id_spedizione, dati.Stato)
+		if result != "codice spedizione non valido" && result != "Il pacco è già Consegnato" && dati.Stato == "Consegnato" {
+			err := m.Delete_pacchi(dati.Id_spedizione)
+			if err != nil {
+				http.Error(w, "Errore eliminazione Pacco", http.StatusBadRequest)
+				return
+			}
+		}
+		fmt.Fprint(w, result)
 	} else {
 		http.Error(w, "Metodo non valido", http.StatusMethodNotAllowed)
 	}
@@ -301,7 +313,8 @@ func Inserimento_data_consegna(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Formato json non corretto", http.StatusBadRequest)
 			return
 		}
-		g.Modifica_Data_Consegna_Spedizione(dati.Id_spedizione, dati.Data)
+
+		fmt.Fprint(w, g.Modifica_Data_Consegna_Spedizione(dati.Id_spedizione, dati.Data))
 
 	} else {
 		http.Error(w, "Metodo non valido", http.StatusMethodNotAllowed)
