@@ -1,16 +1,15 @@
-version: '1.0'
-
+version: '3'
 services:
-  python:
-    build:     
-      context: python/GestioneMagazzino
-      dockerfile: Dockerfile
+  flask-app:
+    build:
+      context: ./python
+      dockerfile: Dockerfile_flask
     ports:
-      - "8082:8082"
-    volumes:
-      - datipython:/python/GestioneMagazzino
+      - "5000:5000"
 
-
-volumes:
-  datipython:
-
+  go-app:
+    build:
+      context: ./modulo_Go
+      dockerfile: Dockerfile_go
+    ports:
+      - "8080:8080"
