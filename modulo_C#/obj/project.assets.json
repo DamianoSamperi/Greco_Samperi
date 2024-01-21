@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "c:\\Users\\damih\\Desktop\\Greco_Samperi\\Greco_Samperi\\modulo_C#\\Modulo_C#.csproj",
+      "projectUniqueName": "C:\\Users\\damih\\Desktop\\Greco_Samperi\\Greco_Samperi\\modulo_C#\\Modulo_C#.csproj",
       "projectName": "Modulo_C#",
-      "projectPath": "c:\\Users\\damih\\Desktop\\Greco_Samperi\\Greco_Samperi\\modulo_C#\\Modulo_C#.csproj",
+      "projectPath": "C:\\Users\\damih\\Desktop\\Greco_Samperi\\Greco_Samperi\\modulo_C#\\Modulo_C#.csproj",
       "packagesPath": "C:\\Users\\damih\\.nuget\\packages\\",
-      "outputPath": "c:\\Users\\damih\\Desktop\\Greco_Samperi\\Greco_Samperi\\modulo_C#\\obj\\",
+      "outputPath": "C:\\Users\\damih\\Desktop\\Greco_Samperi\\Greco_Samperi\\modulo_C#\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\damih\\AppData\\Roaming\\NuGet\\NuGet.Config",
