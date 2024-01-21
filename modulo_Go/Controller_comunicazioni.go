@@ -195,8 +195,16 @@ func Consegna_hub(w http.ResponseWriter, r *http.Request) {
 	}
 	// spedizione := s.Trova_spedizioni_per_ID(dati.Id_Spedizione)
 	// pacchi := spedizione.Pacchi
-	g.SpostaPacco(dati.Id_Spedizione, dati.Vecchio_Hub, dati.Nuovo_Hub)
-	s.Modifica_Stato_Spedizione(dati.Id_Spedizione, "Consegnato all'Hub")
+	err = g.SpostaPacco(dati.Id_Spedizione, dati.Vecchio_Hub, dati.Nuovo_Hub)
+	if err != nil {
+		if err.Error() == "vecchia sede inesistente" || err.Error() == "nuova sede inesistente" {
+			fmt.Fprint(w, err.Error())
+			return
+		}
+		http.Error(w, "Errore spostamento pacco", http.StatusBadRequest)
+		return
+	}
+	// s.Modifica_Stato_Spedizione(dati.Id_Spedizione, "Consegnato all'Hub")
 	fmt.Fprint(w, s.Modifica_Stato_Spedizione(dati.Id_Spedizione, "Consegnato all'Hub"))
 	// for _,_ = range pacchi{
 	// 	g.SpostaPacco(dati.Id_Spedizione,dati.vecchio_Hub,dati.nuovo_Hub)

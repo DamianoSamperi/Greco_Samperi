@@ -19,43 +19,47 @@ namespace Modulo_C_
                 if (nuovo_hub != "")
                 {
                     string vecchio_hub = Microsoft.VisualBasic.Interaction.InputBox("Inserisci sede in cui hai ricevuto il pacco", "Scelta hub", "Catania");
-
-                    // Dati da inviare
-                    var data = new
+                    if(vecchio_hub != "")
                     {
-                        Nuovo_Hub = nuovo_hub,
-		                Vecchio_Hub   = vecchio_hub,
-		                Id_Spedizione =id_spedizione
-                    };
-                    
-
-                    // Conversione dati in formato JSON
-                    string jsonData = JsonSerializer.Serialize(data);
-
-                    try
-                    {
-                        using (HttpClient client = new HttpClient())
+                        // Dati da inviare
+                        var data = new
                         {
-                            HttpContent stringContent = new StringContent(jsonData, Encoding.UTF8, "application/json");
-                            HttpResponseMessage response = await client.PostAsync("http://localhost:8080/Consegna_hub", stringContent);
-                            var contents = await response.Content.ReadAsStringAsync();
-                            if(contents == "codice spedizione non valido")
+                            Nuovo_Hub = nuovo_hub,
+                            Vecchio_Hub = vecchio_hub,
+                            Id_Spedizione = id_spedizione
+                        };
+
+
+                        // Conversione dati in formato JSON
+                        string jsonData = JsonSerializer.Serialize(data);
+
+                        try
+                        {
+                            using (HttpClient client = new HttpClient())
                             {
+                                HttpContent stringContent = new StringContent(jsonData, Encoding.UTF8, "application/json");
+                                HttpResponseMessage response = await client.PostAsync("http://localhost:8080/Consegna_hub", stringContent);
+                                var contents = await response.Content.ReadAsStringAsync();
                                 MessageBox.Show(contents);
                             }
-                            else
-                            {
-                                MessageBox.Show(contents + nuovo_hub);
-                            }
+
                         }
-
+                        catch (Exception)
+                        {
+                            MessageBox.Show("Connessione al server rifiutata");
+                            throw;
+                        }
                     }
-                    catch (Exception)
+                    else
                     {
-                        MessageBox.Show("Connessione al server rifiutata");
-                        throw;
+                        MessageBox.Show("Inserire l'hub di partenza");
                     }
 
+
+                }
+                else
+                {
+                    MessageBox.Show("Inserire il nuovo hub");
                 }
             }
             else

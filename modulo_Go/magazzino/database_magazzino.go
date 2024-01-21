@@ -3,6 +3,7 @@ package magazzino
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -237,8 +238,23 @@ func (g *GestoreMagazzino) InserisciPaccoInSede(sede string, p spedizione.Pacco)
 }
 
 func (g *GestoreMagazzino) SpostaPacco(id string, vecchiaSede string, nuovaSede string) error {
-	vecchiaCollection := g.client.Database("APL").Collection(vecchiaSede)
-	nuovaCollection := g.client.Database("APL").Collection(nuovaSede)
+	database := g.client.Database("APL")
+	collections, err := database.ListCollectionNames(g.ctx, bson.M{"name": vecchiaSede})
+	if err != nil {
+		return err
+	}
+	if len(collections) == 0 {
+		return errors.New("vecchia sede inesistente")
+	}
+	collections, err = database.ListCollectionNames(g.ctx, bson.M{"name": nuovaSede})
+	if err != nil {
+		return err
+	}
+	if len(collections) == 0 {
+		return errors.New("nuova sede inesistente")
+	}
+	vecchiaCollection := database.Collection(vecchiaSede)
+	nuovaCollection := database.Collection(nuovaSede)
 
 	cursor, err := vecchiaCollection.Find(g.ctx, bson.M{"spedizione_id": id})
 	if err != nil {
