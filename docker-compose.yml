@@ -1,0 +1,16 @@
+version: '1.0'
+
+services:
+  python:
+    build:     
+      context: python/GestioneMagazzino
+      dockerfile: Dockerfile
+    ports:
+      - "8082:8082"
+    volumes:
+      - datipython:/python/GestioneMagazzino
+
+
+volumes:
+  datipython:
+
