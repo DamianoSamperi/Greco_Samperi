@@ -14,6 +14,31 @@
                 ],
                 "projectType": "flask"
             }
+        },
+        {
+            "name": ".NET Core Launch (console)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/modulo_C#/bin/Debug/net8.0-windows/Modulo_C#.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/modulo_C#",
+            "console": "internalConsole",
+            "stopAtEntry": false
+        },
+        {
+            "name": ".NET Core Attach",
+            "type": "coreclr",
+            "request": "attach"
+        },
+        {
+            "name": "Docker .NET Launch",
+            "type": "docker",
+            "request": "launch",
+            "preLaunchTask": "docker-run: debug",
+            "netCore": {
+                "appProject": "${workspaceFolder}/modulo_C#/Modulo_C#.csproj"
+            }
         }
     ]
 }

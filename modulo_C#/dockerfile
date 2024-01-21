@@ -1,10 +1,20 @@
-# Usa un'immagine di runtime .NET Core per Windows con supporto per WinForms
-FROM mcr.microsoft.com/dotnet/core/runtime:3.1-nanoserver-1903 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
 
-# Copia i file necessari per l'applicazione
-COPY ./path/to/your/csharp/module.dll .
-COPY ./path/to/your/csharp/Form1.dll .  
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+ARG configuration=Release
+WORKDIR /src
+COPY ["./Modulo_C#.csproj", "modulo_C#/"]
+RUN dotnet restore "modulo_C#\Modulo_C#.csproj"
+COPY . .
+WORKDIR "/src/modulo_C#"
+RUN dotnet build "program.cs" -c $configuration -o /app/build
 
-# Comando per eseguire l'applicazione C#
-CMD ["dotnet", "module.dll"]
+FROM build AS publish
+ARG configuration=Release
+RUN dotnet publish "Modulo_C#.csproj" -c $configuration -o /app/publish /p:UseAppHost=false
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "Modulo_C#.dll"]

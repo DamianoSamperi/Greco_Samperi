@@ -1,40 +1,126 @@
 {
 	"version": "2.0.0",
 	"tasks": [
-		{
-			"type": "docker-build",
-			"label": "docker-build",
-			"platform": "python",
-			"dockerBuild": {
-				"tag": "grecosamperi:latest",
-				"dockerfile": "${workspaceFolder}/Dockerfile",
-				"context": "${workspaceFolder}",
-				"pull": true
-			}
-		},
-		{
-			"type": "docker-run",
-			"label": "docker-run: debug",
-			"dependsOn": [
-				"docker-build"
-			],
-			"dockerRun": {
-				"env": {
-					"FLASK_APP": "python\\GestioneMagazzino.py"
-				}
-			},
-			"python": {
-				"args": [
-					"run",
-					"--no-debugger",
-					"--no-reload",
-					"--host",
-					"0.0.0.0",
-					"--port",
-					"8082"
-				],
-				"module": "flask"
-			}
-		}
-	]
+        {
+            "type": "docker-build",
+            "label": "docker-build",
+            "platform": "python",
+            "dockerBuild": {
+                "tag": "grecosamperi:latest",
+                "dockerfile": "${workspaceFolder}/Dockerfile",
+                "context": "${workspaceFolder}",
+                "pull": true
+            }
+        },
+        {
+            "type": "docker-run",
+            "label": "docker-run: debug",
+            "dependsOn": [
+                "docker-build"
+            ],
+            "dockerRun": {
+                "env": {
+                    "FLASK_APP": "python\\GestioneMagazzino.py"
+                }
+            },
+            "python": {
+                "args": [
+                    "run",
+                    "--no-debugger",
+                    "--no-reload",
+                    "--host",
+                    "0.0.0.0",
+                    "--port",
+                    "8082"
+                ],
+                "module": "flask"
+            }
+        },
+        {
+            "label": "build",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "${workspaceFolder}/Greco_Samperi.sln",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary;ForceNoAlign"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "publish",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "publish",
+                "${workspaceFolder}/Greco_Samperi.sln",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary;ForceNoAlign"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "watch",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "watch",
+                "run",
+                "--project",
+                "${workspaceFolder}/Greco_Samperi.sln"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "type": "docker-build",
+            "label": "docker-build: debug",
+            "dependsOn": [
+                "build"
+            ],
+            "dockerBuild": {
+                "tag": "grecosamperi:dev",
+                "target": "base",
+                "dockerfile": "${workspaceFolder}/modulo_C#/Dockerfile",
+                "context": "${workspaceFolder}",
+                "pull": true
+            },
+            "netCore": {
+                "appProject": "${workspaceFolder}/modulo_C#/Modulo_C#.csproj"
+            }
+        },
+        {
+            "type": "docker-build",
+            "label": "docker-build: release",
+            "dependsOn": [
+                "build"
+            ],
+            "dockerBuild": {
+                "tag": "grecosamperi:latest",
+                "dockerfile": "${workspaceFolder}/modulo_C#/Dockerfile",
+                "context": "${workspaceFolder}",
+                "platform": {
+                    "os": "windows",
+                    "architecture": "amd64"
+                },
+                "pull": true
+            },
+            "netCore": {
+                "appProject": "${workspaceFolder}/modulo_C#/Modulo_C#.csproj"
+            }
+        },
+        {
+            "type": "docker-run",
+            "label": "docker-run: release",
+            "dependsOn": [
+                "docker-build: release"
+            ],
+            "dockerRun": {
+                "os": "Windows"
+            },
+            "netCore": {
+                "appProject": "${workspaceFolder}/modulo_C#/Modulo_C#.csproj"
+            }
+        }
+    ]
 }
