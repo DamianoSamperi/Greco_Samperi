@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"sync"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -44,6 +45,8 @@ type Coordinate struct {
 	Latitudine  float64 `json:"latitude"`
 	Longitudine float64 `json:"longitude"`
 }
+
+var mu sync.Mutex
 
 func contiene(slice []string, str string) bool {
 	for _, item := range slice {
@@ -238,6 +241,8 @@ func (g *GestoreMagazzino) InserisciPaccoInSede(sede string, p spedizione.Pacco)
 }
 
 func (g *GestoreMagazzino) SpostaPacco(id string, vecchiaSede string, nuovaSede string) error {
+	mu.Lock()
+	defer mu.Unlock()
 	database := g.client.Database("APL")
 	collections, err := database.ListCollectionNames(g.ctx, bson.M{"name": vecchiaSede})
 	if err != nil {
