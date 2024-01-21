@@ -1,11 +1,14 @@
 # Usa un'immagine di Go come base
 FROM golang:1.21.6-alpine AS build
 
+
 # Imposta la directory di lavoro nel container
 WORKDIR /app
 
 # Copia il codice sorgente nel container
 COPY . .
+
+RUN go install go.mod
 
 # Build dell'applicazione Go
 RUN go build -o main .
