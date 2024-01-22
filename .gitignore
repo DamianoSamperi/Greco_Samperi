@@ -97,7 +97,7 @@ StyleCopReport.xml
 *.pidb
 *.svclog
 *.scc
-
+modulo_C#\obj
 # Chutzpah Test files
 _Chutzpah*
 
@@ -397,4 +397,4 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 Greco_Samperi.sln
-modulo_C#/bin/Debug/net8.0-windows/
+modulo_C#/obj
