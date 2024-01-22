@@ -15,7 +15,7 @@ services:
       - "8080:8080"
 
 
-  csharp-module:
-    build:
-      context: ./modulo_C#
-      dockerfile: dockerfile
+  # csharp-module:
+  #   build:
+  #     context: ./modulo_C#
+  #     dockerfile: dockerfile
