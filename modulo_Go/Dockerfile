@@ -41,14 +41,24 @@
 # LABEL Name=grecosamperi Version=0.0.1
 # EXPOSE 8080
 
-FROM golang:alpine
-RUN mkdir /app
-ADD . /app
-WORKDIR /app
-## Add this go mod download command to pull in any dependencies
-RUN go mod download
-## Our project will now successfully build with the necessary go libraries included.
-RUN go build -o main .
-## Our start command which kicks off
-## our newly created binary executable
-CMD ["/app/main"]
+# FROM golang:alpine
+# RUN mkdir /app
+# ADD . /app
+# WORKDIR /app
+# ## Add this go mod download command to pull in any dependencies
+# RUN go mod download
+# ## Our project will now successfully build with the necessary go libraries included.
+# RUN go build -o main .
+# ## Our start command which kicks off
+# ## our newly created binary executable
+# CMD ["/app/main"]
+
+FROM golang:latest
+
+WORKDIR /golang
+
+COPY . /golang
+
+EXPOSE 8080
+
+CMD ["go", "run", "Controller_comunicazioni.go"]

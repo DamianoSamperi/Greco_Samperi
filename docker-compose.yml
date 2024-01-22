@@ -4,6 +4,7 @@ services:
     build:
       context: ./python
       dockerfile: Dockerfile
+    container_name: python
     ports:
       - "8082:8082"
 
@@ -11,6 +12,7 @@ services:
     build:
       context: ./modulo_Go
       dockerfile: Dockerfile
+    container_name: go
     ports:
       - "8080:8080"
 
