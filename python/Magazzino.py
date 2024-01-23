@@ -51,10 +51,11 @@ class Magazzino:
             
 
             print("Ritorna Sede")
-            url2 = "http://localhost:8080/Ritorna_Sede"
+            url2 = "http://go:8080/Ritorna_Sede"
             payload = {"indirizzo": mittente }
             headers = {"Content-Type": "application/json"}
             response = requests.post(url2, json=payload, headers=headers)
+            print("ci sono arrivato tanto")
             if response.status_code == 200:
                 print("Richiesta POST eseguita con successo!")
                 print(response.text)
@@ -68,7 +69,7 @@ class Magazzino:
     
 
             print("Inserisci Spedizione")
-            url = "http://localhost:8080/Inserisci_Spedizione"
+            url = "http://go:8080/Inserisci_Spedizione"
             payload = {
                     "id": self.cod_sped,
                     "mittente": mittente,
@@ -89,7 +90,7 @@ class Magazzino:
 
 
             print("Ottieni Prodotti")
-            url3 = "http://localhost:8080/Ottieni_Prodotti_Hub"
+            url3 = "http://go:8080/Ottieni_Prodotti_Hub"
             payload = {
                     "sede": self.sede                   
                       }   
@@ -106,7 +107,7 @@ class Magazzino:
 
 
             print("Visualizza Spedizioni")
-            url5 = "http://localhost:8080/Visualizza_Spedizioni"
+            url5 = "http://go:8080/Visualizza_Spedizioni"
             payload = {"Mittente": mittente }
             payload_json = json.dumps(payload)  
             headers = {"Content-Type": "application/json"}
@@ -160,7 +161,7 @@ class Magazzino:
 
            
             print("Inserisci Prodotto Hub")
-            url4 = "http://localhost:8080/Inserisci_Prodotto_Hub"
+            url4 = "http://go:8080/Inserisci_Prodotto_Hub"
             payload = {
                        "sede": self.sede,
                        "pacco": nuovo_pacco.to_dict()              
@@ -179,7 +180,7 @@ class Magazzino:
 
 
             print("Inserisci Pacco spedizione")
-            url7 = "http://localhost:8080/Inserisci_Pacco_spedizione"
+            url7 = "http://go:8080/Inserisci_Pacco_spedizione"
             payload = {
                        "id_spedizione": nuovo_pacco.codice_sped,
                        "peso": nuovo_pacco.peso,

@@ -27,8 +27,14 @@ namespace Modulo_C_
                 return;
             }
 
+            try
+            {
+                await InviaRichiestaPost(mittente, destinatario); // meccanismo che permette di gestire delle 
 
-            await InviaRichiestaPost(mittente, destinatario); // meccanismo che permette di gestire delle 
+            }catch(Exception)
+            {
+                MessageBox.Show("Connessione al server rifiutata");
+            }
             //espressioni async, permette di ritornare il controllo al chiamante della funzione.
 
             this.Close();
