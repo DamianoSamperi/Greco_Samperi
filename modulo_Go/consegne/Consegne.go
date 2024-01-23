@@ -12,8 +12,9 @@ import (
 	"time"
 )
 
-type Punto_geografico struct {
+type Punto_percorso struct {
 	Indirizzo        string    `json:"indirizzo"`
+	Id               string    `json:"id"`
 	Latitudine       float64   `json:"latitude"`
 	Longitudine      float64   `json:"longitude"`
 	Consegna_Stimata time.Time `json:"consegna_Stimata"`
@@ -53,7 +54,7 @@ var (
 )
 
 // distanza massima che può percorrere un corriere in una giornata in metri
-const distanza_massima_percorribile = 320000.0
+const distanza_massima_percorribile = 240000.0
 
 //	func direzione(angolo float64) string {
 //		switch {
@@ -87,7 +88,7 @@ func Todirezione(angolo float64) string {
 		return "Ovest"
 	}
 }
-func Calcola_distanza_punti(destinatario Punto_geografico, origine Punto_geografico) float64 {
+func Calcola_distanza_punti(destinatario Punto_percorso, origine Punto_percorso) float64 {
 	R := 6372795.477598
 	latA := destinatario.Latitudine * (math.Pi / 180)
 	lonA := destinatario.Longitudine * (math.Pi / 180)
@@ -98,7 +99,7 @@ func Calcola_distanza_punti(destinatario Punto_geografico, origine Punto_geograf
 	distanza := R * math.Acos(math.Sin(latA)*math.Sin(latB)+math.Cos(latA)*math.Cos(latB)*math.Cos(lonA-lonB))
 	return distanza
 }
-func calcola_direzione_punti(destinatario Punto_geografico, origine Punto_geografico) float64 {
+func calcola_direzione_punti(destinatario Punto_percorso, origine Punto_percorso) float64 {
 	latA := origine.Latitudine * (math.Pi / 180)
 	lonA := origine.Longitudine * (math.Pi / 180)
 	latB := destinatario.Latitudine * (math.Pi / 180)
@@ -113,9 +114,9 @@ func calcola_direzione_punti(destinatario Punto_geografico, origine Punto_geogra
 	// direzione := direzione(angolo)
 	// return direzione
 }
-func calcola_punti(spedizioni []spedizione.Spedizione, sede Punto_geografico) []Punto_geografico {
+func calcola_punti(spedizioni []spedizione.Spedizione, sede Punto_percorso) []Punto_percorso {
 	url := "https://geocoding.openapi.it/geocode"
-	var punti []Punto_geografico
+	var punti []Punto_percorso
 	punti = append(punti, sede)
 	for _, spedizione := range spedizioni {
 		payload := strings.NewReader(`{"address":"` + spedizione.Destinatario + `"}`)
@@ -139,38 +140,44 @@ func calcola_punti(spedizioni []spedizione.Spedizione, sede Punto_geografico) []
 		}{}
 		err = json.Unmarshal(body, &risposta)
 		if err != nil {
-			log.Fatal("Errore ricerca coordinate ", err)
+			log.Println("Errore ricerca coordinate ", err)
+			continue
 		}
 		latA := risposta.Element.Latitude
 		lonA := risposta.Element.Longitude
-		var tupla Punto_geografico
+		var tupla Punto_percorso
 		if spedizione.Data_consegna.IsZero() {
-			tupla = Punto_geografico{Indirizzo: spedizione.ID, Latitudine: latA, Longitudine: lonA}
+			tupla = Punto_percorso{Id: spedizione.ID, Latitudine: latA, Longitudine: lonA}
 		} else {
-			tupla = Punto_geografico{Indirizzo: spedizione.ID, Latitudine: latA, Longitudine: lonA, Consegna_Stimata: spedizione.Data_consegna}
+			tupla = Punto_percorso{Id: spedizione.ID, Latitudine: latA, Longitudine: lonA, Consegna_Stimata: spedizione.Data_consegna}
 		}
 		punti = append(punti, tupla)
 	}
 	return punti
 }
 
-func trovaMagazzino_più_vicino(destinatario Punto_geografico, origine Punto_geografico, lista_magazzini []Punto_geografico) (float64, Punto_geografico) {
+func trovaMagazzino_più_vicino(destinatario Punto_percorso, origine Punto_percorso, lista_magazzini []Punto_percorso) (float64, Punto_percorso) {
 	var distanza_magazzino float64 = distanza_massima_percorribile
 	for _, magazzino := range lista_magazzini {
+		print("sede ", magazzino.Indirizzo, "\n")
 		direzione := Todirezione(calcola_direzione_punti(destinatario, origine))
+		print("direzione ", direzione, "\n")
+		fmt.Printf("punto %f,%f,%f,%f \n", destinatario.Latitudine, destinatario.Longitudine, origine.Latitudine, origine.Longitudine)
 		direzione_magazzino := Todirezione(calcola_direzione_punti(magazzino, origine))
+		fmt.Printf("magazzino %f,%f,%f,%f \n", magazzino.Latitudine, magazzino.Longitudine, origine.Latitudine, origine.Longitudine)
+		print("direzione m. ", direzione_magazzino, "\n")
 		if direzione == direzione_magazzino {
 			distanza_magazzino := Calcola_distanza_punti(magazzino, origine)
 			if distanza_magazzino <= distanza_massima_percorribile {
-				return distanza_magazzino, magazzino
+				return distanza_magazzino, Punto_percorso{Indirizzo: magazzino.Indirizzo, Id: destinatario.Id, Latitudine: magazzino.Latitudine, Longitudine: magazzino.Longitudine}
 			}
 		}
 	}
-	return distanza_magazzino + 1, Punto_geografico{}
+	return distanza_magazzino + 1, Punto_percorso{}
 }
-func Calcola_distanza_minima(origine Punto_geografico, Diramazioni []Punto_geografico, direzione_non_ammessa Direzione, distanza_residua_percorribile float64, lista_magazzini []Punto_geografico) (Punto_geografico, int, Direzione, float64) {
+func Calcola_distanza_minima(origine Punto_percorso, Diramazioni []Punto_percorso, direzione_non_ammessa Direzione, distanza_residua_percorribile float64, lista_magazzini []Punto_percorso) (Punto_percorso, int, Direzione, float64) {
 	minDistanza := math.MaxFloat64
-	minDiramazione := Punto_geografico{}
+	minDiramazione := Punto_percorso{}
 	minIndice := -1
 	nuovaDirezione := -1.0
 	for i, p := range Diramazioni {
@@ -194,7 +201,7 @@ func Calcola_distanza_minima(origine Punto_geografico, Diramazioni []Punto_geogr
 						}
 					}
 				} else {
-					d, p := trovaMagazzino_più_vicino(origine, p, lista_magazzini)
+					d, p := trovaMagazzino_più_vicino(p, origine, lista_magazzini)
 					if (distanza_residua_percorribile - d) >= 0 {
 						if d < minDistanza {
 							minDistanza = d
@@ -224,10 +231,10 @@ func nuovaDirezione_non_ammessa(direzione_non_ammessa Direzione, nuovaDirezione 
 
 }
 
-func Trova_percorso(spedizioni []spedizione.Spedizione, sede Punto_geografico, lista_magazzini []Punto_geografico) []Punto_geografico {
+func Trova_percorso(spedizioni []spedizione.Spedizione, sede Punto_percorso, lista_magazzini []Punto_percorso) []Punto_percorso {
 	punti := calcola_punti(spedizioni, sede)
 	var indice int
-	percorso := []Punto_geografico{}
+	percorso := []Punto_percorso{}
 	puntoCorrente := punti[0]               // Scelgo la sede come origine
 	punti = append(punti[:0], punti[1:]...) // Rimuovo la sede dalla lista dei punti
 	var direzione_non_ammessa = Direzione{angolo_inf: 361, angolo_sup: -1}
@@ -240,7 +247,7 @@ func Trova_percorso(spedizioni []spedizione.Spedizione, sede Punto_geografico, l
 		} else {
 			break
 		}
-		if (puntoCorrente != Punto_geografico{}) {
+		if (puntoCorrente != Punto_percorso{}) {
 			percorso = append(percorso, puntoCorrente)
 		}
 	}

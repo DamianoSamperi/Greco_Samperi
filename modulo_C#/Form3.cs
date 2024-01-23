@@ -36,7 +36,7 @@ namespace Modulo_C_
                 catch (Exception)
                 {
                     MessageBox.Show("Connessione al server rifiutata");
-                    throw;
+                    //throw;
                 }
 
             }

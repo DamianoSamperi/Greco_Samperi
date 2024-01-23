@@ -270,10 +270,6 @@ func (g *GestoreSpedizioni) Ritorna_Data_Spedizione(id string) time.Time {
 }
 func (g *GestoreSpedizioni) Ritorna_Destinatario_Spedizione(id string) string {
 	//TO_DO funzione modifica, però prima va cambiato il database in non relazionale
-	collezioni, _ := g.client.Database("APL").ListCollectionNames(g.ctx, bson.M{})
-	if contiene(collezioni, id) {
-		return id
-	}
 	collection := g.client.Database("APL").Collection("spedizioni")
 	filter := bson.D{{Key: "id", Value: id}}
 	// cur, err := collection.Find(context.TODO(), filter)

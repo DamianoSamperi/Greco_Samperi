@@ -178,12 +178,16 @@ func (g *GestoreMagazzino) Ottieni_Sedi(sede string) ([]Coordinate, []string) {
 	for _, collezione := range collezioni {
 		if collezione != sede && collezione != "spedizioni" {
 			collection := g.client.Database("APL").Collection(collezione)
-			var result Coordinate
-			err := collection.FindOne(g.ctx, bson.M{}).Decode(&result)
+			var result RispostaAPI
+			err := collection.FindOne(g.ctx, bson.M{"latitude": bson.M{"$exists": true}}).Decode(&result)
 			if err != nil {
 				return nil, nil
 			}
-			lista_magazzini = append(lista_magazzini, result)
+			var coordinate = Coordinate{
+				Latitudine:  result.Latitudine,
+				Longitudine: result.Longitudine,
+			}
+			lista_magazzini = append(lista_magazzini, coordinate)
 			sedi_magazzini = append(sedi_magazzini, collezione)
 		}
 	}

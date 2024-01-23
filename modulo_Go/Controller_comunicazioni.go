@@ -356,19 +356,24 @@ func Ottieni_percorso(w http.ResponseWriter, r *http.Request) {
 			if Coordinata_Sede == (magazzino.Coordinate{}) {
 				http.Error(w, "Sede non valida", http.StatusMethodNotAllowed)
 			}
-			var Sede = consegne.Punto_geografico{Indirizzo: dati.Sede, Latitudine: Coordinata_Sede.Latitudine, Longitudine: Coordinata_Sede.Longitudine}
+			var Sede = consegne.Punto_percorso{Indirizzo: dati.Sede, Latitudine: Coordinata_Sede.Latitudine, Longitudine: Coordinata_Sede.Longitudine}
 			Lista_coordinate_magazzini, sedi_magazzini := g.Ottieni_Sedi(Sede.Indirizzo)
-			var lista_magazzini []consegne.Punto_geografico
+			var lista_magazzini []consegne.Punto_percorso
 			for i, coordinate := range Lista_coordinate_magazzini {
-				magazzino := consegne.Punto_geografico{Indirizzo: sedi_magazzini[i], Latitudine: coordinate.Latitudine, Longitudine: coordinate.Longitudine}
+				magazzino := consegne.Punto_percorso{Indirizzo: sedi_magazzini[i], Latitudine: coordinate.Latitudine, Longitudine: coordinate.Longitudine}
 				lista_magazzini = append(lista_magazzini, magazzino)
 			}
 			percorso := consegne.Trova_percorso(spedizioni, Sede, lista_magazzini)
 			var indirizzi []string
 			for _, p := range percorso {
-				destinatario := s.Ritorna_Destinatario_Spedizione(p.Indirizzo)
-				indirizzi = append(indirizzi, p.Indirizzo+" "+destinatario+"\n")
-				s.Modifica_Stato_Spedizione(p.Indirizzo, "InTransito")
+				if p.Indirizzo == "" {
+					destinatario := s.Ritorna_Destinatario_Spedizione(p.Id)
+					indirizzi = append(indirizzi, p.Id+" "+destinatario+"\n")
+					s.Modifica_Stato_Spedizione(p.Id, "InTransito")
+				} else {
+					indirizzi = append(indirizzi, p.Id+" da consegnare all'hub di "+p.Indirizzo+"\n")
+					s.Modifica_Stato_Spedizione(p.Id, "InTransito")
+				}
 			}
 			if len(indirizzi) > 0 {
 				fmt.Fprint(w, indirizzi)
