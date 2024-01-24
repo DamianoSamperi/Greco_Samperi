@@ -122,15 +122,7 @@ class Magazzino:
             
 
 
-    def epilogo_ordine(self):            
-            tracciamento_corrente = self.sped.tracciamento()
-            evento_aggiunto = self.sped.aggiungi_evento_tracciamento(f"Pacco in preparazione consegna")
-            return {
-                "tracciamento": tracciamento_corrente,
-                "evento_aggiunto": evento_aggiunto,
-                "prezzo": self.nuovo_pacco.calcola_prezzo()
-                }
-                
+    
    
    
 
@@ -197,7 +189,18 @@ class Magazzino:
             else:
                 print(f"Errore nella richiesta POST. Codice di stato: {response.status_code}")
                 print(response.text)
-        
+
+
+
+    def epilogo_ordine(self):            
+            tracciamento_corrente = self.sped.tracciamento()
+            evento_aggiunto = self.sped.aggiungi_evento_tracciamento(f"Pacco in preparazione consegna")
+            return {
+                "tracciamento": tracciamento_corrente,
+                "evento_aggiunto": evento_aggiunto,
+                "prezzo": self.nuovo_pacco.calcola_prezzo()
+                }
+                    
 
             
 
