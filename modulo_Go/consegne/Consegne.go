@@ -94,7 +94,7 @@ func Calcola_distanza_punti(destinatario Punto_percorso, origine Punto_percorso)
 	lonA := destinatario.Longitudine * (math.Pi / 180)
 	latB := origine.Latitudine * (math.Pi / 180)
 	lonB := origine.Longitudine * (math.Pi / 180)
-	fmt.Printf("%f,%f,%f,%f \n", latA/math.Pi*180, lonA/math.Pi*180, latB/math.Pi*180, lonB/math.Pi*180)
+	// fmt.Printf("%f,%f,%f,%f \n", latA/math.Pi*180, lonA/math.Pi*180, latB/math.Pi*180, lonB/math.Pi*180)
 	// print("seno ", math.Sin(latA*math.Pi/180))
 	distanza := R * math.Acos(math.Sin(latA)*math.Sin(latB)+math.Cos(latA)*math.Cos(latB)*math.Cos(lonA-lonB))
 	return distanza
@@ -159,13 +159,13 @@ func calcola_punti(spedizioni []spedizione.Spedizione, sede Punto_percorso) []Pu
 func trovaMagazzino_più_vicino(destinatario Punto_percorso, origine Punto_percorso, lista_magazzini []Punto_percorso) (float64, Punto_percorso) {
 	var distanza_magazzino float64 = distanza_massima_percorribile
 	for _, magazzino := range lista_magazzini {
-		print("sede ", magazzino.Indirizzo, "\n")
+		// print("sede ", magazzino.Indirizzo, "\n")
 		direzione := Todirezione(calcola_direzione_punti(destinatario, origine))
-		print("direzione ", direzione, "\n")
-		fmt.Printf("punto %f,%f,%f,%f \n", destinatario.Latitudine, destinatario.Longitudine, origine.Latitudine, origine.Longitudine)
+		// print("direzione ", direzione, "\n")
+		// fmt.Printf("punto %f,%f,%f,%f \n", destinatario.Latitudine, destinatario.Longitudine, origine.Latitudine, origine.Longitudine)
 		direzione_magazzino := Todirezione(calcola_direzione_punti(magazzino, origine))
-		fmt.Printf("magazzino %f,%f,%f,%f \n", magazzino.Latitudine, magazzino.Longitudine, origine.Latitudine, origine.Longitudine)
-		print("direzione m. ", direzione_magazzino, "\n")
+		// fmt.Printf("magazzino %f,%f,%f,%f \n", magazzino.Latitudine, magazzino.Longitudine, origine.Latitudine, origine.Longitudine)
+		// print("direzione m. ", direzione_magazzino, "\n")
 		if direzione == direzione_magazzino {
 			distanza_magazzino := Calcola_distanza_punti(magazzino, origine)
 			if distanza_magazzino <= distanza_massima_percorribile {
@@ -182,14 +182,14 @@ func Calcola_distanza_minima(origine Punto_percorso, Diramazioni []Punto_percors
 	nuovaDirezione := -1.0
 	for i, p := range Diramazioni {
 		direzione := calcola_direzione_punti(p, origine)
-		print("direzione ", direzione, "\n")
-		fmt.Printf("direzione non ammessa %f - %f \n", direzione_non_ammessa.angolo_inf, direzione_non_ammessa.angolo_sup)
+		// print("direzione ", direzione, "\n")
+		// fmt.Printf("direzione non ammessa %f - %f \n", direzione_non_ammessa.angolo_inf, direzione_non_ammessa.angolo_sup)
 		if direzione >= direzione_non_ammessa.angolo_sup || direzione < direzione_non_ammessa.angolo_inf {
 			d := Calcola_distanza_punti(origine, p)
-			print("distanza ", d)
+			// print("distanza ", d)
 			if d <= distanza_massima_percorribile {
 				if (distanza_residua_percorribile - d) >= 0 {
-					print("if ", p.Consegna_Stimata.Format("2006/01/02") == time.Now().AddDate(0, 0, 1).Format("2006/01/02"), p.Consegna_Stimata.Format("2006/01/02"), time.Now().AddDate(0, 0, 1).Format("2006/01/02"))
+					// print("if ", p.Consegna_Stimata.Format("2006/01/02") == time.Now().AddDate(0, 0, 1).Format("2006/01/02"), p.Consegna_Stimata.Format("2006/01/02"), time.Now().AddDate(0, 0, 1).Format("2006/01/02"))
 					if p.Consegna_Stimata.IsZero() || p.Consegna_Stimata.Format("2006/01/02") == time.Now().AddDate(0, 0, 1).Format("2006/01/02") {
 						if d < minDistanza {
 							minDistanza = d
@@ -197,7 +197,7 @@ func Calcola_distanza_minima(origine Punto_percorso, Diramazioni []Punto_percors
 							minIndice = i
 							nuovaDirezione = direzione
 							distanza_residua_percorribile = distanza_residua_percorribile - d
-							print("distanza ancora percoribile ", distanza_residua_percorribile, "\n")
+							// print("distanza ancora percoribile ", distanza_residua_percorribile, "\n")
 						}
 					}
 				} else {
@@ -233,6 +233,10 @@ func nuovaDirezione_non_ammessa(direzione_non_ammessa Direzione, nuovaDirezione 
 
 func Trova_percorso(spedizioni []spedizione.Spedizione, sede Punto_percorso, lista_magazzini []Punto_percorso) []Punto_percorso {
 	punti := calcola_punti(spedizioni, sede)
+	fmt.Println("Punti possibili:")
+	for _, punto := range punti {
+		fmt.Println(punto.Id)
+	}
 	var indice int
 	percorso := []Punto_percorso{}
 	puntoCorrente := punti[0]               // Scelgo la sede come origine
@@ -249,6 +253,7 @@ func Trova_percorso(spedizioni []spedizione.Spedizione, sede Punto_percorso, lis
 		}
 		if (puntoCorrente != Punto_percorso{}) {
 			percorso = append(percorso, puntoCorrente)
+			print("punto scelto ", puntoCorrente.Id, "\n")
 		}
 	}
 	for _, punto := range percorso {
