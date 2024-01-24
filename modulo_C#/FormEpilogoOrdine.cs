@@ -14,8 +14,9 @@ namespace Modulo_C_
             // Proprietà della classe corrispondenti ai campi del JSON
             public string tracciamento { get; set; }
             public string evento_aggiunto { get; set; }
+            public string prezzo { get; set; }
 
-            
+
         }
 
         private void FormEpilogoOrdine_Load(object sender, EventArgs e)
@@ -37,11 +38,12 @@ namespace Modulo_C_
 
                     if (response.IsSuccessStatusCode)
                     {
-                        string responseData = await response.Content.ReadAsStringAsync();                       
+                        string responseData = await response.Content.ReadAsStringAsync();
                         DatiEpilogoOrdine datiEpilogo = JsonSerializer.Deserialize<DatiEpilogoOrdine>(responseData);
-                 
+
                         label1.Text = datiEpilogo.tracciamento;
                         label2.Text = datiEpilogo.evento_aggiunto;
+                        label3.Text = datiEpilogo.prezzo;
 
                     }
                     else

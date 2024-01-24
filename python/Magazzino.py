@@ -127,7 +127,8 @@ class Magazzino:
             evento_aggiunto = self.sped.aggiungi_evento_tracciamento(f"Pacco in preparazione consegna")
             return {
                 "tracciamento": tracciamento_corrente,
-                "evento_aggiunto": evento_aggiunto
+                "evento_aggiunto": evento_aggiunto,
+                "prezzo": self.nuovo_pacco.calcola_prezzo()
                 }
                 
    
@@ -153,10 +154,10 @@ class Magazzino:
                     print("Errore: Inserisci una dimensione valida (piccolo, medio o grande).")
 
             #nuovo oggetto Pacco con il nuovo codice
-            nuovo_pacco = Pacco(codice_sped=self.cod_sped, peso=peso, prezzo=100, dimensione=dimensione)
+            self.nuovo_pacco = Pacco(codice_sped=self.cod_sped, peso=peso, prezzo=100, dimensione=dimensione)
 
             # Aggiunta nuovo pacco al magazzino
-            self.aggiungi_pacco(nuovo_pacco)
+            self.aggiungi_pacco(self.nuovo_pacco)
             
 
            
@@ -164,7 +165,7 @@ class Magazzino:
             url4 = "http://go:8080/Inserisci_Prodotto_Hub"
             payload = {
                        "sede": self.sede,
-                       "pacco": nuovo_pacco.to_dict()              
+                       "pacco": self.nuovo_pacco.to_dict()              
                       }   
             
             headers = {"Content-Type": "application/json"}
@@ -182,10 +183,10 @@ class Magazzino:
             print("Inserisci Pacco spedizione")
             url7 = "http://go:8080/Inserisci_Pacco_spedizione"
             payload = {
-                       "id_spedizione": nuovo_pacco.codice_sped,
-                       "peso": nuovo_pacco.peso,
-                       "dimensione": nuovo_pacco.dimensione,
-                       "prezzo": nuovo_pacco.calcola_prezzo()          
+                       "id_spedizione": self.nuovo_pacco.codice_sped,
+                       "peso": self.nuovo_pacco.peso,
+                       "dimensione": self.nuovo_pacco.dimensione,
+                       "prezzo": self.nuovo_pacco.calcola_prezzo()          
                       }   
             
             headers = {"Content-Type": "application/json"}

@@ -30,6 +30,7 @@
         {
             label1 = new Label();
             label2 = new Label();
+            label3 = new Label();
             SuspendLayout();
             // 
             // label1
@@ -48,11 +49,20 @@
             label2.Size = new Size(0, 20);
             label2.TabIndex = 1;
             // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Location = new Point(76, 193);
+            label3.Name = "label3";
+            label3.Size = new Size(0, 20);
+            label3.TabIndex = 2;
+            // 
             // FormEpilogoOrdine
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(492, 389);
+            Controls.Add(label3);
             Controls.Add(label2);
             Controls.Add(label1);
             Name = "FormEpilogoOrdine";
@@ -66,5 +76,6 @@
 
         private Label label1;
         private Label label2;
+        private Label label3;
     }
 }
