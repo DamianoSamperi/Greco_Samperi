@@ -44,7 +44,7 @@ class Magazzino:
             destinatario = data.get('destinatario', '')   
 
             
-            time.sleep(4)
+            # time.sleep(4)
                 
             # Creazione istanza Spedizione utilizzando il GestoreSpedizioni
             self.sped, self.cod_sped = self.gestore_spedizioni.crea_spedizione(mittente=mittente, destinatario=destinatario)
