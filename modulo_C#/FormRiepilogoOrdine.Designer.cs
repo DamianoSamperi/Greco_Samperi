@@ -1,6 +1,6 @@
 ﻿namespace Modulo_C_
 {
-    partial class FormEpilogoOrdine
+    partial class FormRiepilogoOrdine
     {
         /// <summary>
         /// Required designer variable.
@@ -57,7 +57,7 @@
             label3.Size = new Size(0, 20);
             label3.TabIndex = 2;
             // 
-            // FormEpilogoOrdine
+            // FormRiepilogoOrdine
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
@@ -65,9 +65,9 @@
             Controls.Add(label3);
             Controls.Add(label2);
             Controls.Add(label1);
-            Name = "FormEpilogoOrdine";
+            Name = "FormRiepilogoOrdine";
             Text = "FormEpilogoOrdine";
-            Load += FormEpilogoOrdine_Load;
+            Load += FormRiepilogoOrdine_Load;
             ResumeLayout(false);
             PerformLayout();
         }

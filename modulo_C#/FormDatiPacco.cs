@@ -77,7 +77,7 @@ namespace Modulo_C_
         {
             this.Close();
 
-            Form newForm = new FormEpilogoOrdine();
+            Form newForm = new FormRiepilogoOrdine();
             newForm.ShowDialog();
             newForm = null;
         }

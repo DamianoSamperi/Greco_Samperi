@@ -2,9 +2,9 @@
 
 namespace Modulo_C_
 {
-    public partial class FormEpilogoOrdine : Form
+    public partial class FormRiepilogoOrdine : Form
     {
-        public FormEpilogoOrdine()
+        public FormRiepilogoOrdine()
         {
             InitializeComponent();
         }
@@ -19,7 +19,7 @@ namespace Modulo_C_
 
         }
 
-        private void FormEpilogoOrdine_Load(object sender, EventArgs e)
+        private void FormRiepilogoOrdine_Load(object sender, EventArgs e)
         {
             CaricaDatiEpilogoOrdine();
 
@@ -30,7 +30,7 @@ namespace Modulo_C_
         {
             using (HttpClient client = new HttpClient())
             {
-                string url = "http://localhost:8082/epilogo_ordine";
+                string url = "http://localhost:8082/riepilogo_ordine";
 
                 try
                 {
@@ -59,6 +59,6 @@ namespace Modulo_C_
             }
         }
 
-
+        
     }
 }

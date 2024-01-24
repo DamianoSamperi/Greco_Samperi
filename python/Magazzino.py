@@ -192,7 +192,7 @@ class Magazzino:
 
 
 
-    def epilogo_ordine(self):            
+    def riepilogo_ordine(self):            
             tracciamento_corrente = self.sped.tracciamento()
             evento_aggiunto = self.sped.aggiungi_evento_tracciamento(f"Pacco in preparazione consegna")
             return {

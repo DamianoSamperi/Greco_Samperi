@@ -22,7 +22,7 @@
     <Compile Update="FormDatiSpedizione.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="FormEpilogoOrdine.cs">
+    <Compile Update="FormRiepilogoOrdine.cs">
       <SubType>Form</SubType>
     </Compile>
   </ItemGroup>

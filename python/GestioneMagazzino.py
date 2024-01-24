@@ -63,11 +63,11 @@ def aggiungi_pacco_cliente():
 
 
     
-@app.route('/epilogo_ordine', methods=['GET'])
-def epilogo_ordine():
-    dati_epilogo = magazzino.epilogo_ordine()
+@app.route('/riepilogo_ordine', methods=['GET'])
+def riepilogo_ordine():
+    dati_riepilogo = magazzino.riepilogo_ordine()
     #jsonify per convertire i dati in formato JSON e inviarli come risposta
-    return jsonify(dati_epilogo)
+    return jsonify(dati_riepilogo)
 
 
 if __name__ == '__main__':
