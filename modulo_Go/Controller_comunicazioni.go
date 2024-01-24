@@ -214,7 +214,7 @@ func Ritorna_sede(w http.ResponseWriter, r *http.Request) {
 	ctx := context.TODO()
 	g, err := magazzino.NuovoGestoreMagazzino(ctx, "mongodb+srv://root:yWP2DlLumOz07vNv@apl.yignw97.mongodb.net/?retryWrites=true&w=majority")
 	if err != nil {
-		log.Fatal(err)
+		http.Error(w, "Errore connessione al database", http.StatusBadRequest)
 	}
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
