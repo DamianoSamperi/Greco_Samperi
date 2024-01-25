@@ -198,7 +198,7 @@ class Magazzino:
             return {
                 "tracciamento": tracciamento_corrente,
                 "evento_aggiunto": evento_aggiunto,
-                "prezzo": str(self.preventivo)
+                "prezzo": f"prezzo: {str(self.preventivo)}"
                 }
                     
 
