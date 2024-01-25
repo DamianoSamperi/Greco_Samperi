@@ -190,7 +190,7 @@ class Magazzino:
                 print(f"Errore nella richiesta POST. Codice di stato: {response.status_code}")
                 print(response.text)
 
-            self.preventivo = self.nuovo_pacco.calcola_prezzo()
+            self.preventivo = self.preventivo + self.nuovo_pacco.calcola_prezzo()
 
     def riepilogo_ordine(self):            
             tracciamento_corrente = self.sped.tracciamento()
