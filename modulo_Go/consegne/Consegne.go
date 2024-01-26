@@ -110,7 +110,6 @@ func Verifica_Corriere(identificativo string) (bool, error) {
 		return false, nil
 	}
 
-	// Se c'è un altro errore, stampa l'errore e termina
 	return false, err
 }
 

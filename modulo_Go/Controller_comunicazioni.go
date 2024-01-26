@@ -407,6 +407,7 @@ func Identifica_corriere(w http.ResponseWriter, r *http.Request) {
 	result, err := consegne.Verifica_Corriere(dati)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Errore nella richiesta identificazione %v", err), http.StatusBadRequest)
+		return
 	}
 	fmt.Fprint(w, result)
 }
