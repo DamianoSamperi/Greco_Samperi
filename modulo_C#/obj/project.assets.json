@@ -8,19 +8,19 @@
     "net8.0-windows7.0": []
   },
   "packageFolders": {
-    "C:\\Users\\damih\\.nuget\\packages\\": {}
+    "C:\\Users\\Greco\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\damih\\Desktop\\Greco_Samperi\\Greco_Samperi\\modulo_C#\\Modulo_C#.csproj",
+      "projectUniqueName": "C:\\Users\\Greco\\Documents\\GitHub\\Greco_Samperi\\modulo_C#\\Modulo_C#.csproj",
       "projectName": "Modulo_C#",
-      "projectPath": "C:\\Users\\damih\\Desktop\\Greco_Samperi\\Greco_Samperi\\modulo_C#\\Modulo_C#.csproj",
-      "packagesPath": "C:\\Users\\damih\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\damih\\Desktop\\Greco_Samperi\\Greco_Samperi\\modulo_C#\\obj\\",
+      "projectPath": "C:\\Users\\Greco\\Documents\\GitHub\\Greco_Samperi\\modulo_C#\\Modulo_C#.csproj",
+      "packagesPath": "C:\\Users\\Greco\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Greco\\Documents\\GitHub\\Greco_Samperi\\modulo_C#\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\damih\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Greco\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -67,5 +67,13 @@
         "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.101/PortableRuntimeIdentifierGraph.json"
       }
     }
-  }
+  },
+  "logs": [
+    {
+      "code": "Undefined",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Problem reading the cache file C:\\Users\\Greco\\Documents\\GitHub\\Greco_Samperi\\modulo_C#\\obj\\project.nuget.cache : Invalid property identifier character: <. Path 'version', line 3, position 0."
+    }
+  ]
 }

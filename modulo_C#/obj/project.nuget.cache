@@ -1,12 +1,15 @@
 {
   "version": 2,
-<<<<<<< HEAD
   "dgSpecHash": "BcAryeWud4zghf8A3o4Kw4QclLejaK5q/4UH4EZf3j8h12qLvOos2LjF7ZuEFfQwMcSqcU3eeHXf4S+Kzwj8lQ==",
-=======
-  "dgSpecHash": "oHw1a10ddw3YMte+SVnTqgyT2ryrJhxZda/ggoJh5YF6F3rK7NdJsjrlyUzTVzZ/k/N6S1Cf1POW1D+il5v3mQ==",
->>>>>>> 0fc4a88d85cb017d661a0f19c6d7424fffa5f5c6
   "success": true,
-  "projectFilePath": "C:\\Users\\damih\\Desktop\\Greco_Samperi\\Greco_Samperi\\modulo_C#\\Modulo_C#.csproj",
+  "projectFilePath": "C:\\Users\\Greco\\Documents\\GitHub\\Greco_Samperi\\modulo_C#\\Modulo_C#.csproj",
   "expectedPackageFiles": [],
-  "logs": []
+  "logs": [
+    {
+      "code": "Undefined",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Problem reading the cache file C:\\Users\\Greco\\Documents\\GitHub\\Greco_Samperi\\modulo_C#\\obj\\project.nuget.cache : Invalid property identifier character: <. Path 'version', line 3, position 0."
+    }
+  ]
 }

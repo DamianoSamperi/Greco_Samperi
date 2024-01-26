@@ -8,6 +8,7 @@ class Magazzino:
     def __init__(self, gestore_spedizioni):
         self.cod_sped = None
         self.sede = None
+        self.preventivo = 0
         #lista vuota assegnata all'attributo di istanza 'inventario'
         self.inventario = []
 
@@ -128,7 +129,7 @@ class Magazzino:
 
 
     def aggiungi_pacco_cliente(self, data):
-            self.ordini = []
+            
             while True:
                 try:
                     peso = float(data.get('peso', ''))
@@ -148,7 +149,7 @@ class Magazzino:
             nuovo_pacco = Pacco(codice_sped=self.cod_sped, peso=peso, prezzo=100, dimensione=dimensione)
 
             # Aggiunta nuovo pacco al magazzino
-            self.aggiungi_pacco(self.nuovo_pacco)
+            self.aggiungi_pacco(nuovo_pacco)
             
 
            
@@ -189,7 +190,7 @@ class Magazzino:
                 print(f"Errore nella richiesta POST. Codice di stato: {response.status_code}")
                 print(response.text)
 
-            self.preventivo =  sum(nuovo_pacco.calcola_prezzo() for nuovo_pacco in self.inventario)
+            self.preventivo = self.preventivo + nuovo_pacco.calcola_prezzo()
 
     def riepilogo_ordine(self):            
             tracciamento_corrente = self.sped.tracciamento()
