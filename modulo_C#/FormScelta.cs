@@ -42,13 +42,13 @@ namespace Modulo_C_
                     HttpContent stringContent = new StringContent(jsonData, Encoding.UTF8, "application/json");
                     HttpResponseMessage response = await httpClient.PostAsync("http://localhost:8080/identifica_corriere", stringContent);
                     var contents = await response.Content.ReadAsStringAsync();
-                    if (contents == "True")
+                    if (contents == "true")
                     {
                         this.Hide();
                         Form newForm = new FormCorriere();
                         newForm.ShowDialog();
                         this.Show();
-                    }else if (contents == "False")
+                    }else if (contents == "false")
                     {
                         MessageBox.Show("identificativo non valido");
                     }
