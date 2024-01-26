@@ -36,7 +36,6 @@ namespace Modulo_C_
             this.Close();
             Form newForm = new Cliente(mittente);
             newForm.ShowDialog();
-            newForm = null;
         }
 
         private async Task InviaRichiestaPost(string nome, string cognome)

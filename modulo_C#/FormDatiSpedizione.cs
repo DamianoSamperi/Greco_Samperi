@@ -40,7 +40,6 @@ namespace Modulo_C_
             this.Close();
             Form newForm = new FormDatiPacco();
             newForm.ShowDialog();
-            newForm = null;
         }
 
         private async Task InviaRichiestaPost(string mittente, string destinatario)

@@ -41,13 +41,9 @@ type GestoreSpedizioni struct {
 
 type Pacco struct {
 	Spedizione_id string
-	// Nome string  `json:"nome"`
-	Peso float64
-	// Lunghezza  float64
-	// Altezza    float64
-	// Profondità float64
-	Dimensione string
-	Prezzo     float64
+	Peso          float64
+	Dimensione    string
+	Prezzo        float64
 }
 
 func (s Stato) String() string {
@@ -143,23 +139,6 @@ func (g *GestoreSpedizioni) Trova_spedizioni_per_ID(ID string) Spedizione {
 
 }
 
-// func (g *GestoreSpedizioni) Ritorna_pacchi_spedizione(ID string) []Pacco{
-// 	collection := g.client.Database("APL").Collection("spedizioni")
-// 	filter := bson.D{{Key: "id", Value: ID}}
-// 	cur, err := collection.Find(context.TODO(), filter)
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-// 	defer cur.Close(context.TODO())
-// 	var result Spedizione
-// 	err = cur.Decode(&result)
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-// 	return result.Pacchi
-
-// }
-
 func (g *GestoreSpedizioni) Insert_Spedizione(ID string, mittente string, destinatario string, sede string) {
 	collection := g.client.Database("APL").Collection("spedizioni")
 	var Stati []Stato
@@ -174,23 +153,15 @@ func (g *GestoreSpedizioni) Insert_Spedizione(ID string, mittente string, destin
 func (g *GestoreSpedizioni) Insert_Pacco_spedizione(ID string, Peso float64, Dimensione string, Prezzo float64) error {
 	collection := g.client.Database("APL").Collection("spedizioni")
 	Pacco := Pacco{Spedizione_id: ID, Peso: Peso, Dimensione: Dimensione, Prezzo: Prezzo}
-	// filter := bson.M{{"id": ID}}
 	var spedizione Spedizione
 	err := collection.FindOne(g.ctx, bson.M{"id": ID}).Decode(&spedizione)
 	if err != nil {
 		return errors.New("Spedizione inesistente")
 	}
-	// err = cur.Decode(&spedizione)
-	// if err != nil {
-	// 	print("Errore decode")
-	// 	return err
-	// }
 	Pacchi := spedizione.Pacchi
 	Pacchi = append(Pacchi, Pacco)
-	// defer cur.Close(context.TODO())
 	numero_pacchi := len(Pacchi)
 	update := bson.D{{Key: "$set", Value: bson.D{{Key: "numero_pacchi", Value: numero_pacchi}, {Key: "pacchi", Value: Pacchi}}}}
-	// update := bson.D{{Key: "$set", Value: bson.D{{Key: "numero_pacchi", Value: numero_pacchi}}}, {Key: "$push", Value: bson.D{{Key: "pacchi", Value: Pacchi}}}}
 	updateResult, err := collection.UpdateOne(context.TODO(), bson.M{"id": ID}, update)
 	if err != nil {
 		print("Errore update")

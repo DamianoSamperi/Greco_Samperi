@@ -79,7 +79,6 @@ namespace Modulo_C_
 
             Form newForm = new FormRiepilogoOrdine();
             newForm.ShowDialog();
-            newForm = null;
         }
     }
 }
