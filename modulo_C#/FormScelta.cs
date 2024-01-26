@@ -47,9 +47,7 @@ namespace Modulo_C_
                         if (contents)
                         {
                             this.Hide();
-                            //CustomControl customControl = new CustomControl();
                             Form newForm = new FormCorriere();
-                            //newForm.Controls.Add(customControl);
                             newForm.ShowDialog();
                             this.Show();
                         }
@@ -57,7 +55,7 @@ namespace Modulo_C_
                         {
                             MessageBox.Show("identificativo non valido");
                         }
-                    }catch (Exception)
+                    }catch (JsonException)
                     {
                         MessageBox.Show("Errata risposta dal server");
                     }
@@ -68,6 +66,10 @@ namespace Modulo_C_
                     MessageBox.Show($"Connessione al server rifiutata: {ex.Message}");
                 }
 
+            }
+            else
+            {
+                MessageBox.Show("Inserisci un identificativo");
             }
 
         }
