@@ -7,10 +7,10 @@
     <Compile Update="Consegna.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="Form1.cs">
+    <Compile Update="FormScelta.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="Form3.cs">
+    <Compile Update="FormCorriere.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="FormDatiCliente.cs">

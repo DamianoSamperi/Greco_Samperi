@@ -3,9 +3,9 @@ using System.Text.Json;
 
 namespace Modulo_C_
 {
-    public partial class Form3 : Form
+    public partial class FormCorriere : Form
     {
-        public Form3()
+        public FormCorriere()
         {
             InitializeComponent();
         }

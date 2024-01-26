@@ -1,5 +1,4 @@
 import requests
-import time
 from Pacco import Pacco
 import json
 
@@ -146,7 +145,7 @@ class Magazzino:
                     print("Errore: Inserisci una dimensione valida (piccolo, medio o grande).")
 
             #nuovo oggetto Pacco con il nuovo codice
-            self.nuovo_pacco = Pacco(codice_sped=self.cod_sped, peso=peso, prezzo=100, dimensione=dimensione)
+            nuovo_pacco = Pacco(codice_sped=self.cod_sped, peso=peso, prezzo=100, dimensione=dimensione)
 
             # Aggiunta nuovo pacco al magazzino
             self.aggiungi_pacco(self.nuovo_pacco)
@@ -175,10 +174,10 @@ class Magazzino:
             print("Inserisci Pacco spedizione")
             url7 = "http://go:8080/Inserisci_Pacco_spedizione"
             payload = {
-                       "id_spedizione": self.nuovo_pacco.codice_sped,
-                       "peso": self.nuovo_pacco.peso,
-                       "dimensione": self.nuovo_pacco.dimensione,
-                       "prezzo": self.nuovo_pacco.calcola_prezzo()          
+                       "id_spedizione": nuovo_pacco.codice_sped,
+                       "peso": nuovo_pacco.peso,
+                       "dimensione": nuovo_pacco.dimensione,
+                       "prezzo": nuovo_pacco.calcola_prezzo()          
                       }   
             
             headers = {"Content-Type": "application/json"}
@@ -190,7 +189,7 @@ class Magazzino:
                 print(f"Errore nella richiesta POST. Codice di stato: {response.status_code}")
                 print(response.text)
 
-            self.preventivo = self.preventivo + self.nuovo_pacco.calcola_prezzo()
+            self.preventivo =  sum(nuovo_pacco.calcola_prezzo() for nuovo_pacco in self.inventario)
 
     def riepilogo_ordine(self):            
             tracciamento_corrente = self.sped.tracciamento()
