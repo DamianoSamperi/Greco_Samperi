@@ -41,23 +41,20 @@ namespace Modulo_C_
                     string jsonData = JsonSerializer.Serialize(data);
                     HttpContent stringContent = new StringContent(jsonData, Encoding.UTF8, "application/json");
                     HttpResponseMessage response = await httpClient.PostAsync("http://localhost:8080/identifica_corriere", stringContent);
-                    //var contents = await response.Content.ReadAsStringAsync();
-                    try {
-                        bool contents = await response.Content.ReadFromJsonAsync<bool>();
-                        if (contents)
-                        {
-                            this.Hide();
-                            Form newForm = new FormCorriere();
-                            newForm.ShowDialog();
-                            this.Show();
-                        }
-                        else
-                        {
-                            MessageBox.Show("identificativo non valido");
-                        }
-                    }catch (JsonException)
+                    var contents = await response.Content.ReadAsStringAsync();
+                    if (contents == "True")
                     {
-                        MessageBox.Show("Errata risposta dal server");
+                        this.Hide();
+                        Form newForm = new FormCorriere();
+                        newForm.ShowDialog();
+                        this.Show();
+                    }else if (contents == "False")
+                    {
+                        MessageBox.Show("identificativo non valido");
+                    }
+                    else
+                    {
+                        MessageBox.Show($"Errata risposta dal server: {contents}");
                     }
 
                 }
