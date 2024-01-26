@@ -396,5 +396,5 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
-Greco_Samperi.sln
-modulo_C#/obj
+
+modulo_C#\obj
