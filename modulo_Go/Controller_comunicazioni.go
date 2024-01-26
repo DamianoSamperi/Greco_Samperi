@@ -442,6 +442,7 @@ func main() {
 	//Verifica l'identificativo del corriere
 	http.HandleFunc("/identifica_corriere", Identifica_corriere)
 
+	fmt.Println("Il server è avviato sulla porta :8080...")
 	err := http.ListenAndServe(":8080", nil)
 	if errors.Is(err, http.ErrServerClosed) {
 		fmt.Print("server closed\n")
