@@ -17,19 +17,11 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	// _ "github.com/go-sql-driver/mysql"
 )
 
-// type Prodotto struct {
-// 	ID       int    `json:"id"`
-// 	Nome     string `json:"nome"`
-// 	Quantita int    `json:"quantita"`
-// }
-
 type Hub struct {
-	ID   int    `json:"id"`
-	Sede string `json:"sede"`
-	// Prodotti []Prodotto `json:"prodotti"`
+	ID     int    `json:"id"`
+	Sede   string `json:"sede"`
 	Pacchi []spedizione.Pacco
 }
 type GestoreMagazzino struct {
@@ -103,13 +95,6 @@ func (g *GestoreMagazzino) Ritorna_hub_per_vicinanza(indirizzo string) string {
 	var sede string
 	for _, collezione := range collezioni {
 		if collezione != "spedizioni" {
-			// collection := g.client.Database("APL").Collection(collezione)
-			// var result Coordinate
-			// // filtro := bson.M{"latitude": bson.M{"$exists": true}}
-			// err := collection.FindOne(g.ctx, bson.M{}).Decode(&result)
-			// if err != nil {
-			// 	return "errore nella richesta al database " + err.Error()
-			// }
 			result := g.Ritorna_Coordinate_hub(collezione)
 			latB := result.Latitudine
 			lonB := result.Longitudine
@@ -124,39 +109,6 @@ func (g *GestoreMagazzino) Ritorna_hub_per_vicinanza(indirizzo string) string {
 	return sede
 }
 
-// func (g *GestoreMagazzino) Ritorna_hub_per_vicinanza(indirizzo string) string {
-
-// 	url := "https://geocoding.openapi.it/geocode"
-
-// 	payload := strings.NewReader("{\"address\":\"Via Cristoforo Colombo, Roma RM\"}")
-
-// 	req, _ := http.NewRequest("POST", url, payload)
-
-// 	req.Header.Add("content-type", "application/json")
-// 	req.Header.Add("Authorization", "Bearer 659ad5656af8cf61ad062a3c")
-
-// 	res, _ := http.DefaultClient.Do(req)
-
-// 	defer res.Body.Close()
-// 	body, _ := io.ReadAll(res.Body)
-
-//		fmt.Println(string(body))
-//		var risposta = struct {
-//			Success bool `json:"success"`
-//			Element struct {
-//				ProvidedBy string  `json:"providedBy"`
-//				Latitude   float64 `json:"latitude"`
-//				Longitude  float64 `json:"longitude"`
-//				// Aggiungi qui altri campi se necessario
-//			} `json:"element"`
-//		}{}
-//		err := json.Unmarshal(body, &risposta)
-//		if err != nil {
-//			log.Fatal(err)
-//		}
-//		fmt.Println("coso ", risposta.Element)
-//		return ""
-//	}
 func (g *GestoreMagazzino) Ritorna_Coordinate_hub(sede string) Coordinate {
 	collection := g.client.Database("APL").Collection(sede)
 	var result RispostaAPI

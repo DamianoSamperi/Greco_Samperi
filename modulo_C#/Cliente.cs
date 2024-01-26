@@ -21,7 +21,6 @@ namespace Modulo_C_
             this.Close();
             Form newForm = new FormDatiSpedizione(indirizzo);
             newForm.ShowDialog();
-            newForm = null;
         }
 
         private async void btn_visualizza_Click(object sender, EventArgs e)
@@ -56,10 +55,9 @@ namespace Modulo_C_
                     }
 
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    MessageBox.Show("Connessione al server rifiutata");
-                    throw;
+                    MessageBox.Show($"Connessione al server rifiutata: {ex.Message}");
                 }
             }
             else
@@ -95,10 +93,9 @@ namespace Modulo_C_
                 }
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                MessageBox.Show("Connessione al server rifiutata");
-                throw;
+                MessageBox.Show($"Connessione al server rifiutata: {ex.Message}");
             }
         }
 
@@ -130,10 +127,9 @@ namespace Modulo_C_
                         }
 
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
-                        MessageBox.Show("Connessione al server rifiutata");
-                        //throw;
+                        MessageBox.Show($"Connessione al server rifiutata: {ex.Message}");
                     }
                 }
                 else

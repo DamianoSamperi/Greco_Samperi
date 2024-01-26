@@ -192,8 +192,7 @@ func Consegna_hub(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Formato json non corretto", http.StatusBadRequest)
 		return
 	}
-	// spedizione := s.Trova_spedizioni_per_ID(dati.Id_Spedizione)
-	// pacchi := spedizione.Pacchi
+
 	err = g.SpostaPacco(dati.Id_Spedizione, dati.Vecchio_Hub, dati.Nuovo_Hub)
 	if err != nil {
 		if err.Error() == "vecchia sede inesistente" || err.Error() == "nuova sede inesistente" {
@@ -203,11 +202,8 @@ func Consegna_hub(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Errore spostamento pacco", http.StatusBadRequest)
 		return
 	}
-	// s.Modifica_Stato_Spedizione(dati.Id_Spedizione, "Consegnato all'Hub")
 	fmt.Fprint(w, s.Modifica_Stato_Spedizione(dati.Id_Spedizione, "Consegnato all'Hub"))
-	// for _,_ = range pacchi{
-	// 	g.SpostaPacco(dati.Id_Spedizione,dati.vecchio_Hub,dati.nuovo_Hub)
-	// }
+
 }
 func Ritorna_sede(w http.ResponseWriter, r *http.Request) {
 	ctx := context.TODO()
@@ -340,7 +336,11 @@ func Ottieni_percorso(w http.ResponseWriter, r *http.Request) {
 		var dati = struct {
 			Sede string
 		}{}
-		_ = json.Unmarshal(body, &dati)
+		err = json.Unmarshal(body, &dati)
+		if err != nil {
+			http.Error(w, "Formato json non corretto", http.StatusBadRequest)
+			return
+		}
 		ids := g.Ottieni_Spedizioni_PerSede(dati.Sede)
 		var spedizioni []spedizione.Spedizione
 		for _, id := range ids {
@@ -387,6 +387,30 @@ func Ottieni_percorso(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func Identifica_corriere(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodPost {
+
+	} else {
+		http.Error(w, "Metodo non valido", http.StatusMethodNotAllowed)
+	}
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		http.Error(w, "Errore nella lettura del corpo della richiesta", http.StatusBadRequest)
+		return
+	}
+	var dati string
+	err = json.Unmarshal(body, &dati)
+	if err != nil {
+		http.Error(w, "Formato json non corretto", http.StatusBadRequest)
+		return
+	}
+	result, err := consegne.Verifica_Corriere(dati)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Errore nella richiesta identificazione %v", err), http.StatusBadRequest)
+	}
+	fmt.Fprint(w, result)
+}
+
 func main() {
 	//passi una spedizione e la sede che puoi farti tornare da ritorna sede(o faccio io vedi tu) e la inserisce nel database
 	http.HandleFunc("/Inserisci_Spedizione", Inserimento_spedizione)
@@ -414,6 +438,8 @@ func main() {
 	http.HandleFunc("/Consegna_hub", Consegna_hub)
 	//Visualizza TRacciamento dato id spedizione
 	http.HandleFunc("/tracciamento_spedizione", Traccia_spedizione)
+	//Verifica l'identificativo del corriere
+	http.HandleFunc("/identifica_corriere", Identifica_corriere)
 
 	err := http.ListenAndServe(":8080", nil)
 	if errors.Is(err, http.ErrServerClosed) {

@@ -1,6 +1,7 @@
 package consegne
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -10,6 +11,10 @@ import (
 	"net/http"
 	"strings"
 	"time"
+
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type Punto_percorso struct {
@@ -24,11 +29,6 @@ type Coordinate struct {
 	Longitudine float64 `json:"longitude"`
 }
 
-//	type Direzione struct {
-//		id        string
-//		Distanza  float64
-//		Direzione string
-//	}
 type Direzione struct {
 	angolo_inf float64
 	angolo_sup float64
@@ -88,14 +88,38 @@ func Todirezione(angolo float64) string {
 		return "Ovest"
 	}
 }
+func Verifica_Corriere(identificativo string) (bool, error) {
+	ctx := context.TODO()
+
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI("mongodb+srv://root:yWP2DlLumOz07vNv@apl.yignw97.mongodb.net/?retryWrites=true&w=majority"))
+	if err != nil {
+		return false, err
+	}
+
+	collection := client.Database("APL").Collection("Corrieri")
+
+	filter := bson.M{"identificativo": identificativo}
+	var result bson.M
+	err = collection.FindOne(ctx, filter).Decode(&result)
+
+	if err == nil {
+		return true, nil
+	}
+
+	if err == mongo.ErrNoDocuments {
+		return false, nil
+	}
+
+	// Se c'è un altro errore, stampa l'errore e termina
+	return false, err
+}
+
 func Calcola_distanza_punti(destinatario Punto_percorso, origine Punto_percorso) float64 {
 	R := 6372795.477598
 	latA := destinatario.Latitudine * (math.Pi / 180)
 	lonA := destinatario.Longitudine * (math.Pi / 180)
 	latB := origine.Latitudine * (math.Pi / 180)
 	lonB := origine.Longitudine * (math.Pi / 180)
-	// fmt.Printf("%f,%f,%f,%f \n", latA/math.Pi*180, lonA/math.Pi*180, latB/math.Pi*180, lonB/math.Pi*180)
-	// print("seno ", math.Sin(latA*math.Pi/180))
 	distanza := R * math.Acos(math.Sin(latA)*math.Sin(latB)+math.Cos(latA)*math.Cos(latB)*math.Cos(lonA-lonB))
 	return distanza
 }
@@ -111,8 +135,7 @@ func calcola_direzione_punti(destinatario Punto_percorso, origine Punto_percorso
 	}
 	angolo := math.Atan2(delta_lon, delta)
 	return angolo * 180 / math.Pi
-	// direzione := direzione(angolo)
-	// return direzione
+
 }
 func calcola_punti(spedizioni []spedizione.Spedizione, sede Punto_percorso) []Punto_percorso {
 	url := "https://geocoding.openapi.it/geocode"
@@ -159,13 +182,8 @@ func calcola_punti(spedizioni []spedizione.Spedizione, sede Punto_percorso) []Pu
 func trovaMagazzino_più_vicino(destinatario Punto_percorso, origine Punto_percorso, lista_magazzini []Punto_percorso) (float64, Punto_percorso) {
 	var distanza_magazzino float64 = distanza_massima_percorribile
 	for _, magazzino := range lista_magazzini {
-		// print("sede ", magazzino.Indirizzo, "\n")
 		direzione := Todirezione(calcola_direzione_punti(destinatario, origine))
-		// print("direzione ", direzione, "\n")
-		// fmt.Printf("punto %f,%f,%f,%f \n", destinatario.Latitudine, destinatario.Longitudine, origine.Latitudine, origine.Longitudine)
 		direzione_magazzino := Todirezione(calcola_direzione_punti(magazzino, origine))
-		// fmt.Printf("magazzino %f,%f,%f,%f \n", magazzino.Latitudine, magazzino.Longitudine, origine.Latitudine, origine.Longitudine)
-		// print("direzione m. ", direzione_magazzino, "\n")
 		if direzione == direzione_magazzino {
 			distanza_magazzino := Calcola_distanza_punti(magazzino, origine)
 			if distanza_magazzino <= distanza_massima_percorribile {
@@ -182,14 +200,10 @@ func Calcola_distanza_minima(origine Punto_percorso, Diramazioni []Punto_percors
 	nuovaDirezione := -1.0
 	for i, p := range Diramazioni {
 		direzione := calcola_direzione_punti(p, origine)
-		// print("direzione ", direzione, "\n")
-		// fmt.Printf("direzione non ammessa %f - %f \n", direzione_non_ammessa.angolo_inf, direzione_non_ammessa.angolo_sup)
 		if direzione >= direzione_non_ammessa.angolo_sup || direzione < direzione_non_ammessa.angolo_inf {
 			d := Calcola_distanza_punti(origine, p)
-			// print("distanza ", d)
 			if d <= distanza_massima_percorribile {
 				if (distanza_residua_percorribile - d) >= 0 {
-					// print("if ", p.Consegna_Stimata.Format("2006/01/02") == time.Now().AddDate(0, 0, 1).Format("2006/01/02"), p.Consegna_Stimata.Format("2006/01/02"), time.Now().AddDate(0, 0, 1).Format("2006/01/02"))
 					if p.Consegna_Stimata.IsZero() || p.Consegna_Stimata.Format("2006/01/02") == time.Now().AddDate(0, 0, 1).Format("2006/01/02") {
 						if d < minDistanza {
 							minDistanza = d
@@ -197,7 +211,6 @@ func Calcola_distanza_minima(origine Punto_percorso, Diramazioni []Punto_percors
 							minIndice = i
 							nuovaDirezione = direzione
 							distanza_residua_percorribile = distanza_residua_percorribile - d
-							// print("distanza ancora percoribile ", distanza_residua_percorribile, "\n")
 						}
 					}
 				} else {
@@ -239,8 +252,8 @@ func Trova_percorso(spedizioni []spedizione.Spedizione, sede Punto_percorso, lis
 	}
 	var indice int
 	percorso := []Punto_percorso{}
-	puntoCorrente := punti[0]               // Scelgo la sede come origine
-	punti = append(punti[:0], punti[1:]...) // Rimuovo la sede dalla lista dei punti
+	puntoCorrente := punti[0]
+	punti = append(punti[:0], punti[1:]...)
 	var direzione_non_ammessa = Direzione{angolo_inf: 361, angolo_sup: -1}
 	var distanza_residua_percorribile = distanza_massima_percorribile
 	for len(punti) > 0 {

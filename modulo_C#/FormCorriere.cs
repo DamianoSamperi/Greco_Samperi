@@ -33,10 +33,9 @@ namespace Modulo_C_
                     var contents = await response.Content.ReadAsStringAsync();
                     MessageBox.Show(contents);
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    MessageBox.Show("Connessione al server rifiutata");
-                    //throw;
+                    MessageBox.Show($"Connessione al server rifiutata: {ex.Message}");
                 }
 
             }
@@ -50,7 +49,6 @@ namespace Modulo_C_
             Form newForm = new Consegna();
             //newForm.Controls.Add(customControl);
             newForm.ShowDialog();
-            newForm = null;
             this.Show();
         }
     }
