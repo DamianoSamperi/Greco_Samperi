@@ -157,7 +157,7 @@ class Magazzino:
             url4 = "http://go:8080/Inserisci_Prodotto_Hub"
             payload = {
                        "sede": self.sede,
-                       "pacco": self.nuovo_pacco.to_dict()              
+                       "pacco": nuovo_pacco.to_dict()              
                       }   
             
             headers = {"Content-Type": "application/json"}
