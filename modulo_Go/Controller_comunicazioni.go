@@ -78,7 +78,6 @@ func Inserimento_pacco(w http.ResponseWriter, r *http.Request) {
 		err = g.Insert_Pacco_spedizione(dati.Spedizione_id, dati.Peso, dati.Dimensione, dati.Prezzo)
 		if err != nil {
 			http.Error(w, "Errore inserimento "+err.Error(), http.StatusBadRequest)
-			//TO_DO andrebbe fatto il rollback
 		} else {
 			fmt.Fprint(w, "Pacco inserito con successo")
 		}
@@ -237,6 +236,7 @@ func Ritorna_sede(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Errore nella ricerca della sede", http.StatusBadRequest)
 	}
 }
+
 func Ritorna_id(w http.ResponseWriter, r *http.Request) {
 	ctx := context.TODO()
 	g, err := spedizione.NuovoGestoreSpedizioni(ctx, "mongodb+srv://root:yWP2DlLumOz07vNv@apl.yignw97.mongodb.net/?retryWrites=true&w=majority")
@@ -320,6 +320,7 @@ func Inserimento_data_consegna(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Metodo non valido", http.StatusMethodNotAllowed)
 	}
 }
+
 func Ottieni_percorso(w http.ResponseWriter, r *http.Request) {
 	ctx := context.TODO()
 	g, err := magazzino.NuovoGestoreMagazzino(ctx, "mongodb+srv://root:yWP2DlLumOz07vNv@apl.yignw97.mongodb.net/?retryWrites=true&w=majority")
@@ -340,12 +341,9 @@ func Ottieni_percorso(w http.ResponseWriter, r *http.Request) {
 			Sede string
 		}{}
 		_ = json.Unmarshal(body, &dati)
-		//TO_DO funzione che torna gli id delle spedizioni di un magazzino passata la sede
 		ids := g.Ottieni_Spedizioni_PerSede(dati.Sede)
-		//TO_DO funzione in spedizione e trovare un modo per passargli la sede come punto geografico o lo calcolo all'interno mi sa meglio
 		var spedizioni []spedizione.Spedizione
 		for _, id := range ids {
-			//TO_DO andrebbero tornate solo quelle che sono in preparazione
 			spedizione := s.Trova_spedizioni_per_ID(id)
 			if spedizione.ID != "nulla" {
 				spedizioni = append(spedizioni, spedizione)
@@ -400,9 +398,9 @@ func main() {
 	http.HandleFunc("/Ottieni_Prodotti_Hub", Ottieni_prodotti)
 	//Passi la sede e un pacco e lo inserisce nel Hub corrispondente
 	http.HandleFunc("/Inserisci_Prodotto_Hub", Inserimento_prodotto)
-	//TO_DO funzione che passa tutti gli id delle spedizioni
+	//funzione che passa tutti gli id delle spedizioni
 	http.HandleFunc("/RitornaId_Spedizionie", Ritorna_id)
-	//TO_DO funzione che modifica lo stato della spedizione, devi passare il nuovo stato e l'id
+	//funzione che modifica lo stato della spedizione, devi passare il nuovo stato e l'id
 	http.HandleFunc("/Modifica_Stato_Spedizione", Modifica_stato)
 	//passi l'indirizzo e ti torna la sede più vicina, il formato indirizzo deve essere Via, Città Provincia ex. "Via Cristoforo Colombo, Roma RM"
 	http.HandleFunc("/Ritorna_Sede", Ritorna_sede)
@@ -412,7 +410,7 @@ func main() {
 	http.HandleFunc("/Ottieni_data_spedizione", Ottieni_data)
 	//funzione che permette all'utente di scegliere una data di consegna, di default è impostata come il prima possibile
 	http.HandleFunc("/Scegli_data_consegna", Inserimento_data_consegna)
-	//TO_DO mi serve una funzione dove passi id_spedizione e cambia hub a tutti i pacchi presenti, viene passato il nuovo hub,vecchio hub, id spedizione
+	// funzione dove passi id_spedizione e cambia hub a tutti i pacchi presenti, viene passato il nuovo hub,vecchio hub, id spedizione
 	http.HandleFunc("/Consegna_hub", Consegna_hub)
 	//Visualizza TRacciamento dato id spedizione
 	http.HandleFunc("/tracciamento_spedizione", Traccia_spedizione)

@@ -1,6 +1,6 @@
 ﻿namespace Modulo_C_
 {
-    partial class Form3
+    partial class FormCorriere
     {
         /// <summary>
         /// Required designer variable.

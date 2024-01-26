@@ -1,7 +1,6 @@
 package spedizione
 
 import (
-	//TO_DO da passare come non relazionale, per aggiungere lista stati per il tracciamento
 	"context"
 	"errors"
 	"fmt"
@@ -12,7 +11,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	// _ "github.com/go-sql-driver/mysql"
 )
 
 type Stato int
@@ -172,7 +170,6 @@ func (g *GestoreSpedizioni) Insert_Spedizione(ID string, mittente string, destin
 		log.Fatal(err)
 	}
 	fmt.Println("Inserita una nuova spedizione con ID:", insertResult.InsertedID)
-	//TO_DO potrebbbe essere necessario inserire il pacco nel magazzino
 }
 func (g *GestoreSpedizioni) Insert_Pacco_spedizione(ID string, Peso float64, Dimensione string, Prezzo float64) error {
 	collection := g.client.Database("APL").Collection("spedizioni")
@@ -200,13 +197,12 @@ func (g *GestoreSpedizioni) Insert_Pacco_spedizione(ID string, Peso float64, Dim
 		return err
 	}
 	fmt.Printf("Modificati %v documenti\n", updateResult.ModifiedCount)
-	//TO_DO potrebbbe essere necessario inserire il pacco nel magazzino
 	return nil
 }
 
 func (g *GestoreSpedizioni) RitornaID() []string {
 	collection := g.client.Database("APL").Collection("spedizioni")
-	opts := options.Find().SetProjection(bson.D{{Key: "ID", Value: 1}}) //TO_DO il key-value viene aggiunto da Golang perchè richiede i key name della struct, andrebbe controllato se funziona anche cosi l'option
+	opts := options.Find().SetProjection(bson.D{{Key: "ID", Value: 1}})
 	cur, err := collection.Find(context.TODO(), bson.D{}, opts)
 	if err != nil {
 		log.Fatal(err)
@@ -258,7 +254,6 @@ func (g *GestoreSpedizioni) Modifica_Data_Consegna_Spedizione(id string, data st
 	}
 }
 func (g *GestoreSpedizioni) Ritorna_Data_Spedizione(id string) time.Time {
-	//TO_DO funzione modifica, però prima va cambiato il database in non relazionale
 	collection := g.client.Database("APL").Collection("spedizioni")
 	filter := bson.D{{Key: "id", Value: id}}
 	var date time.Time
@@ -269,10 +264,8 @@ func (g *GestoreSpedizioni) Ritorna_Data_Spedizione(id string) time.Time {
 	return date
 }
 func (g *GestoreSpedizioni) Ritorna_Destinatario_Spedizione(id string) string {
-	//TO_DO funzione modifica, però prima va cambiato il database in non relazionale
 	collection := g.client.Database("APL").Collection("spedizioni")
 	filter := bson.D{{Key: "id", Value: id}}
-	// cur, err := collection.Find(context.TODO(), filter)
 	var date struct {
 		Destinatario string `bson:"destinatario"`
 	}
@@ -283,7 +276,6 @@ func (g *GestoreSpedizioni) Ritorna_Destinatario_Spedizione(id string) string {
 	return date.Destinatario
 }
 func (g *GestoreSpedizioni) Modifica_Stato_Spedizione(id string, stato string) string {
-	//TO_DO funzione modifica, però prima va cambiato il database in non relazionale
 	collection := g.client.Database("APL").Collection("spedizioni")
 	filter := bson.D{{Key: "id", Value: id}}
 
@@ -316,10 +308,8 @@ func (g *GestoreSpedizioni) Modifica_Stato_Spedizione(id string, stato string) s
 }
 
 func Tracciamento(spedizione Spedizione) string {
-	// var String string
 	SpedizioneString := "Id " + spedizione.ID + "\nMittente " + spedizione.Mittente + "\nDestinatario " + spedizione.Destinatario + "\nNumero Pacchi: " + strconv.Itoa(spedizione.NumeroPacchi) + "\nPacchi:\n"
 	for _, pacco := range spedizione.Pacchi {
-		// Pacco := "Peso" + strconv.FormatFloat(pacco.Peso, 'f', -1, 64) + "Lunghezza" + strconv.FormatFloat(pacco.Lunghezza, 'f', -1, 64) + "Altezza" + strconv.FormatFloat(pacco.Altezza, 'f', -1, 64) + "Profondità" + strconv.FormatFloat(pacco.Profondità, 'f', -1, 64) + "Prezzo" + strconv.FormatFloat(pacco.Prezzo, 'f', -1, 64)
 		Pacco := "Peso: " + strconv.FormatFloat(pacco.Peso, 'f', -1, 64) + " Dimensione: " + pacco.Dimensione + " Prezzo: " + strconv.FormatFloat(pacco.Prezzo, 'f', -1, 64)
 		SpedizioneString = SpedizioneString + Pacco
 	}
@@ -327,22 +317,18 @@ func Tracciamento(spedizione Spedizione) string {
 	for _, stato := range spedizione.Stato {
 		SpedizioneString = SpedizioneString + stato.String() + "\n"
 	}
-	// String = SpedizioneString
 	return SpedizioneString
 }
 func ToString(spedizioni []Spedizione) string {
-	// var SpedizioneString string
 	var resultString string
 	for _, s := range spedizioni {
 		SpedizioneString := "Id " + s.ID + "\nMittente " + s.Mittente + "\nDestinatario " + s.Destinatario + "\nStato: " + s.Stato[len(s.Stato)-1].String() + "\nNumero Pacchi: " + strconv.Itoa(s.NumeroPacchi) + "\nPacchi:\n"
 		for _, pacco := range s.Pacchi {
-			// Pacco := "Peso" + strconv.FormatFloat(pacco.Peso, 'f', -1, 64) + "Lunghezza" + strconv.FormatFloat(pacco.Lunghezza, 'f', -1, 64) + "Altezza" + strconv.FormatFloat(pacco.Altezza, 'f', -1, 64) + "Profondità" + strconv.FormatFloat(pacco.Profondità, 'f', -1, 64) + "Prezzo" + strconv.FormatFloat(pacco.Prezzo, 'f', -1, 64)
 			Pacco := "Peso: " + strconv.FormatFloat(pacco.Peso, 'f', -1, 64) + " Dimensione: " + pacco.Dimensione + " Prezzo: " + strconv.FormatFloat(pacco.Prezzo, 'f', -1, 64)
 			SpedizioneString = SpedizioneString + Pacco + "\n"
 		}
 		resultString = resultString + SpedizioneString + "\n--------------------\n"
 	}
 
-	// String = SpedizioneString
 	return resultString
 }

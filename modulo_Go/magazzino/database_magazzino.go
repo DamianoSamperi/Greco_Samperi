@@ -65,8 +65,8 @@ func NuovoGestoreMagazzino(ctx context.Context, uri string) (*GestoreMagazzino, 
 }
 
 func (g *GestoreMagazzino) Ritorna_hub_per_vicinanza(indirizzo string) string {
-	//TO_DO funzione che ritorna l'hub più vicino all'indirizzo dato
-	//TO_DO trasforma indirizzi in coordinate e poi calcola distanza tra due punti e moltiplica per indice curvatura terreste poi trovi il minimo delle distanze
+	//funzione che ritorna l'hub più vicino all'indirizzo dato
+	//trasforma indirizzi in coordinate e poi calcola distanza tra due punti e moltiplica per indice curvatura terreste poi trovi il minimo delle distanze
 	R := 6372795.477598
 	url := "https://geocoding.openapi.it/geocode"
 	collezioni, _ := g.client.Database("APL").ListCollectionNames(g.ctx, bson.M{})

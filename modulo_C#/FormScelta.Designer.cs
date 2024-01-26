@@ -1,6 +1,6 @@
 ﻿namespace Modulo_C_
 {
-    partial class Form1
+    partial class FormScelta
     {
         /// <summary>
         ///  Required designer variable.

@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Greco\\Documents\\GitHub\\Greco_Samperi\\modulo_C#\\Modulo_C#.csproj": {}
+    "C:\\Users\\damih\\Desktop\\Greco_Samperi\\Greco_Samperi\\modulo_C#\\Modulo_C#.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Greco\\Documents\\GitHub\\Greco_Samperi\\modulo_C#\\Modulo_C#.csproj": {
+    "C:\\Users\\damih\\Desktop\\Greco_Samperi\\Greco_Samperi\\modulo_C#\\Modulo_C#.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Greco\\Documents\\GitHub\\Greco_Samperi\\modulo_C#\\Modulo_C#.csproj",
+        "projectUniqueName": "C:\\Users\\damih\\Desktop\\Greco_Samperi\\Greco_Samperi\\modulo_C#\\Modulo_C#.csproj",
         "projectName": "Modulo_C#",
-        "projectPath": "C:\\Users\\Greco\\Documents\\GitHub\\Greco_Samperi\\modulo_C#\\Modulo_C#.csproj",
-        "packagesPath": "C:\\Users\\Greco\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Greco\\Documents\\GitHub\\Greco_Samperi\\modulo_C#\\obj\\",
+        "projectPath": "C:\\Users\\damih\\Desktop\\Greco_Samperi\\Greco_Samperi\\modulo_C#\\Modulo_C#.csproj",
+        "packagesPath": "C:\\Users\\damih\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\damih\\Desktop\\Greco_Samperi\\Greco_Samperi\\modulo_C#\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Greco\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\damih\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
