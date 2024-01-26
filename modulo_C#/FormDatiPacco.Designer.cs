@@ -80,6 +80,7 @@
             // 
             // buttonFineOrdine
             // 
+            buttonFineOrdine.Enabled = false;
             buttonFineOrdine.Location = new Point(208, 248);
             buttonFineOrdine.Name = "buttonFineOrdine";
             buttonFineOrdine.Size = new Size(94, 29);

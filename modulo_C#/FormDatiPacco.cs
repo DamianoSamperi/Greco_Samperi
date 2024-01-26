@@ -63,6 +63,7 @@ namespace Modulo_C_
                     {                     
                         string responseContent = await response.Content.ReadAsStringAsync();
                         MessageBox.Show(responseContent, "Risposta dal server", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        buttonFineOrdine.Enabled = true;
                     }
 
                 }
